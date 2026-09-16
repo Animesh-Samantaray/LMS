@@ -8,7 +8,6 @@ const GlobalFrameBackground = () => {
   const totalFrames = 300;
 
   useEffect(() => {
-    // 1. Preload frames progressively
     const preloadProgressively = async () => {
       const loadSingleFrame = (i) => {
         return new Promise((resolve) => {
@@ -26,10 +25,10 @@ const GlobalFrameBackground = () => {
         });
       };
 
-      // Load frame 1 (index 0) first
+
       await loadSingleFrame(0);
       
-      // Set the initial frame immediately once loaded
+
       if (imageRef.current && imagesRef.current[0]) {
         imageRef.current.src = imagesRef.current[0].src;
       }
@@ -93,7 +92,6 @@ const GlobalFrameBackground = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
     
-    // Call once to ensure correct initial state
     updateFrame();
 
     return () => {

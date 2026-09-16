@@ -394,8 +394,6 @@
 
 .footer {
   background: rgba(6, 9, 17, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-subtle);
   padding: 4.5rem 0 2rem 0;
   color: var(--text-secondary);
