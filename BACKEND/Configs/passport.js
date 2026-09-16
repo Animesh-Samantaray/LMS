@@ -32,16 +32,13 @@ passport.use(
 
         const profileImage = profile.photos?.[0]?.value || "";
 
-        const selectedRole = req.query.role;
-
         const allowedRoles = ["Student", "Instructor"];
 
-        if (!selectedRole || !allowedRoles.includes(selectedRole)) {
-          return done(
-            new Error("Please select a valid role"),
-            null
-          );
-        }
+const selectedRole = req.query.state;
+
+if (!allowedRoles.includes(selectedRole)) {
+  return done(new Error("Please select a valid role"), null);
+}
 
         let user = await User.findOne({ googleId });
 

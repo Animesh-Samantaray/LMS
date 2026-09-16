@@ -1,31 +1,35 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, UserCheck } from 'lucide-react';
+import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import authService from '../services/authService';
-import '../styles/auth.css';
+import { getDashboardPath, useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    rememberMe: false
+    rememberMe: false,
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
+  const [googleRole, setGoogleRole] = useState('Student');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
-    setErrorMsg('');
+    if (errorMsg) setErrorMsg('');
   };
 
   const handleSubmit = async (e) => {
@@ -33,11 +37,11 @@ const Login = () => {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!formData.email) {
+    if (!formData.email.trim()) {
       setErrorMsg('Please enter your email address.');
       return;
     }
-    if (!authService.isValidEmail(formData.email)) {
+    if (!authService.isValidEmail(formData.email.trim())) {
       setErrorMsg('Please enter a valid email address (e.g. name@domain.com).');
       return;
     }
@@ -48,181 +52,188 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await authService.loginWithEmail(formData);
-      setSuccessMsg(`Welcome back, ${res.user.name}! Redirecting...`);
+      const res = await login({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+      setSuccessMsg(`Welcome back, ${res.user.name || 'Learner'}! Redirecting...`);
       setTimeout(() => {
-        navigate('/');
-      }, 1200);
+        navigate(getDashboardPath(res.user.role), { replace: true });
+      }, 1000);
     } catch (err) {
-      setErrorMsg(err.message || 'Invalid login credentials. Please try again.');
+      setErrorMsg(err.message || 'Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setErrorMsg('');
     setSuccessMsg('');
     try {
       setGoogleLoading(true);
-      const res = await authService.loginWithGoogle();
-      setSuccessMsg(res.message || 'Google Auth UI initialized. Connecting...');
-      setTimeout(() => {
-        navigate('/');
-      }, 1200);
-    } catch (err) {
-      setErrorMsg('Google authentication failed.');
-    } finally {
+      authService.startGoogleAuth(googleRole);
+    } catch {
+      setErrorMsg('Failed to initialize Google authentication.');
       setGoogleLoading(false);
     }
   };
 
   return (
-    <div className="auth-page-container">
-      <div className="auth-split-wrapper">
-        <div className="auth-brand-side">
-          <div>
-            <Link to="/" className="navbar-logo">
-              <div className="navbar-logo-icon">
-                <GraduationCap size={22} />
-              </div>
-              <span>Edu<span className="text-gradient">Flow</span></span>
-            </Link>
-
-            <div className="auth-brand-content">
-              <h1 className="auth-brand-title">Welcome Back to Your Learning Hub</h1>
-              <p className="auth-brand-desc">
-                Access your enrolled courses, pick up where you left off in video lessons, track your upcoming quiz deadlines, and view verified certificates.
-              </p>
-
-              <div style={{ marginTop: '2.5rem' }}>
-                <div className="auth-feature-pill">
-                  <CheckCircle2 size={18} color="#6ee7b7" />
-                  <span>Resume video progress across desktop & mobile</span>
-                </div>
-                <div className="auth-feature-pill">
-                  <CheckCircle2 size={18} color="#6ee7b7" />
-                  <span>Automated quiz grading & instant score alerts</span>
-                </div>
-                <div className="auth-feature-pill">
-                  <CheckCircle2 size={18} color="#6ee7b7" />
-                  <span>24/7 Academic support and course discussions</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} EduFlow LMS Inc. All rights reserved.
-          </div>
+    <AuthLayout
+      title="Welcome Back"
+      subtitle="Enter your LMS credentials to access your courses"
+      badgeText="Secure LMS Access"
+      badgeIcon={Sparkles}
+      footerPromptText="Don't have an account yet?"
+      footerActionText="Create an account"
+      footerActionLink="/signup"
+      compact={false}
+    >
+      {errorMsg && (
+        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm animate-fade-in">
+          <AlertCircle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+          <span className="leading-snug">{errorMsg}</span>
         </div>
+      )}
 
-        <div className="auth-form-side">
-          <div className="auth-card">
-            <div className="auth-header">
-              <h2>Sign in to EduFlow</h2>
-              <p>Enter your account credentials to continue</p>
-            </div>
+      {successMsg && (
+        <div className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm animate-fade-in">
+          <CheckCircle2 size={18} className="text-emerald-400 flex-shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
 
-            {errorMsg && (
-              <div className="error-alert" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <AlertCircle size={18} style={{ flexShrink: 0 }} />
-                <span>{errorMsg}</span>
-              </div>
-            )}
+      <div className="space-y-2.5">
+        <GoogleAuthButton
+          onClick={handleGoogleLogin}
+          loading={googleLoading}
+          text="Continue with Google"
+        />
 
-            {successMsg && (
-              <div style={{ padding: '0.75rem 1rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 'var(--radius-md)', color: '#6ee7b7', fontSize: '0.88rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CheckCircle2 size={18} />
-                <span>{successMsg}</span>
-              </div>
-            )}
-
-            <GoogleAuthButton
-              onClick={handleGoogleLogin}
-              loading={googleLoading}
-              text="Continue with Google"
-            />
-
-            <div className="auth-divider">
-              <span>OR LOGIN WITH EMAIL</span>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label className="form-label">Email Address</label>
-                <div className="input-wrapper">
-                  <Mail size={18} className="input-icon" />
-                  <input
-                    type="email"
-                    name="email"
-                    className={`form-input ${errorMsg && !formData.email ? 'has-error' : ''}`}
-                    placeholder="student@example.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Password</label>
-                <div className="input-wrapper">
-                  <Lock size={18} className="input-icon" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    className={`form-input ${errorMsg && !formData.password ? 'has-error' : ''}`}
-                    placeholder="••••••••••••"
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-options-row">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                    style={{ accentColor: 'var(--accent-indigo)' }}
-                  />
-                  <span>Remember me</span>
-                </label>
-                <a href="#forgot" onClick={(e) => { e.preventDefault(); alert('Password reset link sent to your email.'); }} className="auth-link">
-                  Forgot password?
-                </a>
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '0.85rem' }}
-                disabled={loading}
-              >
-                {loading ? 'Signing in...' : 'Sign In'} <ArrowRight size={18} />
-              </button>
-            </form>
-
-            <div className="auth-footer-prompt">
-              Don't have an account?{' '}
-              <Link to="/signup" className="auth-link">
-                Sign up
-              </Link>
-            </div>
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-950/40 border border-slate-800/80 text-xs">
+          <span className="text-slate-400 flex items-center gap-1.5 font-medium">
+            <UserCheck size={14} className="text-indigo-400" /> If new Google account, join as:
+          </span>
+          <div className="inline-flex rounded-md p-0.5 bg-slate-900 border border-slate-800">
+            <button
+              type="button"
+              onClick={() => setGoogleRole('Student')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-all ${
+                googleRole === 'Student'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => setGoogleRole('Instructor')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-all ${
+                googleRole === 'Instructor'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Instructor
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="relative flex items-center justify-center my-3">
+        <div className="w-full border-t border-slate-800"></div>
+        <span className="absolute bg-slate-900 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+          or sign in with email
+        </span>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            Email Address
+          </label>
+          <div className="relative flex items-center">
+            <Mail size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              disabled={loading}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              Password
+            </label>
+            <Link
+              to="/forgot-password"
+              className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative flex items-center">
+            <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••••••"
+              disabled={loading}
+              className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-200 focus:outline-none hover:bg-slate-800/60 transition-colors"
+            >
+              {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center">
+          <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={handleChange}
+              className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500/30 focus:ring-offset-0 focus:ring-2 cursor-pointer accent-indigo-600"
+            />
+            <span className="text-xs text-slate-400 font-medium">Remember my session</span>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="group relative w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:via-indigo-400 hover:to-purple-500 text-white font-semibold text-sm sm:text-base shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Logging in...</span>
+            </>
+          ) : (
+            <>
+              <span>Sign In to Dashboard</span>
+              <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
+            </>
+          )}
+        </button>
+      </form>
+    </AuthLayout>
   );
 };
 

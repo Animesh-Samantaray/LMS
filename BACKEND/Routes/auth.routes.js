@@ -32,9 +32,21 @@ router.post("/reset-password", resetPassword);
 
 router.get(
   "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
+  (req, res, next) => {
+    const role = req.query.role;
+
+    if (!["Student", "Instructor"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a valid role",
+      });
+    }
+
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      state: role,
+    })(req, res, next);
+  }
 );
 
 router.get(
