@@ -122,76 +122,78 @@ const Signup = () => {
         </div>
       )}
 
-      <div>
-        <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-          Choose Account Type
-        </label>
-        <div className="grid grid-cols-2 gap-2.5">
-          <button
-            type="button"
-            onClick={() => handleRoleSelect('Student')}
-            className={`group relative flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 text-left ${
-              formData.role === 'Student'
-                ? 'bg-indigo-600/15 border-indigo-500 text-white shadow-sm shadow-indigo-500/20 ring-1 ring-indigo-500/40'
-                : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-            }`}
-          >
-            <div
-              className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
-                formData.role === 'Student' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 group-hover:text-slate-300'
+      <div className="space-y-5">
+        <div>
+          <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            Choose Account Type
+          </label>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => handleRoleSelect('Student')}
+              className={`group relative flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 text-left ${
+                formData.role === 'Student'
+                  ? 'bg-indigo-600/15 border-indigo-500 text-white shadow-sm shadow-indigo-500/20 ring-1 ring-indigo-500/40'
+                  : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
               }`}
             >
-              <GraduationCap size={15} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold truncate text-white">Student</div>
-              <div className="text-[10px] text-slate-400 truncate">Learn & get certified</div>
-            </div>
-            {formData.role === 'Student' && (
-              <div className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                <Check size={10} strokeWidth={3} />
+              <div
+                className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                  formData.role === 'Student' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 group-hover:text-slate-300'
+                }`}
+              >
+                <GraduationCap size={15} />
               </div>
-            )}
-          </button>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold truncate text-white">Student</div>
+                <div className="text-[10px] text-slate-400 truncate">Learn & get certified</div>
+              </div>
+              {formData.role === 'Student' && (
+                <div className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                  <Check size={10} strokeWidth={3} />
+                </div>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => handleRoleSelect('Instructor')}
-            className={`group relative flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 text-left ${
-              formData.role === 'Instructor'
-                ? 'bg-purple-600/15 border-purple-500 text-white shadow-sm shadow-purple-500/20 ring-1 ring-purple-500/40'
-                : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-            }`}
-          >
-            <div
-              className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
-                formData.role === 'Instructor' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 group-hover:text-slate-300'
+            <button
+              type="button"
+              onClick={() => handleRoleSelect('Instructor')}
+              className={`group relative flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 text-left ${
+                formData.role === 'Instructor'
+                  ? 'bg-purple-600/15 border-purple-500 text-white shadow-sm shadow-purple-500/20 ring-1 ring-purple-500/40'
+                  : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
               }`}
             >
-              <Laptop size={15} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold truncate text-white">Instructor</div>
-              <div className="text-[10px] text-slate-400 truncate">Create & teach courses</div>
-            </div>
-            {formData.role === 'Instructor' && (
-              <div className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                <Check size={10} strokeWidth={3} />
+              <div
+                className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                  formData.role === 'Instructor' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 group-hover:text-slate-300'
+                }`}
+              >
+                <Laptop size={15} />
               </div>
-            )}
-          </button>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold truncate text-white">Instructor</div>
+                <div className="text-[10px] text-slate-400 truncate">Create & teach courses</div>
+              </div>
+              {formData.role === 'Instructor' && (
+                <div className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                  <Check size={10} strokeWidth={3} />
+                </div>
+              )}
+            </button>
+          </div>
         </div>
+
+        <GoogleAuthButton
+          onClick={handleGoogleSignup}
+          loading={googleLoading}
+          text={`Sign up as ${formData.role} with Google`}
+        />
       </div>
 
-      <GoogleAuthButton
-        onClick={handleGoogleSignup}
-        loading={googleLoading}
-        text={`Sign up as ${formData.role} with Google`}
-      />
-
-      <div className="relative flex items-center justify-center my-2">
+      <div className="relative flex items-center justify-center my-6">
         <div className="w-full border-t border-slate-800"></div>
-        <span className="absolute bg-slate-900 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+        <span className="absolute bg-slate-900/50 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
           or register with email
         </span>
       </div>
