@@ -113,7 +113,13 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <item.icon size={18} className={isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'} />
+                  {typeof item.icon === 'string' ? (
+                    <span className="text-lg w-[18px] flex items-center justify-center leading-none select-none grayscale-[20%] group-hover:grayscale-0 transition-all">
+                      {item.icon}
+                    </span>
+                  ) : (
+                    <item.icon size={18} className={isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'} />
+                  )}
                   {item.label}
                 </Link>
               );

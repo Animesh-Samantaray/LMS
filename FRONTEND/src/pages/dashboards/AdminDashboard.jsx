@@ -33,11 +33,11 @@ const AdminDashboard = () => {
 
   const sidebarItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { label: 'Users', path: '#', icon: Users },
-    { label: 'Courses', path: '#', icon: BookOpen },
-    { label: 'Mentors', path: '#', icon: UserCheck },
-    { label: 'Revenue', path: '#', icon: DollarSign },
-    { label: 'Settings', path: '/admin/profile', icon: Settings },
+    { label: 'Users', path: '#', icon: '👥' },
+    { label: 'Courses', path: '#', icon: '📖' },
+    { label: 'Mentors', path: '#', icon: '🧑‍🏫' },
+    { label: 'Revenue', path: '#', icon: '💰' },
+    { label: 'Settings', path: '/admin/profile', icon: '⚙️' },
   ];
 
   if (loading) {

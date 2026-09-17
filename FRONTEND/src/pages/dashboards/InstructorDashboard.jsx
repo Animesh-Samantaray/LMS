@@ -27,11 +27,11 @@ const InstructorDashboard = () => {
 
   const sidebarItems = [
     { label: 'Dashboard', path: '/instructor/dashboard', icon: LayoutDashboard },
-    { label: 'My Students', path: '#', icon: Users },
-    { label: 'Courses', path: '#', icon: BookOpen },
-    { label: 'Sessions', path: '#', icon: Calendar },
-    { label: 'Analytics', path: '#', icon: BarChart2 },
-    { label: 'Profile', path: '/instructor/profile', icon: User },
+    { label: 'My Students', path: '#', icon: '👥' },
+    { label: 'Courses', path: '#', icon: '📖' },
+    { label: 'Sessions', path: '#', icon: '📅' },
+    { label: 'Analytics', path: '#', icon: '📊' },
+    { label: 'Profile', path: '/instructor/profile', icon: '👤' },
   ];
 
   if (loading) {
