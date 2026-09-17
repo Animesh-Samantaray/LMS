@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, UserCheck } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import authService from '../services/authService';
-import { getDashboardPath, useAuth } from '../context/AuthContext';
+import { getDashboardPath } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  
+  const location = useLocation();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    otp: '',
     rememberMe: false,
   });
 
@@ -22,6 +22,19 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [googleRole, setGoogleRole] = useState('Student');
+  const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const twoFactorParam = params.get('twoFactor');
+    const emailParam = params.get('email');
+    if (twoFactorParam === 'true') {
+      setRequiresTwoFactor(true);
+      if (emailParam) {
+        setFormData((prev) => ({ ...prev, email: emailParam }));
+      }
+    }
+  }, [location.search]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,6 +58,28 @@ const Login = () => {
       setErrorMsg('Please enter a valid email address (e.g. name@domain.com).');
       return;
     }
+
+    if (requiresTwoFactor) {
+      if (formData.otp.length !== 6) {
+        setErrorMsg('Please enter the full 6-digit verification code.');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const res = await authService.verify2FA(formData.email.trim(), formData.otp);
+        setSuccessMsg(res.message || 'Login successful. Redirecting...');
+        setTimeout(() => {
+          navigate(getDashboardPath(res.user.role), { replace: true });
+        }, 1000);
+      } catch (err) {
+        setErrorMsg(err.message || 'OTP verification failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     if (!formData.password) {
       setErrorMsg('Please enter your password.');
       return;
@@ -52,10 +87,14 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await login({
-        email: formData.email.trim(),
-        password: formData.password,
-      });
+      const res = await authService.login(formData.email.trim(), formData.password);
+
+      if (res.requiresTwoFactor) {
+        setRequiresTwoFactor(true);
+        setSuccessMsg(res.message || 'OTP sent to your email.');
+        return;
+      }
+
       setSuccessMsg(`Welcome back, ${res.user.name || 'Learner'}! Redirecting...`);
       setTimeout(() => {
         navigate(getDashboardPath(res.user.role), { replace: true });
@@ -137,52 +176,77 @@ const Login = () => {
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-              Password
-            </label>
-            <Link
-              to="/forgot-password"
-              className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <div className="relative flex items-center">
-            <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••••••"
-              disabled={loading}
-              className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              className="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-200 focus:outline-none hover:bg-slate-800/60 transition-colors"
-            >
-              {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-            </button>
-          </div>
-        </div>
+        {!requiresTwoFactor && (
+          <>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative flex items-center">
+                <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••••••"
+                  disabled={loading}
+                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-200 focus:outline-none hover:bg-slate-800/60 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </div>
+            </div>
 
-        <div className="flex items-center">
-          <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              name="rememberMe"
-              checked={formData.rememberMe}
-              onChange={handleChange}
-              className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500/30 focus:ring-offset-0 focus:ring-2 cursor-pointer accent-indigo-600"
-            />
-            <span className="text-xs text-slate-400 font-medium">Remember my session</span>
-          </label>
-        </div>
+            <div className="flex items-center">
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  checked={formData.rememberMe}
+                  onChange={handleChange}
+                  className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500/30 focus:ring-offset-0 focus:ring-2 cursor-pointer accent-indigo-600"
+                />
+                <span className="text-xs text-slate-400 font-medium">Remember my session</span>
+              </label>
+            </div>
+          </>
+        )}
+
+        {requiresTwoFactor && (
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              Verification Code
+            </label>
+            <div className="relative flex items-center">
+              <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                name="otp"
+                value={formData.otp}
+                onChange={handleChange}
+                placeholder="Enter 6-digit OTP"
+                maxLength={6}
+                disabled={loading}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
+              />
+            </div>
+          </div>
+        )}
 
         <button
           type="submit"
@@ -192,11 +256,11 @@ const Login = () => {
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Logging in...</span>
+              <span>{requiresTwoFactor ? 'Verifying OTP...' : 'Logging in...'}</span>
             </>
           ) : (
             <>
-              <span>Sign In to Dashboard</span>
+              <span>{requiresTwoFactor ? 'Verify OTP' : 'Sign In to Dashboard'}</span>
               <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
             </>
           )}

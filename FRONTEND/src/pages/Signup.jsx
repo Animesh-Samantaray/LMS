@@ -4,18 +4,17 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, L
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import authService from '../services/authService';
-import { getDashboardPath, useAuth } from '../context/AuthContext';
+import { getDashboardPath } from '../context/AuthContext';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
-
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
     role: 'Student',
+    adminAccessToken: '',
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -65,12 +64,13 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const res = await register({
-        fullName: formData.fullName.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        role: formData.role,
-      });
+      const res = await authService.register(
+        formData.fullName.trim(),
+        formData.email.trim(),
+        formData.password,
+        formData.role,
+        formData.role === 'Admin' ? formData.adminAccessToken : undefined
+      );
       setSuccessMsg(`Welcome to EduFlow, ${res.user.name}! Redirecting to your dashboard...`);
       setTimeout(() => {
         navigate(getDashboardPath(res.user.role), { replace: true });
@@ -123,6 +123,26 @@ const Signup = () => {
       )}
 
       <div className="space-y-5">
+        {formData.role === 'Admin' && (
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              Admin Access Token
+            </label>
+            <div className="relative flex items-center">
+              <Lock size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+              <input
+                type="password"
+                name="adminAccessToken"
+                value={formData.adminAccessToken}
+                onChange={handleChange}
+                placeholder="Enter admin access token"
+                disabled={loading}
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
+              />
+            </div>
+          </div>
+        )}
+
         <div>
           <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
             Choose Account Type
