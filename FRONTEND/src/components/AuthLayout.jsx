@@ -128,19 +128,7 @@ const AuthLayout = ({
 
       <div className="w-full lg:w-1/2 flex flex-col relative bg-slate-950 overflow-hidden h-full">
 
-        <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center gap-4 z-20">
-          <button className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-            <Moon size={16} />
-          </button>
-          {footerActionLink && (
-            <Link
-              to={footerActionLink}
-              className="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm font-semibold text-white transition-colors"
-            >
-              {isLogin ? 'Create account' : 'Log in'}
-            </Link>
-          )}
-        </div>
+
 
         <div className="flex-1 flex flex-col justify-center items-center p-6 lg:p-12 z-10 h-full overflow-y-auto custom-scrollbar">
           
