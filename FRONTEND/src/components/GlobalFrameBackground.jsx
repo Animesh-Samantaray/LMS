@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const GlobalFrameBackground = () => {
   const imageRef = useRef(null);
-  
 
   const imagesRef = useRef([]);
   const totalFrames = 300;
@@ -25,15 +24,12 @@ const GlobalFrameBackground = () => {
         });
       };
 
-
       await loadSingleFrame(0);
-      
 
       if (imageRef.current && imagesRef.current[0]) {
         imageRef.current.src = imagesRef.current[0].src;
       }
 
-     
       for (let i = 1; i < totalFrames; i++) {
         await loadSingleFrame(i);
       }
@@ -41,7 +37,6 @@ const GlobalFrameBackground = () => {
     
     preloadProgressively();
 
-   
     let ticking = false;
 
     const handleScroll = () => {
@@ -65,7 +60,6 @@ const GlobalFrameBackground = () => {
 
       const frameIndex = Math.round(progress * (totalFrames - 1));
 
-    
       let renderIndex = frameIndex;
       if (!imagesRef.current[renderIndex] || !imagesRef.current[renderIndex].complete) {
        

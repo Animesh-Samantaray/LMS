@@ -40,7 +40,7 @@ class FrameLoader {
       };
       
       img.onerror = () => {
-        // Resolve with null to avoid hanging, but don't cache
+        
         console.warn(`Failed to load frame ${index}: ${url}`);
         resolve(null);
       };
@@ -53,13 +53,11 @@ class FrameLoader {
     if (this.loading) return;
     this.loading = true;
 
-    // High priority: Load first frame immediately so hero is visible
     await this.loadFrame(0);
 
-    // Progressive loading for the rest
     for (let i = 1; i < this.totalFrames; i++) {
       await this.loadFrame(i);
-      // We can also let the scroll handler request specific priority frames
+      
     }
     
     this.loading = false;

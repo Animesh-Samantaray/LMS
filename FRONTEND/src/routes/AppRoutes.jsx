@@ -4,10 +4,13 @@ import LandingPage from '../pages/LandingPage';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import ForgotPassword from '../pages/ForgotPassword';
-import Dashboard from '../components/Dashboard';
+import StudentDashboard from '../pages/dashboards/StudentDashboard';
+import InstructorDashboard from '../pages/dashboards/InstructorDashboard';
+import AdminDashboard from '../pages/dashboards/AdminDashboard';
+import ProfileSettings from '../pages/dashboards/ProfileSettings';
 import { getDashboardPath, useAuth } from '../context/AuthContext';
 
-const LoadingScreen = () => <div className="auth-page-container" />;
+const LoadingScreen = () => <div className="flex h-screen items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
 
 const ProtectedRoute = ({ roles }) => {
   const { user, loading } = useAuth();
@@ -40,13 +43,16 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
       <Route element={<ProtectedRoute roles={['Student']} />}>
-        <Route path="/student/dashboard" element={<Dashboard />} />
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/student/profile" element={<ProfileSettings />} />
       </Route>
       <Route element={<ProtectedRoute roles={['Instructor']} />}>
-        <Route path="/instructor/dashboard" element={<Dashboard />} />
+        <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+        <Route path="/instructor/profile" element={<ProfileSettings />} />
       </Route>
       <Route element={<ProtectedRoute roles={['Admin']} />}>
-        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/profile" element={<ProfileSettings />} />
       </Route>
       <Route path="*" element={<LandingPage />} />
     </Routes>
