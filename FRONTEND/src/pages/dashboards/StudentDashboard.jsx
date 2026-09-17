@@ -27,9 +27,9 @@ const StudentDashboard = () => {
 
   const sidebarItems = [
     { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-    { label: 'My Courses', path: '#', icon: BookOpen },
-    { label: 'Learning', path: '#', icon: PlayCircle },
-    { label: 'Profile', path: '/student/profile', icon: User },
+    { label: 'My Courses', path: '#', icon: '📖' },
+    { label: 'Learning', path: '#', icon: '🎓' },
+    { label: 'Profile', path: '/student/profile', icon: '👤' },
   ];
 
   if (loading) {

@@ -296,26 +296,26 @@ const ProfileSettings = () => {
   const sidebarItems = isAdmin
     ? [
         { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-        { label: 'Users', path: '#', icon: Users },
-        { label: 'Courses', path: '#', icon: BookOpen },
-        { label: 'Mentors', path: '#', icon: UserCheck },
-        { label: 'Revenue', path: '#', icon: DollarSign },
-        { label: 'Settings', path: '/admin/profile', icon: Settings },
+        { label: 'Users', path: '#', icon: '👥' },
+        { label: 'Courses', path: '#', icon: '📖' },
+        { label: 'Mentors', path: '#', icon: '🧑‍🏫' },
+        { label: 'Revenue', path: '#', icon: '💰' },
+        { label: 'Settings', path: '/admin/profile', icon: '⚙️' },
       ]
     : isInstructor
     ? [
         { label: 'Dashboard', path: '/instructor/dashboard', icon: LayoutDashboard },
-        { label: 'My Students', path: '#', icon: Users },
-        { label: 'Courses', path: '#', icon: BookOpen },
-        { label: 'Sessions', path: '#', icon: Calendar },
-        { label: 'Analytics', path: '#', icon: BarChart2 },
-        { label: 'Profile', path: '/instructor/profile', icon: User },
+        { label: 'My Students', path: '#', icon: '👥' },
+        { label: 'Courses', path: '#', icon: '📖' },
+        { label: 'Sessions', path: '#', icon: '📅' },
+        { label: 'Analytics', path: '#', icon: '📊' },
+        { label: 'Profile', path: '/instructor/profile', icon: '👤' },
       ]
     : [
         { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-        { label: 'My Courses', path: '#', icon: BookOpen },
-        { label: 'Learning', path: '#', icon: PlayCircle },
-        { label: 'Profile', path: '/student/profile', icon: User },
+        { label: 'My Courses', path: '#', icon: '📖' },
+        { label: 'Learning', path: '#', icon: '🎓' },
+        { label: 'Profile', path: '/student/profile', icon: '👤' },
       ];
 
   const fetchProfile = async () => {
