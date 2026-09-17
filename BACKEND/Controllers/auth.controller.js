@@ -46,6 +46,7 @@ const sendLoginOtp = async (user) => {
     to: user.email,
     subject: "Login Verification OTP",
     html: loginOtpTemplate(otp),
+    text: `Your LMS login verification code is ${otp}. It expires in 10 minutes.`,
   });
 };
 

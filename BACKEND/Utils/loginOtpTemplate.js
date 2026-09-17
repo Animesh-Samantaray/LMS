@@ -1,5 +1,4 @@
-const loginOtpTemplate = (otp) =>{
-    `
+const loginOtpTemplate = (otp) => `
     <div style="background-color: #f4f6f8; padding: 40px 20px; font-family: 'Segoe UI', Arial, sans-serif; min-height: 100%; margin: 0;">
       <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eef2f5;">
 
@@ -18,7 +17,7 @@ const loginOtpTemplate = (otp) =>{
           </h3>
 
           <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin-bottom: 30px;">
-            We received a request for 2 Factor Authentuication .
+            We received a request for two-factor authentication.
             Use the One-Time Password (OTP) below to continue.
           </p>
 
@@ -31,7 +30,7 @@ const loginOtpTemplate = (otp) =>{
 
          
           <div style="background:#fef3c7; color:#92400e; display:inline-block; padding:10px 18px; border-radius:6px; font-size:13px; font-weight:500;">
-            ⏳ This OTP is valid for <strong>10 minutes</strong>.
+            This OTP is valid for <strong>10 minutes</strong>.
           </div>
 
           <p style="margin-top:30px; color:#6b7280; font-size:14px; line-height:1.6;">
@@ -52,6 +51,5 @@ const loginOtpTemplate = (otp) =>{
       </div>
     </div>
   `;
-};
 
 export default loginOtpTemplate;

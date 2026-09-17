@@ -175,13 +175,19 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
 
             <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
-            <button 
+            <Link 
+              to={user?.role === 'Admin' ? '/admin/profile' : user?.role === 'Instructor' ? '/instructor/profile' : '/student/profile'}
               className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+              title="View Profile"
             >
-              <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                {getInitials(user?.name)}
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 overflow-hidden">
+                {user?.profileImage ? (
+                  <img src={user.profileImage} alt={user.name || 'User'} className="w-full h-full object-cover" />
+                ) : (
+                  getInitials(user?.name)
+                )}
               </div>
-            </button>
+            </Link>
             <button
               onClick={handleLogout}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold transition-colors"

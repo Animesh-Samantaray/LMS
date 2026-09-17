@@ -39,9 +39,10 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const nextValue = name === 'otp' ? value.replace(/\D/g, '').slice(0, 6) : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : nextValue,
     }));
     if (errorMsg) setErrorMsg('');
   };
@@ -233,8 +234,9 @@ const Login = () => {
         {requiresTwoFactor && (
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Verification Code
+              Email verification code
             </label>
+            <p className="text-xs text-slate-500 mb-2">Enter the 6-digit code sent to your inbox. It expires in 10 minutes.</p>
             <div className="relative flex items-center">
               <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
               <input
@@ -244,6 +246,9 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Enter 6-digit OTP"
                 maxLength={6}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                autoFocus
                 disabled={loading}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
               />
