@@ -4,9 +4,10 @@ import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, L
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import authService from '../services/authService';
-import { getDashboardPath } from '../context/AuthContext';
+import { getDashboardPath, useAuth } from '../context/AuthContext';
 
 const Signup = () => {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -72,6 +73,7 @@ const Signup = () => {
         formData.role === 'Admin' ? formData.adminAccessToken : undefined
       );
       setSuccessMsg(`Welcome to EduFlow, ${res.user.name}! Redirecting to your dashboard...`);
+      setUser(res.user);
       setTimeout(() => {
         navigate(getDashboardPath(res.user.role), { replace: true });
       }, 1000);

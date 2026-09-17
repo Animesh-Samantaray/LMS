@@ -4,9 +4,10 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import authService from '../services/authService';
-import { getDashboardPath } from '../context/AuthContext';
+import { getDashboardPath, useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
@@ -69,6 +70,7 @@ const Login = () => {
         setLoading(true);
         const res = await authService.verify2FA(formData.email.trim(), formData.otp);
         setSuccessMsg(res.message || 'Login successful. Redirecting...');
+        setUser(res.user);
         setTimeout(() => {
           navigate(getDashboardPath(res.user.role), { replace: true });
         }, 1000);
@@ -96,6 +98,7 @@ const Login = () => {
       }
 
       setSuccessMsg(`Welcome back, ${res.user.name || 'Learner'}! Redirecting...`);
+      setUser(res.user);
       setTimeout(() => {
         navigate(getDashboardPath(res.user.role), { replace: true });
       }, 1000);

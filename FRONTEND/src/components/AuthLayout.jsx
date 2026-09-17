@@ -27,11 +27,9 @@ const AuthLayout = ({
 
   return (
     <div className="h-screen w-full flex bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
-      
-      {/* Left Pane - Branding & Info */}
+
       <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden bg-slate-900 border-r border-slate-800">
-        
-        {/* Abstract Background Elements */}
+
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vh] bg-gradient-to-br from-indigo-600/20 via-purple-600/10 to-transparent blur-[130px] rounded-full" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vh] bg-gradient-to-tl from-blue-600/15 via-indigo-600/10 to-transparent blur-[130px] rounded-full" />
@@ -45,8 +43,7 @@ const AuthLayout = ({
         </div>
         
         <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 2xl:p-20 justify-between">
-          
-          {/* Header */}
+
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2.5 group transition-transform hover:scale-[1.02]">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:rotate-12 transition-transform duration-300">
@@ -63,7 +60,6 @@ const AuthLayout = ({
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="space-y-6 mt-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
               <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
@@ -104,7 +100,6 @@ const AuthLayout = ({
             </div>
           </div>
 
-          {/* Abstract Progress Card (From Original) */}
           <div className="mt-8 relative rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-slate-950/80 border border-slate-800/90 p-5 shadow-2xl backdrop-blur-xl overflow-hidden max-w-md">
             <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4 relative z-10">
@@ -131,10 +126,8 @@ const AuthLayout = ({
         </div>
       </div>
 
-      {/* Right Pane - Auth Form */}
       <div className="w-full lg:w-1/2 flex flex-col relative bg-slate-950 overflow-hidden h-full">
-        
-        {/* Top Right Actions */}
+
         <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center gap-4 z-20">
           <button className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
             <Moon size={16} />
@@ -149,7 +142,6 @@ const AuthLayout = ({
           )}
         </div>
 
-        {/* Form Container */}
         <div className="flex-1 flex flex-col justify-center items-center p-6 lg:p-12 z-10 h-full overflow-y-auto custom-scrollbar">
           
           <div className="w-full max-w-[520px] bg-slate-900/50 backdrop-blur-sm rounded-3xl border border-slate-800/80 p-8 sm:p-10 shadow-2xl">
