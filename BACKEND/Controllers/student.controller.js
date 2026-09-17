@@ -43,6 +43,15 @@ export const updateStudentProfile = async (req, res) => {
       return res.status(404).json({ success: false, message: "Student profile not found" });
     }
 
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (req.body.name !== undefined) user.name = String(req.body.name).trim();
+    if (req.body.email !== undefined) user.email = String(req.body.email).trim().toLowerCase();
+    await user.save();
+
     profileFields.forEach((field) => {
       if (req.body[field] !== undefined) profile[field] = req.body[field];
     });
@@ -51,7 +60,16 @@ export const updateStudentProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Student profile updated successfully",
-      profile,
+      profile: await StudentProfile.findById(profile._id).populate(
+        "user", "name email profileImage role"
+      ),
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("Update Student Profile Error:", error);
