@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   GraduationCap, 
@@ -6,19 +6,55 @@ import {
   BookOpen, 
   Award, 
   BarChart3, 
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import authService from '../services/authService';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await authService.get2FAStatus();
+        setTwoFactorEnabled(Boolean(response.twoFactorEnabled));
+      } catch {
+        setTwoFactorEnabled(false);
+      }
+    };
+
+    if (user) {
+      fetchStatus();
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await authService.logout();
     } finally {
       navigate('/login', { replace: true });
+    }
+  };
+
+  const toggleTwoFactor = async () => {
+    try {
+      setTwoFactorLoading(true);
+      if (twoFactorEnabled) {
+        await authService.update2FA(false);
+        setTwoFactorEnabled(false);
+      } else {
+        await authService.update2FA(true);
+        setTwoFactorEnabled(true);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setTwoFactorLoading(false);
     }
   };
 
@@ -105,6 +141,28 @@ const Dashboard = () => {
                 <LogOut size={16} /> Logout
               </button>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-300 flex items-center justify-center">
+                <ShieldCheck size={18} />
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-white">Two-Factor Authentication</div>
+                <div className="text-xs text-slate-400">{twoFactorEnabled ? 'Enabled' : 'Disabled'}</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={toggleTwoFactor}
+              disabled={twoFactorLoading}
+              className="px-3 py-2 rounded-xl border border-slate-700 bg-slate-800 text-xs font-semibold text-slate-200 disabled:opacity-60"
+            >
+              {twoFactorLoading ? 'Updating...' : twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+            </button>
           </div>
         </div>
 

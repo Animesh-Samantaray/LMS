@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 import passport from "./Configs/passport.js";
 import connectDB from "./Configs/db.js";
 import authRoutes from "./Routes/auth.routes.js";
+import studentRoutes from "./Routes/student.route.js";
+import instructorRoutes from "./Routes/instructor.route.js";
+import adminRoutes from "./Routes/admin.route.js";
 
 const app = express();
 
@@ -40,6 +43,9 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/instructor", instructorRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);

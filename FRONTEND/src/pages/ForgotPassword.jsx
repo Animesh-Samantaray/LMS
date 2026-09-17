@@ -52,7 +52,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await authService.forgotPassword(cleanEmail);
+      const res = await authService.sendResetPasswordOtp(cleanEmail);
       setSuccessMsg(res.message || `A 6-digit verification code has been sent to ${cleanEmail}`);
       setStep('otp');
     } catch (err) {
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
     setSuccessMsg('');
     try {
       setResending(true);
-      const res = await authService.forgotPassword(formData.email.trim());
+      const res = await authService.sendResetPasswordOtp(formData.email.trim());
       setSuccessMsg(res.message || 'A fresh 6-digit code has been sent.');
     } catch (err) {
       setErrorMsg(err.message || 'Unable to resend OTP at this time.');
@@ -88,7 +88,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await authService.verifyResetOtp(formData.email.trim(), formData.otp);
+      const res = await authService.verifyResetPasswordOtp(formData.email.trim(), formData.otp);
       setSuccessMsg(res.message || 'OTP verified successfully! Now set your new password.');
       setStep('reset');
     } catch (err) {
@@ -115,7 +115,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await authService.resetPassword(
+      const res = await authService.changePassword(
         formData.email.trim(),
         formData.otp,
         formData.newPassword

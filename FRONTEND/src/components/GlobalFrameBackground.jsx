@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 const GlobalFrameBackground = () => {
   const imageRef = useRef(null);
   
-  // Cache for images
+
   const imagesRef = useRef([]);
   const totalFrames = 300;
 
@@ -18,7 +18,7 @@ const GlobalFrameBackground = () => {
             resolve();
           };
           img.onerror = () => {
-            imagesRef.current[i] = img; // store it anyway so we don't crash
+            imagesRef.current[i] = img; 
             resolve();
           };
           img.src = `/frames/frame_${paddedIndex}.jpg`;
@@ -33,7 +33,7 @@ const GlobalFrameBackground = () => {
         imageRef.current.src = imagesRef.current[0].src;
       }
 
-      // Then preload the rest progressively
+     
       for (let i = 1; i < totalFrames; i++) {
         await loadSingleFrame(i);
       }
@@ -41,7 +41,7 @@ const GlobalFrameBackground = () => {
     
     preloadProgressively();
 
-    // 3. Scroll handler
+   
     let ticking = false;
 
     const handleScroll = () => {
@@ -65,10 +65,10 @@ const GlobalFrameBackground = () => {
 
       const frameIndex = Math.round(progress * (totalFrames - 1));
 
-      // Render the nearest loaded frame if the exact one isn't ready
+    
       let renderIndex = frameIndex;
       if (!imagesRef.current[renderIndex] || !imagesRef.current[renderIndex].complete) {
-        // Fallback to nearest loaded
+       
         let offset = 1;
         while (offset < totalFrames) {
           if (renderIndex - offset >= 0 && imagesRef.current[renderIndex - offset]?.complete) {

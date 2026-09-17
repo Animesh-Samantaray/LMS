@@ -10,6 +10,10 @@ import {
   verifyResetOTP,
   resetPassword,
   googleAuthCallback,
+  verifyTwoFactor,
+  getTwoFactorStatus,
+  enableTwoFactor,
+  disableTwoFactor,
 } from "../Controllers/auth.controller.js";
 
 import authMiddleware from "../Middlewares/auth.middleware.js";
@@ -17,17 +21,15 @@ import authMiddleware from "../Middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.post("/register", register);
-
 router.post("/login", login);
-
+router.post("/verify-2fa", verifyTwoFactor);
+router.get("/2fa/status", authMiddleware, getTwoFactorStatus);
+router.post("/2fa/enable", authMiddleware, enableTwoFactor);
+router.post("/2fa/disable", authMiddleware, disableTwoFactor);
 router.get("/me", authMiddleware, getCurrentUser);
-
 router.post("/logout", logout);
-
 router.post("/forgot-password", forgotPassword);
-
 router.post("/verify-reset-otp", verifyResetOTP);
-
 router.post("/reset-password", resetPassword);
 
 router.get(
