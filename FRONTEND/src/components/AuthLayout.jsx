@@ -49,7 +49,7 @@ const AuthLayout = ({
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:rotate-12 transition-transform duration-300">
                 <GraduationCap size={20} />
               </div>
-              <span className="font-bold text-2xl tracking-tight text-white">
+              <span className="font-bold text-2xl tracking-tight text-slate-900 dark:text-white pink:text-pink-900">
                 Edu<span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Flow</span>
               </span>
             </Link>
@@ -66,7 +66,7 @@ const AuthLayout = ({
               10,000+ Active Students & Instructors
             </div>
 
-            <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white pink:text-pink-900 leading-tight">
               Unlock Your Potential with{' '}
               <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
                 Interactive Learning
@@ -83,7 +83,7 @@ const AuthLayout = ({
                   <CheckCircle2 size={16} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm mb-0.5">Instant automated grading</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white pink:text-pink-900 text-sm mb-0.5">Instant automated grading</h3>
                   <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Get feedback on your assignments immediately.</p>
                 </div>
               </div>
@@ -93,7 +93,7 @@ const AuthLayout = ({
                   <BookOpen size={16} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm mb-0.5">Resume lectures anytime</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white pink:text-pink-900 text-sm mb-0.5">Resume lectures anytime</h3>
                   <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Seamless sync across all your devices.</p>
                 </div>
               </div>
@@ -108,7 +108,7 @@ const AuthLayout = ({
                   <BookOpen size={20} />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-white">Full-Stack Architecture</div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white pink:text-pink-900">Full-Stack Architecture</div>
                   <div className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Module 4 • Lesson 8 of 12</div>
                 </div>
               </div>
