@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { auth } from '../configs/firebase';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -10,17 +11,16 @@ const api = axios.create({
   },
 });
 
-import { auth } from '../configs/firebase';
-
 api.interceptors.request.use(
   async (config) => {
     if (auth.currentUser) {
       try {
-        const token = await auth.currentUser.getIdToken(true);
+        const token = await auth.currentUser.getIdToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
       } catch (err) {
+        console.error('Error fetching Firebase ID token:', err);
       }
     }
     return config;
@@ -39,6 +39,7 @@ api.interceptors.response.use(
     );
 
     requestError.status = error.response?.status;
+    requestError.response = error.response;
     return Promise.reject(requestError);
   }
 );

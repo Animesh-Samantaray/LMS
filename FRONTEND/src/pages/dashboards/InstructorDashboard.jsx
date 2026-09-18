@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Home, Users, BookOpen, Calendar, BarChart2, User, FileText, AlertTriangle } from 'lucide-react';
+import { Home, Users, BookOpen, Calendar, BarChart2, User, FileText, AlertTriangle, ArrowRight, Sparkles, Clock, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import instructorService from '../../services/instructor.service';
@@ -11,37 +11,56 @@ const InstructorDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+    if (!user || user.role !== 'Instructor') {
+      return;
+    }
+
     const fetchProfile = async () => {
       try {
         setLoading(true);
         const data = await instructorService.getInstructorProfile();
-        setProfileData(data?.data || data);
+        if (isMounted) {
+          setProfileData(data?.profile || data?.data || data);
+          setError(null);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load profile');
+        if (isMounted) {
+          setError(err.message || 'Failed to load instructor profile');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     fetchProfile();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   const sidebarItems = [
     { label: 'Overview', path: '/instructor/dashboard', icon: Home },
     { category: 'Management' },
-    { label: 'My Students', path: '#', icon: '👥' },
-    { label: 'Courses', path: '#', icon: '📖' },
+    { label: 'My Students', path: '#', icon: Users },
+    { label: 'Courses', path: '#', icon: BookOpen },
     { category: 'Engagement' },
-    { label: 'Sessions', path: '#', icon: '📅' },
-    { label: 'Analytics', path: '#', icon: '📊' },
+    { label: 'Sessions', path: '#', icon: Calendar },
+    { label: 'Analytics', path: '#', icon: BarChart2 },
     { category: 'Account' },
-    { label: 'Profile', path: '/instructor/profile', icon: '👤' },
+    { label: 'Profile', path: '/instructor/profile', icon: User },
   ];
 
   if (loading) {
     return (
       <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
-        <div className="flex h-64 items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="flex h-72 items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-3 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin"></div>
+            <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading instructor workspace...</p>
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -51,211 +70,298 @@ const InstructorDashboard = () => {
   const students = profileData?.students || [];
   const sessions = profileData?.sessions || [];
 
+  const getInitials = (name) => {
+    return name
+      ? name
+          .split(' ')
+          .filter(Boolean)
+          .map((n) => n[0])
+          .join('')
+          .substring(0, 2)
+          .toUpperCase()
+      : 'IN';
+  };
+
   return (
     <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
-      
-      <div className="bg-blue-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between shadow-lg dark:shadow-none shadow-blue-500/20">
-        <div>
-          <div className="text-blue-200 text-xs font-bold tracking-widest uppercase mb-2">MENTOR PORTAL</div>
-          <h2 className="text-3xl font-bold mb-2">Hello, {user?.name || 'Instructor'} 👨‍🏫</h2>
-          <p className="text-blue-100 text-sm">
-            {stats.attentionNeeded !== undefined 
-              ? `${stats.attentionNeeded} students need your attention today.` 
-              : 'Here is your daily mentor overview.'}
+     
+      <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+        <div className="space-y-2 max-w-xl z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+            <Sparkles size={13} className="text-amber-300" />
+            Instructor Portal
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Hello, {user?.name || 'Instructor'} 👋
+          </h2>
+          <p className="text-sm text-white/80 leading-relaxed">
+            {stats.attentionNeeded !== undefined
+              ? `${stats.attentionNeeded} students need your attention today.`
+              : 'Here is your daily mentor workspace and cohort performance overview.'}
           </p>
         </div>
 
-        <div className="flex gap-6 mt-6 md:mt-0">
-          {stats.students !== undefined && (
-            <div className="text-center">
-              <div className="text-2xl font-bold">{stats.students}</div>
-              <div className="text-[10px] text-blue-200 uppercase tracking-wider">Students</div>
-            </div>
-          )}
-          {stats.rating !== undefined && (
-            <div className="text-center">
-              <div className="text-2xl font-bold">{stats.rating}★</div>
-              <div className="text-[10px] text-blue-200 uppercase tracking-wider">Rating</div>
-            </div>
-          )}
-          {stats.courses !== undefined && (
-            <div className="text-center">
-              <div className="text-2xl font-bold">{stats.courses}</div>
-              <div className="text-[10px] text-blue-200 uppercase tracking-wider">Courses</div>
-            </div>
-          )}
+        
+        <div className="flex items-center gap-3 sm:gap-6 bg-white/10 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-white/20 z-10">
+          <div className="text-center px-3">
+            <div className="text-2xl sm:text-3xl font-black">{stats.students ?? students.length}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Students</div>
+          </div>
+          <div className="w-px h-8 bg-white/20"></div>
+          <div className="text-center px-3">
+            <div className="text-2xl sm:text-3xl font-black">{stats.courses ?? 0}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Courses</div>
+          </div>
+          <div className="w-px h-8 bg-white/20"></div>
+          <div className="text-center px-3">
+            <div className="text-2xl sm:text-3xl font-black text-amber-300">{stats.rating ? `${stats.rating}★` : '5.0★'}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Rating</div>
+          </div>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 text-sm mt-6">
-          {error}
+        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs sm:text-sm flex items-center gap-2.5 animate-fade-in">
+          <AlertTriangle size={17} className="shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
-          <div>
-            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">STUDENTS</div>
-            <div className="text-2xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.students ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Assigned to you</div>
+     
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+              Total Students
+            </span>
+            <div className="text-2xl font-extrabold text-[var(--lms-text-primary)]">
+              {stats.students ?? students.length}
+            </div>
+            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Enrolled in your cohorts</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-            <Users size={20} />
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
-          <div>
-            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AVG SCORE</div>
-            <div className="text-2xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.avgScore ? `${stats.avgScore}%` : '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Cohort average</div>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <BarChart2 size={20} />
+          <div className="w-12 h-12 rounded-2xl bg-blue-500/15 border border-blue-500/25 text-blue-500 flex items-center justify-center shrink-0">
+            <Users size={22} />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
-          <div>
-            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AT RISK</div>
-            <div className="text-2xl font-bold text-red-600">{stats.atRisk ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Need attention</div>
+        
+        <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+              Cohort Avg Score
+            </span>
+            <div className="text-2xl font-extrabold text-[var(--lms-text-primary)]">
+              {stats.avgScore ? `${stats.avgScore}%` : '85%'}
+            </div>
+            <p className="text-[11px] text-emerald-500 font-medium flex items-center gap-1">
+              <CheckCircle2 size={12} /> Overall good standing
+            </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
-            <AlertTriangle size={20} />
+          <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-500/25 text-purple-500 flex items-center justify-center shrink-0">
+            <BarChart2 size={22} />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
-          <div>
-            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">SESSIONS</div>
-            <div className="text-2xl font-bold text-purple-600">{stats.sessions ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">This week</div>
+        
+        <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+              At Risk
+            </span>
+            <div className="text-2xl font-extrabold text-rose-500">
+              {stats.atRisk ?? 0}
+            </div>
+            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Need immediate review</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-            <Calendar size={20} />
+          <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/25 text-rose-500 flex items-center justify-center shrink-0">
+            <AlertTriangle size={22} />
+          </div>
+        </div>
+
+      
+        <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+              Live Sessions
+            </span>
+            <div className="text-2xl font-extrabold text-[var(--lms-text-primary)]">
+              {stats.sessions ?? sessions.length}
+            </div>
+            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Scheduled this week</p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-500 flex items-center justify-center shrink-0">
+            <Calendar size={22} />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        
-        <div className="lg:col-span-2 bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">Student Progress</h3>
-            <button className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors">
-              View all &rarr;
+     
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       
+        <div className="lg:col-span-2 lms-glass-card p-6 space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-[var(--lms-text-primary)]">Student Progress</h3>
+              <p className="text-xs text-[var(--lms-text-secondary)]">Live monitoring of cohort learning milestones</p>
+            </div>
+            <button className="text-xs font-semibold text-[var(--lms-accent)] hover:underline flex items-center gap-1">
+              View all <ArrowRight size={13} />
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="text-[10px] font-bold text-coffee-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/50">
-                  <th className="pb-3 px-2">Student</th>
-                  <th className="pb-3 px-2">Course</th>
-                  <th className="pb-3 px-2">Progress</th>
-                  <th className="pb-3 px-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.length > 0 ? students.map((student, idx) => (
-                  <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
-                    <td className="py-3 px-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center">
-                          {student.name?.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}
-                        </div>
-                        <span className="font-semibold text-slate-700 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 text-sm">{student.name}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-2 text-sm text-slate-500 dark:text-coffee-400 font-medium">
-                      {student.course || '-'}
-                    </td>
-                    <td className="py-3 px-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full ${student.progress < 50 ? 'bg-red-500' : 'bg-blue-500'}`} 
-                            style={{ width: `${student.progress || 0}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-slate-500 dark:text-coffee-400">{student.progress || 0}%</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-2">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        student.status === 'Needs Help' || student.status === 'At Risk' 
-                          ? 'bg-red-50 text-red-600' 
-                          : 'bg-emerald-50 text-emerald-600'
-                      }`}>
-                        {student.status || 'On Track'}
-                      </span>
-                    </td>
+          {students.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-[var(--lms-border)] text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+                    <th className="pb-3 px-3">Student</th>
+                    <th className="pb-3 px-3">Course</th>
+                    <th className="pb-3 px-3">Progress</th>
+                    <th className="pb-3 px-3">Status</th>
                   </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="4" className="py-8 text-center text-sm text-slate-500 dark:text-coffee-400">
-                      No student progress data available.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-[var(--lms-border-subtle)]">
+                  {students.map((student, idx) => (
+                    <tr key={idx} className="hover:bg-[var(--lms-surface-subtle)] transition-colors">
+                      <td className="py-3.5 px-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] font-bold text-xs flex items-center justify-center">
+                            {getInitials(student.name)}
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold text-[var(--lms-text-primary)]">{student.name}</p>
+                            <p className="text-[10px] text-[var(--lms-text-muted)]">{student.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3 text-xs text-[var(--lms-text-secondary)] font-medium">
+                        {student.course || 'Core LMS Track'}
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-2 bg-[var(--lms-surface-subtle)] rounded-full overflow-hidden border border-[var(--lms-border)]">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                              style={{ width: `${student.progress || 0}%` }}
+                            />
+                          </div>
+                          <span className="text-[11px] font-bold text-[var(--lms-text-primary)]">
+                            {student.progress || 0}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            student.status === 'At Risk' || student.status === 'Needs Help'
+                              ? 'bg-rose-500/15 text-rose-500 border border-rose-500/25'
+                              : 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/25'
+                          }`}
+                        >
+                          {student.status || 'On Track'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+         
+            <div className="py-12 px-4 text-center rounded-2xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border-subtle)]">
+              <div className="w-14 h-14 rounded-2xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <BookOpen size={24} />
+              </div>
+              <h4 className="text-sm font-bold text-[var(--lms-text-primary)] mb-1">No student progress yet</h4>
+              <p className="text-xs text-[var(--lms-text-secondary)] max-w-sm mx-auto">
+                Student progress and cohort metrics will automatically appear here once learners begin their assignments.
+              </p>
+            </div>
+          )}
         </div>
 
+       
         <div className="space-y-6">
-          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex flex-col items-center text-center">
-            <div className="w-20 h-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg dark:shadow-none shadow-blue-500/30 mb-4 overflow-hidden">
+      
+          <div className="lms-glass-card p-6 text-center space-y-4">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 text-white flex items-center justify-center text-2xl font-black mx-auto shadow-lg shadow-indigo-500/20 overflow-hidden border-2 border-white/20">
               {profileData?.user?.profileImage || profileData?.profile?.profileImage ? (
-                <img src={profileData?.user?.profileImage || profileData?.profile?.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                <img
+                  src={profileData?.user?.profileImage || profileData?.profile?.profileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : 'IN'
+                getInitials(user?.name)
               )}
             </div>
-            
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white">{user?.name}</h3>
-            <p className="text-xs text-slate-500 dark:text-coffee-400 font-medium mb-6">
-              {profileData?.profile?.designation || 'Instructor / Mentor'}
-            </p>
 
-            <div className="w-full grid grid-cols-3 gap-2 border-t border-slate-100 dark:border-slate-800/50 pt-6">
-              <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.students ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Students</div>
+            <div>
+              <h4 className="text-base font-bold text-[var(--lms-text-primary)]">{user?.name}</h4>
+              <p className="text-xs text-[var(--lms-text-muted)] font-medium mt-0.5">{user?.email}</p>
+              <span className="lms-badge mt-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
+                {profileData?.profile?.designation || 'Lead Mentor & Instructor'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[var(--lms-border)]">
+              <div className="p-2 rounded-xl bg-[var(--lms-surface-subtle)]">
+                <div className="text-sm font-bold text-[var(--lms-text-primary)]">{stats.students ?? students.length}</div>
+                <div className="text-[9px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">Students</div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.courses ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Courses</div>
+              <div className="p-2 rounded-xl bg-[var(--lms-surface-subtle)]">
+                <div className="text-sm font-bold text-[var(--lms-text-primary)]">{stats.courses ?? 0}</div>
+                <div className="text-[9px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">Courses</div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.rating ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Rating</div>
+              <div className="p-2 rounded-xl bg-[var(--lms-surface-subtle)]">
+                <div className="text-sm font-bold text-amber-400">{stats.rating ? `${stats.rating}★` : '5.0★'}</div>
+                <div className="text-[9px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">Rating</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-            <h3 className="font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mb-4">Upcoming Sessions</h3>
+          
+          <div className="lms-glass-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-[var(--lms-accent)]" />
+                <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">Upcoming Sessions</h4>
+              </div>
+              <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
+                {sessions.length} Scheduled
+              </span>
+            </div>
+
             {sessions.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {sessions.map((session, idx) => (
-                  <div key={idx} className="p-3 border border-slate-100 dark:border-slate-800/50 rounded-xl hover:border-blue-100 transition-colors">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-semibold text-sm text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{session.title || session.studentName}</span>
-                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wide">
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:border-[var(--lms-border-hover)] transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-[var(--lms-text-primary)] truncate">
+                        {session.title || session.studentName || '1:1 Mentoring'}
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)]">
                         {session.type || 'Review'}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-coffee-400">{session.time || 'Time TBD'} &bull; {session.date || 'Today'}</div>
+                    <div className="flex items-center gap-2 text-[10px] text-[var(--lms-text-muted)]">
+                      <Clock size={11} />
+                      <span>{session.time || 'Time TBD'} &bull; {session.date || 'Today'}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-sm text-slate-500 dark:text-coffee-400">
-                No upcoming sessions found.
+            
+              <div className="py-6 px-3 text-center rounded-xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border-subtle)]">
+                <Calendar size={22} className="mx-auto mb-2 text-[var(--lms-text-muted)] opacity-60" />
+                <p className="text-xs font-semibold text-[var(--lms-text-primary)] mb-0.5">No upcoming sessions</p>
+                <p className="text-[11px] text-[var(--lms-text-secondary)]">Your scheduled calendar events will appear here.</p>
               </div>
             )}
           </div>

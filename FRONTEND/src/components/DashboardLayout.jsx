@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Shield, ShieldAlert } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
-const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
+const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
   const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [themeOpen, setThemeOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const themeDropdownRef = useRef(null);
+
   
   useEffect(() => {
-    const applyTheme = (theme) => {
-      document.documentElement.classList.remove('dark', 'theme-pink');
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-      if (theme === 'pink') document.documentElement.classList.add('theme-pink');
-      setCurrentTheme(theme);
+    const handleOutsideClick = (e) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target)) {
+        setThemeDropdownOpen(false);
+      }
     };
-    applyTheme(currentTheme);
-  }, [currentTheme]);
-
-  const toggle2FA = () => {
-    alert('Firebase MFA is not enabled yet.');
-  };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -34,173 +34,287 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
   };
 
   const getInitials = (name) => {
-    return name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+    return name
+      ? name
+          .split(' ')
+          .filter(Boolean)
+          .map((n) => n[0])
+          .join('')
+          .substring(0, 2)
+          .toUpperCase()
+      : 'U';
   };
 
+  const themeOptions = [
+    { id: 'dark', label: 'Dark Theme', icon: Moon, desc: 'Deep glassmorphism' },
+    { id: 'light', label: 'Light Theme', icon: Sun, desc: 'Crisp soft glass' },
+    { id: 'pink', label: 'Pink Theme', icon: Sparkles, desc: 'Rose blush glass' },
+  ];
+
+  const profilePath =
+    user?.role === 'Admin'
+      ? '/admin/profile'
+      : user?.role === 'Instructor'
+      ? '/instructor/profile'
+      : '/student/profile';
+
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 dark:bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 flex text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 font-sans transition-colors duration-200">
-      
+    <div className="h-screen overflow-hidden flex bg-lms-bg text-lms-text font-sans selection:bg-indigo-500/30">
+     
       {mobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+        <div
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm animate-fade-in"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 border-r border-slate-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:flex lg:flex-col ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+      
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 lms-glass-sidebar transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:flex lg:flex-col ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+       
+        <div className="h-16 flex items-center justify-between px-6 border-b border-[var(--lms-border)]">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
               LS
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-slate-900 dark:text-white leading-tight">LearnSphere</span>
-              <span className="text-[10px] text-coffee-400 font-medium tracking-wide">LMS Platform</span>
+              <span className="font-bold text-sm leading-tight text-[var(--lms-text-primary)]">
+                LearnSphere
+              </span>
+              <span className="text-[10px] text-[var(--lms-text-muted)] font-medium tracking-wide">
+                LMS Platform
+              </span>
             </div>
           </Link>
-          <button className="lg:hidden text-coffee-400 hover:text-slate-800 dark:text-slate-200 pink:text-pink-900" onClick={() => setMobileMenuOpen(false)}>
-            <X size={20} />
+          <button
+            className="lg:hidden text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] p-1 rounded-lg"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-6 px-4">
-          <div className="text-xs font-bold text-slate-600 dark:text-slate-400 pink:text-pink-600 dark:text-coffee-500 mb-4 px-2 tracking-wider uppercase">
+      
+        <div className="flex-1 overflow-y-auto py-5 px-3.5 space-y-1">
+          <div className="text-[10px] font-bold text-[var(--lms-text-muted)] mb-3 px-3 tracking-widest uppercase">
             {roleTitle} PORTAL
           </div>
+
           <nav className="space-y-1">
             {sidebarItems.map((item, index) => {
               if (item.category) {
                 return (
-                  <div key={`cat-${index}`} className="text-[11px] font-semibold text-coffee-400 dark:text-slate-500 mt-6 mb-2 px-3 tracking-wide">
+                  <div
+                    key={`cat-${index}`}
+                    className="text-[10px] font-bold text-[var(--lms-text-muted)] mt-5 mb-2 px-3 tracking-wider uppercase"
+                  >
                     {item.category}
                   </div>
                 );
               }
 
-              const isActive = activeItem === item.label;
+              const isActive =
+                item.path && item.path !== '#'
+                  ? location.pathname === item.path
+                  : false;
+
               return (
                 <Link
                   key={item.label}
                   to={item.path !== '#' ? item.path : '#'}
                   onClick={(e) => {
                     if (item.path === '#') e.preventDefault();
-                    setActiveItem(item.label);
                     if (mobileMenuOpen) setMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive 
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 dark:shadow-blue-900/20' 
-                      : 'text-coffee-600 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 hover:bg-coffee-200 dark:hover:bg-slate-800/50 hover:text-coffee-900 dark:hover:text-white'
+                  className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? 'bg-[var(--lms-accent)] text-white shadow-md shadow-indigo-500/25'
+                      : 'text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-subtle)]'
                   }`}
                 >
                   {typeof item.icon === 'string' ? (
-                    <span className="text-lg w-[18px] flex items-center justify-center leading-none select-none grayscale-[20%] group-hover:grayscale-0 transition-all">
+                    <span className="text-base w-4 flex items-center justify-center select-none">
                       {item.icon}
                     </span>
                   ) : (
-                    <item.icon size={18} className={isActive ? 'text-white' : 'text-coffee-400 dark:text-slate-500'} />
+                    <item.icon
+                      size={17}
+                      className={isActive ? 'text-white' : 'text-[var(--lms-text-muted)] group-hover:text-[var(--lms-accent)] transition-colors'}
+                    />
                   )}
-                  {item.label}
+                  <span>{item.label}</span>
                   {item.badge && (
-                    <div className="ml-auto w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span className="ml-auto w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
                   )}
                 </Link>
               );
             })}
           </nav>
         </div>
-        
-        <div className="p-4 border-t border-slate-100 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 lg:hidden">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+
+        {/* User Mini Profile in Sidebar */}
+        <div className="p-3 border-t border-[var(--lms-border)]">
+          <Link
+            to={profilePath}
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
           >
-            <LogOut size={18} />
-            Logout
-          </button>
+            <div className="w-8 h-8 rounded-lg bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+              {user?.profileImage ? (
+                <img
+                  src={user.profileImage}
+                  alt={user.name || 'User'}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                getInitials(user?.name)
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-[var(--lms-text-primary)] truncate">
+                {user?.name || 'My Account'}
+              </p>
+              <p className="text-[10px] text-[var(--lms-text-muted)] truncate capitalize">
+                {user?.role || 'User'}
+              </p>
+            </div>
+          </Link>
         </div>
       </aside>
 
+      {/* Main App Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
-        <header className="h-16 bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 flex items-center justify-between px-4 sm:px-6 z-10 transition-colors duration-200">
-          <div className="flex items-center gap-4">
-            <button 
-              className="lg:hidden text-slate-500 dark:text-coffee-400 hover:text-slate-700 dark:hover:text-slate-800 dark:text-slate-200 pink:text-pink-900 p-1"
+        {/* Top Header */}
+        <header className="h-16 lms-glass-header flex items-center justify-between px-4 sm:px-6 z-20">
+          <div className="flex items-center gap-3">
+            <button
+              className="lg:hidden text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] p-2 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
               onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open sidebar"
             >
-              <Menu size={24} />
+              <Menu size={20} />
             </button>
             <div className="hidden sm:block">
-              <div className="text-[10px] font-bold text-slate-600 dark:text-slate-400 pink:text-pink-600 dark:text-coffee-500 uppercase tracking-widest">{roleTitle} PORTAL</div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white leading-none">Dashboard</h1>
+              <div className="text-[10px] font-bold text-[var(--lms-accent)] uppercase tracking-widest leading-none mb-1">
+                {roleTitle} PORTAL
+              </div>
+              <h1 className="text-lg font-bold text-[var(--lms-text-primary)] leading-tight">
+                Dashboard
+              </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full">{user?.role}</span>
-            </div>
+          {/* Right Header Controls */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Role Badge */}
+            <span className="lms-badge hidden md:inline-flex">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
+              {user?.role || 'Learner'}
+            </span>
 
-            <button 
-              onClick={toggle2FA}
-              title={is2FAEnabled ? "Disable 2FA" : "Enable 2FA"}
-              className={`relative p-1.5 rounded-full transition-colors ${is2FAEnabled ? 'text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20' : 'text-coffee-400 hover:text-coffee-600 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200'}`}
-            >
-              {is2FAEnabled ? <Shield size={18} /> : <ShieldAlert size={18} />}
-            </button>
-
-            
-            <div className="relative">
-              <button 
-                onClick={() => setThemeOpen(!themeOpen)}
-                className="p-1.5 rounded-full text-slate-600 dark:text-slate-400 pink:text-pink-600 hover:text-slate-600 dark:hover:text-slate-800 dark:text-slate-200 pink:text-pink-900 hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 transition-colors"
+            {/* Theme Selector Dropdown */}
+            <div className="relative" ref={themeDropdownRef}>
+              <button
+                onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm text-xs font-semibold"
+                aria-label="Select theme"
               >
-                {currentTheme === 'dark' ? <Moon size={18} /> : currentTheme === 'pink' ? <div className="w-[18px] h-[18px] rounded-full bg-pink-500"></div> : <Sun size={18} />}
+                {theme === 'dark' ? (
+                  <Moon size={15} className="text-indigo-400" />
+                ) : theme === 'pink' ? (
+                  <Sparkles size={15} className="text-pink-500" />
+                ) : (
+                  <Sun size={15} className="text-amber-500" />
+                )}
+                <span className="capitalize hidden sm:inline">{theme}</span>
+                <ChevronDown size={13} className="opacity-60" />
               </button>
-              
-              {themeOpen && (
-                <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-xl shadow-xl border border-slate-100 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 py-2 z-50">
-                  <div className="text-[10px] font-bold text-slate-600 dark:text-slate-400 pink:text-pink-600 uppercase tracking-wider px-3 mb-1">Theme</div>
-                  <button onClick={() => { setCurrentTheme('light'); localStorage.setItem('theme', 'light'); setThemeOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 hover:bg-slate-50 dark:hover:bg-slate-700">Light</button>
-                  <button onClick={() => { setCurrentTheme('dark'); localStorage.setItem('theme', 'dark'); setThemeOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 hover:bg-slate-50 dark:hover:bg-slate-700">Dark</button>
-                  <button onClick={() => { setCurrentTheme('pink'); localStorage.setItem('theme', 'pink'); setThemeOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 hover:bg-slate-50 dark:hover:bg-slate-700">Pink</button>
+
+              {themeDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-1.5 shadow-xl backdrop-blur-2xl z-50 animate-scale-in">
+                  <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--lms-text-muted)]">
+                    Theme Mode
+                  </div>
+                  {themeOptions.map((opt) => {
+                    const isSelected = theme === opt.id;
+                    const Icon = opt.icon;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={() => {
+                          setTheme(opt.id);
+                          setThemeDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium transition-colors ${
+                          isSelected
+                            ? 'bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] font-semibold'
+                            : 'text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-subtle)]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Icon size={15} />
+                          <div className="text-left">
+                            <p className="leading-tight">{opt.label}</p>
+                            <p className="text-[9px] opacity-70">{opt.desc}</p>
+                          </div>
+                        </div>
+                        {isSelected && <Check size={14} className="shrink-0" />}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
-            
-            <button className="relative text-coffee-400 hover:text-slate-600 dark:hover:text-slate-700 dark:text-slate-300 pink:text-pink-800 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200">
-              <Bell size={18} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-900"></span>
+
+            {/* Notifications */}
+            <button
+              className="relative p-2 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
+              title="Notifications"
+            >
+              <Bell size={16} />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
             </button>
 
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+            {/* Divider */}
+            <div className="h-6 w-px bg-[var(--lms-border)] mx-0.5"></div>
 
-            <Link 
-              to={user?.role === 'Admin' ? '/admin/profile' : user?.role === 'Instructor' ? '/instructor/profile' : '/student/profile'}
-              className="flex items-center gap-2 text-slate-500 dark:text-coffee-400 hover:text-slate-800 dark:hover:text-slate-800 dark:text-slate-200 pink:text-pink-900 transition-colors"
+            {/* Profile Link */}
+            <Link
+              to={profilePath}
+              className="flex items-center gap-2 group p-1 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
               title="View Profile"
             >
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 overflow-hidden">
+              <div className="w-8 h-8 rounded-xl bg-[var(--lms-accent-subtle)] border border-[var(--lms-accent-border)] text-[var(--lms-accent-text)] flex items-center justify-center text-xs font-bold shadow-sm overflow-hidden group-hover:ring-2 group-hover:ring-[var(--lms-accent)] transition-all">
                 {user?.profileImage ? (
-                  <img src={user.profileImage} alt={user.name || 'User'} className="w-full h-full object-cover" />
+                  <img
+                    src={user.profileImage}
+                    alt={user.name || 'User'}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   getInitials(user?.name)
                 )}
               </div>
             </Link>
+
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/20 text-xs font-semibold transition-all"
+              title="Log out"
             >
               <LogOut size={14} />
-              <span>Logout</span>
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50 dark:bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 transition-colors duration-200">
-          <div className="max-w-7xl mx-auto space-y-6">
+        {/* Scrollable Main Content */}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
             {children}
           </div>
         </main>

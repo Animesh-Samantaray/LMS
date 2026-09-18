@@ -2,17 +2,20 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import './styles/index.css';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="app-container">
-          <AppRoutes />
-        </div>
-      </AuthProvider>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <div className="min-h-screen bg-lms-bg text-lms-text transition-colors duration-300">
+            <AppRoutes />
+          </div>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 
