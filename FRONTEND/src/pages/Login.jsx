@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, UserCheck } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
-import authService from '../services/authService';
+import { getAuthErrorMessage, googleLogin, login } from '../services/firebaseAuth.service';
 import { getDashboardPath, useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,20 +21,6 @@ const Login = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [googleRole, setGoogleRole] = useState('Student');
-  const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const twoFactorParam = params.get('twoFactor');
-    const emailParam = params.get('email');
-    if (twoFactorParam === 'true') {
-      setRequiresTwoFactor(true);
-      if (emailParam) {
-        setFormData((prev) => ({ ...prev, email: emailParam }));
-      }
-    }
-  }, [location.search]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -56,30 +41,8 @@ const Login = () => {
       setErrorMsg('Please enter your email address.');
       return;
     }
-    if (!authService.isValidEmail(formData.email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       setErrorMsg('Please enter a valid email address (e.g. name@domain.com).');
-      return;
-    }
-
-    if (requiresTwoFactor) {
-      if (formData.otp.length !== 6) {
-        setErrorMsg('Please enter the full 6-digit verification code.');
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const res = await authService.verify2FA(formData.email.trim(), formData.otp);
-        setSuccessMsg(res.message || 'Login successful. Redirecting...');
-        setUser(res.user);
-        setTimeout(() => {
-          navigate(getDashboardPath(res.user.role), { replace: true });
-        }, 1000);
-      } catch (err) {
-        setErrorMsg(err.message || 'OTP verification failed. Please try again.');
-      } finally {
-        setLoading(false);
-      }
       return;
     }
 
@@ -90,34 +53,41 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await authService.login(formData.email.trim(), formData.password);
-
-      if (res.requiresTwoFactor) {
-        setRequiresTwoFactor(true);
-        setSuccessMsg(res.message || 'OTP sent to your email.');
-        return;
-      }
-
-      setSuccessMsg(`Welcome back, ${res.user.name || 'Learner'}! Redirecting...`);
-      setUser(res.user);
+      const credential = await login(formData.email.trim(), formData.password);
+      const firebaseUser = credential.user;
+      const user = {
+        ...firebaseUser,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Learner',
+        role: sessionStorage.getItem('lmsRole') || 'Student',
+      };
+      setSuccessMsg(`Welcome back, ${user.name}! Redirecting...`);
+      setUser(user);
       setTimeout(() => {
-        navigate(getDashboardPath(res.user.role), { replace: true });
+        navigate(getDashboardPath(user.role), { replace: true });
       }, 1000);
     } catch (err) {
-      setErrorMsg(err.message || 'Invalid email or password. Please try again.');
+      setErrorMsg(getAuthErrorMessage(err, 'Invalid email or password. Please try again.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setErrorMsg('');
     setSuccessMsg('');
     try {
       setGoogleLoading(true);
-      authService.startGoogleAuth(googleRole);
-    } catch {
-      setErrorMsg('Failed to initialize Google authentication.');
+      const credential = await googleLogin();
+      const firebaseUser = credential.user;
+      const user = {
+        ...firebaseUser,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Learner',
+        role: sessionStorage.getItem('lmsRole') || 'Student',
+      };
+      setUser(user);
+      navigate(getDashboardPath(user.role), { replace: true });
+    } catch (err) {
+      setErrorMsg(getAuthErrorMessage(err, 'Failed to initialize Google authentication.'));
       setGoogleLoading(false);
     }
   };
@@ -180,10 +150,7 @@ const Login = () => {
           </div>
         </div>
 
-        {!requiresTwoFactor && (
-          <>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                   Password
                 </label>
@@ -214,9 +181,8 @@ const Login = () => {
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
-            </div>
 
-            <div className="flex items-center">
+          <div className="flex items-center">
               <label className="inline-flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -227,34 +193,7 @@ const Login = () => {
                 />
                 <span className="text-xs text-slate-400 font-medium">Remember my session</span>
               </label>
-            </div>
-          </>
-        )}
-
-        {requiresTwoFactor && (
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Email verification code
-            </label>
-            <p className="text-xs text-slate-500 mb-2">Enter the 6-digit code sent to your inbox. It expires in 10 minutes.</p>
-            <div className="relative flex items-center">
-              <Lock size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
-              <input
-                type="text"
-                name="otp"
-                value={formData.otp}
-                onChange={handleChange}
-                placeholder="Enter 6-digit OTP"
-                maxLength={6}
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                autoFocus
-                disabled={loading}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50"
-              />
-            </div>
           </div>
-        )}
 
         <button
           type="submit"
@@ -264,11 +203,11 @@ const Login = () => {
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>{requiresTwoFactor ? 'Verifying OTP...' : 'Logging in...'}</span>
+              <span>Logging in...</span>
             </>
           ) : (
             <>
-              <span>{requiresTwoFactor ? 'Verify OTP' : 'Sign In to Dashboard'}</span>
+              <span>Sign In to Dashboard</span>
               <ArrowRight size={17} className="group-hover:translate-x-1 transition-transform" />
             </>
           )}

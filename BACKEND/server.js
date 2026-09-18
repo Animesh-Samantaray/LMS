@@ -8,6 +8,7 @@ import authRoutes from "./Routes/auth.routes.js";
 import studentRoutes from "./Routes/student.route.js";
 import instructorRoutes from "./Routes/instructor.route.js";
 import adminRoutes from "./Routes/admin.route.js";
+import "./Configs/firebaseAdmin.js";
 
 const app = express();
 

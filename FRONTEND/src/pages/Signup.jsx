@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, GraduationCap, Laptop, Check } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
-import authService from '../services/authService';
+import { getAuthErrorMessage, googleLogin, register, verifyEmail } from '../services/firebaseAuth.service';
+import { updateProfile } from 'firebase/auth';
 import { getDashboardPath, useAuth } from '../context/AuthContext';
 
 const Signup = () => {
@@ -49,13 +50,12 @@ const Signup = () => {
       setErrorMsg('Please enter your email address.');
       return;
     }
-    if (!authService.isValidEmail(formData.email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       setErrorMsg('Please enter a valid email address.');
       return;
     }
-    const passwordError = authService.validatePassword(formData.password);
-    if (passwordError) {
-      setErrorMsg(passwordError);
+    if (formData.password.length < 8) {
+      setErrorMsg('Password must be at least 8 characters.');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -65,33 +65,44 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const res = await authService.register(
-        formData.fullName.trim(),
-        formData.email.trim(),
-        formData.password,
-        formData.role,
-        formData.role === 'Admin' ? formData.adminAccessToken : undefined
-      );
-      setSuccessMsg(`Welcome to EduFlow, ${res.user.name}! Redirecting to your dashboard...`);
-      setUser(res.user);
+      const credential = await register(formData.email.trim(), formData.password);
+      await updateProfile(credential.user, { displayName: formData.fullName.trim() });
+      await verifyEmail();
+      sessionStorage.setItem('lmsRole', formData.role);
+      const user = {
+        ...credential.user,
+        name: formData.fullName.trim(),
+        role: formData.role,
+      };
+      setSuccessMsg(`Welcome to EduFlow, ${user.name}! Redirecting to your dashboard...`);
+      setUser(user);
       setTimeout(() => {
-        navigate(getDashboardPath(res.user.role), { replace: true });
+        navigate(getDashboardPath(user.role), { replace: true });
       }, 1000);
     } catch (err) {
-      setErrorMsg(err.message || 'Registration failed. Please try again.');
+      setErrorMsg(getAuthErrorMessage(err, 'Registration failed. Please try again.'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignup = () => {
+  const handleGoogleSignup = async () => {
     setErrorMsg('');
     setSuccessMsg('');
     try {
       setGoogleLoading(true);
-      authService.startGoogleAuth(formData.role);
-    } catch {
-      setErrorMsg('Google sign-up failed.');
+      const credential = await googleLogin();
+      sessionStorage.setItem('lmsRole', formData.role);
+      const firebaseUser = credential.user;
+      const user = {
+        ...firebaseUser,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || formData.fullName || 'Learner',
+        role: formData.role,
+      };
+      setUser(user);
+      navigate(getDashboardPath(user.role), { replace: true });
+    } catch (err) {
+      setErrorMsg(getAuthErrorMessage(err, 'Google sign-up failed.'));
       setGoogleLoading(false);
     }
   };
