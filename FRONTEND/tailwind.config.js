@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin');
 export default {
   content: [
     "./index.html",
@@ -64,5 +65,6 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addVariant }) { addVariant('pink', '.theme-pink &') }),],
 }

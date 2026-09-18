@@ -26,9 +26,9 @@ const AuthLayout = ({
   const isLogin = location.pathname === '/login';
 
   return (
-    <div className="h-screen w-full flex bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
+    <div className="h-screen w-full flex bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 text-slate-900 dark:text-slate-100 pink:text-pink-950 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
 
-      <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden bg-slate-900 border-r border-slate-800">
+      <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden bg-white dark:bg-slate-900 pink:bg-pink-50 border-r border-slate-200 dark:border-slate-800 pink:border-pink-300">
 
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vh] bg-gradient-to-br from-indigo-600/20 via-purple-600/10 to-transparent blur-[130px] rounded-full" />
@@ -54,7 +54,7 @@ const AuthLayout = ({
               </span>
             </Link>
             
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 pink:bg-pink-200/80 border border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300 pink:text-pink-800">
               <Sparkles size={14} className="text-purple-400" />
               <span>Next-Gen Cloud LMS</span>
             </div>
@@ -73,7 +73,7 @@ const AuthLayout = ({
               </span>
             </h1>
 
-            <p className="text-base xl:text-lg text-slate-400 leading-relaxed max-w-lg">
+            <p className="text-base xl:text-lg text-slate-600 dark:text-slate-400 pink:text-pink-600 leading-relaxed max-w-lg">
               Connect directly with certified instructors, access 1,000+ interactive course lessons, and earn verified credentials on EduFlow LMS.
             </p>
 
@@ -84,7 +84,7 @@ const AuthLayout = ({
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-sm mb-0.5">Instant automated grading</h3>
-                  <p className="text-xs text-slate-400">Get feedback on your assignments immediately.</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Get feedback on your assignments immediately.</p>
                 </div>
               </div>
 
@@ -94,7 +94,7 @@ const AuthLayout = ({
                 </div>
                 <div>
                   <h3 className="font-bold text-white text-sm mb-0.5">Resume lectures anytime</h3>
-                  <p className="text-xs text-slate-400">Seamless sync across all your devices.</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Seamless sync across all your devices.</p>
                 </div>
               </div>
             </div>
@@ -109,7 +109,7 @@ const AuthLayout = ({
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white">Full-Stack Architecture</div>
-                  <div className="text-xs text-slate-400">Module 4 • Lesson 8 of 12</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Module 4 • Lesson 8 of 12</div>
                 </div>
               </div>
               <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
@@ -117,7 +117,7 @@ const AuthLayout = ({
               </span>
             </div>
             <div className="space-y-2 relative z-10">
-              <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 w-[84%] transition-all duration-1000" />
               </div>
             </div>
@@ -126,13 +126,13 @@ const AuthLayout = ({
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex flex-col relative bg-slate-950 overflow-hidden h-full">
+      <div className="w-full lg:w-1/2 flex flex-col relative bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 overflow-hidden h-full">
 
 
 
         <div className="flex-1 flex flex-col justify-center items-center p-6 lg:p-12 z-10 h-full overflow-y-auto custom-scrollbar">
           
-          <div className="w-full max-w-[520px] bg-slate-900/50 backdrop-blur-sm rounded-3xl border border-slate-800/80 p-8 sm:p-10 shadow-2xl">
+          <div className="w-full max-w-[520px] bg-slate-100/50 dark:bg-slate-900/50 pink:bg-pink-100/50 backdrop-blur-sm rounded-3xl border border-slate-800/80 p-8 sm:p-10 shadow-2xl">
             
             <div className="flex flex-col items-center text-center mb-6">
               {badgeText && (
@@ -147,7 +147,7 @@ const AuthLayout = ({
               </h2>
               
               {subtitle && (
-                <p className="text-slate-400 text-xs">
+                <p className="text-slate-600 dark:text-slate-400 pink:text-pink-600 text-xs">
                   {subtitle}
                 </p>
               )}
@@ -159,7 +159,7 @@ const AuthLayout = ({
             
             {footerPromptText && footerActionLink && (
               <div className="mt-6 text-center">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">
                   {footerPromptText}{' '}
                   <Link
                     to={footerActionLink}
