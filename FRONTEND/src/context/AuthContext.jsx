@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import authService from '../services/authService';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '../configs/firebase';
 
 const AuthContext = createContext(null);
 
@@ -15,26 +16,28 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (!firebaseUser) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
 
-    authService.getMe()
-      .then((response) => {
-        if (active) setUser(response.user);
-      })
-      .catch(() => {
-        if (active) setUser(null);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
+      const role = sessionStorage.getItem('lmsRole') || 'Student';
+      setUser({
+        ...firebaseUser,
+        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Learner',
+        role,
       });
+      setLoading(false);
+    });
 
-    return () => {
-      active = false;
-    };
+    return unsubscribe;
   }, []);
 
   const logout = async () => {
-    await authService.logout();
+    await signOut(auth);
+    sessionStorage.removeItem('lmsRole');
     setUser(null);
   };
 

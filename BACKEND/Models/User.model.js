@@ -2,6 +2,14 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    
+    firebaseUid: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+
     name: {
       type: String,
       required: true,
@@ -19,28 +27,11 @@ const userSchema = new mongoose.Schema(
       index: true,
     },
 
-    password: {
-      type: String,
-      select: false,
-    },
-
     role: {
       type: String,
       enum: ["Student", "Instructor", "Admin"],
       default: "Student",
       index: true,
-    },
-
-    googleId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-
-    authProvider: {
-      type: String,
-      enum: ["local", "google", "local_google"],
-      default: "local",
     },
 
     profileImage: {
@@ -53,33 +44,6 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "inactive", "suspended"],
       default: "active",
       index: true,
-    },
-
-
-    resetPasswordOTP: {
-      type: String,
-      default: null,
-      select: false,
-    },
-
-    resetPasswordOTPExpire: {
-      type: Date,
-      default: null,
-      select: false,
-    },
-    twoFactorEnabled: {
-      type: Boolean,
-      default: false,
-    }, loginOTP: {
-      type: String,
-      default: null,
-      select: false,
-    },
-
-    loginOTPExpire: {
-      type: Date,
-      default: null,
-      select: false,
     },
   },
   {

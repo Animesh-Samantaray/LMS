@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Menu, X, Bell, Moon, Sun, Shield, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import authService from '../services/authService';
 
 const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
   const { user, logout } = useAuth();
@@ -16,16 +15,6 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
     return current ? current.label : sidebarItems[0]?.label;
   });
 
-  useEffect(() => {
-    const fetch2FA = async () => {
-      try {
-        const res = await authService.get2FAStatus();
-        setIs2FAEnabled(res.twoFactorEnabled);
-      } catch (e) { console.error(e); }
-    };
-    if (user) fetch2FA();
-  }, [user]);
-
   const toggleDarkMode = () => {
     if (isDarkMode) {
       document.documentElement.classList.remove('dark');
@@ -38,19 +27,8 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle }) => {
     }
   };
 
-  const toggle2FA = async () => {
-    try {
-      if (is2FAEnabled) {
-        await authService.update2FA(false);
-        setIs2FAEnabled(false);
-      } else {
-        await authService.update2FA(true);
-        setIs2FAEnabled(true);
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Failed to toggle 2FA.');
-    }
+  const toggle2FA = () => {
+    alert('Firebase MFA is not enabled yet.');
   };
 
   const handleLogout = async () => {
