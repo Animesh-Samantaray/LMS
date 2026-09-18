@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LayoutDashboard, Users, BookOpen, Calendar, BarChart2, User, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Home, Users, BookOpen, Calendar, BarChart2, User, FileText, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import instructorService from '../../services/instructor.service';
@@ -26,11 +26,14 @@ const InstructorDashboard = () => {
   }, []);
 
   const sidebarItems = [
-    { label: 'Dashboard', path: '/instructor/dashboard', icon: LayoutDashboard },
+    { label: 'Overview', path: '/instructor/dashboard', icon: Home },
+    { category: 'Management' },
     { label: 'My Students', path: '#', icon: '👥' },
     { label: 'Courses', path: '#', icon: '📖' },
+    { category: 'Engagement' },
     { label: 'Sessions', path: '#', icon: '📅' },
     { label: 'Analytics', path: '#', icon: '📊' },
+    { category: 'Account' },
     { label: 'Profile', path: '/instructor/profile', icon: '👤' },
   ];
 
@@ -93,9 +96,9 @@ const InstructorDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">STUDENTS</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">STUDENTS</div>
             <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">{stats.students ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Assigned to you</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Assigned to you</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
             <Users size={20} />
@@ -104,9 +107,9 @@ const InstructorDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">AVG SCORE</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AVG SCORE</div>
             <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">{stats.avgScore ? `${stats.avgScore}%` : '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Cohort average</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Cohort average</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
             <BarChart2 size={20} />
@@ -115,9 +118,9 @@ const InstructorDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">AT RISK</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AT RISK</div>
             <div className="text-2xl font-bold text-red-600">{stats.atRisk ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Need attention</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Need attention</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
             <AlertTriangle size={20} />
@@ -126,9 +129,9 @@ const InstructorDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">SESSIONS</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">SESSIONS</div>
             <div className="text-2xl font-bold text-purple-600">{stats.sessions ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">This week</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">This week</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
             <Calendar size={20} />
@@ -149,7 +152,7 @@ const InstructorDashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/50">
+                <tr className="text-[10px] font-bold text-coffee-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/50">
                   <th className="pb-3 px-2">Student</th>
                   <th className="pb-3 px-2">Course</th>
                   <th className="pb-3 px-2">Progress</th>
@@ -167,7 +170,7 @@ const InstructorDashboard = () => {
                         <span className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{student.name}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                    <td className="py-3 px-2 text-sm text-slate-500 dark:text-coffee-400 font-medium">
                       {student.course || '-'}
                     </td>
                     <td className="py-3 px-2">
@@ -178,7 +181,7 @@ const InstructorDashboard = () => {
                             style={{ width: `${student.progress || 0}%` }}
                           />
                         </div>
-                        <span className="text-xs text-slate-500 dark:text-slate-400">{student.progress || 0}%</span>
+                        <span className="text-xs text-slate-500 dark:text-coffee-400">{student.progress || 0}%</span>
                       </div>
                     </td>
                     <td className="py-3 px-2">
@@ -193,7 +196,7 @@ const InstructorDashboard = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="4" className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                    <td colSpan="4" className="py-8 text-center text-sm text-slate-500 dark:text-coffee-400">
                       No student progress data available.
                     </td>
                   </tr>
@@ -214,22 +217,22 @@ const InstructorDashboard = () => {
             </div>
             
             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{user?.name}</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-6">
+            <p className="text-xs text-slate-500 dark:text-coffee-400 font-medium mb-6">
               {profileData?.profile?.designation || 'Instructor / Mentor'}
             </p>
 
             <div className="w-full grid grid-cols-3 gap-2 border-t border-slate-100 dark:border-slate-800/50 pt-6">
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.students ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Students</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Students</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.courses ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Courses</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Courses</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.rating ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Rating</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Rating</div>
               </div>
             </div>
           </div>
@@ -246,12 +249,12 @@ const InstructorDashboard = () => {
                         {session.type || 'Review'}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">{session.time || 'Time TBD'} &bull; {session.date || 'Today'}</div>
+                    <div className="text-xs text-slate-500 dark:text-coffee-400">{session.time || 'Time TBD'} &bull; {session.date || 'Today'}</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6 text-sm text-slate-500 dark:text-slate-400">
+              <div className="text-center py-6 text-sm text-slate-500 dark:text-coffee-400">
                 No upcoming sessions found.
               </div>
             )}

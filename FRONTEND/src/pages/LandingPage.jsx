@@ -86,33 +86,52 @@ const LandingPage = () => {
         <section className="hero-section" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <motion.div 
             className="container hero-content text-center" 
-            style={{ paddingTop: '80px' }}
+            style={{ paddingTop: '20px' }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="hero-badge-wrapper">
               <span className="badge badge-indigo">
-                <Sparkles size={14} /> Next-Generation Learning Management System
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#a855f7', display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} /> AI-POWERED LEARNING PLATFORM
               </span>
             </div>
 
             <h1 className="hero-title">
-              Learn Without Limits.<br />
-              <span className="text-gradient">Grow With Knowledge.</span>
+              Everything You Need to<br />
+              <span className="text-gradient">Master Any Skill</span>
             </h1>
 
             <p className="hero-subtext">
-              The all-in-one platform connecting ambitious students, expert instructors, and modern institutions in one centralized learning environment.
+              Built with precision tools designed to maximize student retention and instructor productivity across every subject and skill level.
             </p>
 
             <div className="hero-cta-group">
               <button onClick={() => navigate('/signup')} className="btn btn-primary" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem' }}>
-                Get Started Free <ArrowRight size={18} />
+                Start Learning Free <ArrowRight size={18} />
               </button>
-              <a href="#courses" className="btn btn-secondary" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem' }}>
-                <BookOpen size={18} /> Explore Courses
+              <a href="#demo" className="btn btn-secondary" style={{ padding: '0.9rem 2rem', fontSize: '1.05rem' }}>
+                <Play size={18} /> Watch Demo
               </a>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '3rem', marginTop: '4rem' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 'bold', color: '#fff' }}>50K+</div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>Active Learners</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 'bold', color: '#fff' }}>1,200+</div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>Expert Courses</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 'bold', color: '#fff' }}>98%</div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>Completion Rate</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.6rem', fontWeight: 'bold', color: '#fff' }}>4.9★</div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>Average Rating</div>
+              </div>
             </div>
             </motion.div>
         </section>
