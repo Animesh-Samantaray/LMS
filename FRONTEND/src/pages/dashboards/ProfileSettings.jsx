@@ -5,6 +5,7 @@ import studentService from '../../services/student.service';
 import instructorService from '../../services/instructor.service';
 import adminService from '../../services/admin.service';
 import {
+  Home,
   AlertCircle,
   Award,
   BookOpen,
@@ -131,11 +132,11 @@ const TagInput = ({
     <div className="space-y-2.5">
       <div className="flex items-center justify-between">
         <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-          {Icon && <Icon size={14} className="text-slate-500 dark:text-slate-400" />}
+          {Icon && <Icon size={14} className="text-slate-500 dark:text-coffee-400" />}
           {label}
         </label>
         {tags.length > 0 && (
-          <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400">
+          <span className="text-[11px] font-medium text-slate-600 dark:text-coffee-400">
             {tags.length} {tags.length === 1 ? 'item' : 'items'}
           </span>
         )}
@@ -148,13 +149,13 @@ const TagInput = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800"
+          className="flex-1 rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800"
         />
         <button
           type="button"
           onClick={handleAdd}
           disabled={!inputValue.trim()}
-          className="flex items-center gap-1 rounded-xl bg-slate-100 px-3.5 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          className="flex items-center gap-1 rounded-xl bg-coffee-200 px-3.5 py-2.5 text-xs font-semibold text-coffee-700 transition hover:bg-coffee-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
         >
           <Plus size={14} />
           Add
@@ -162,7 +163,7 @@ const TagInput = ({
       </div>
 
       {helperText && (
-        <p className="text-[11px] text-slate-600 dark:text-slate-400">{helperText}</p>
+        <p className="text-[11px] text-slate-600 dark:text-coffee-400">{helperText}</p>
       )}
 
       {tags.length > 0 && (
@@ -176,7 +177,7 @@ const TagInput = ({
               <button
                 type="button"
                 onClick={() => handleRemove(idx)}
-                className="rounded p-0.5 text-current opacity-60 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10"
+                className="rounded p-0.5 text-current opacity-60 hover:opacity-100 hover:bg-black/5 dark:hover:bg-coffee-50/10"
                 title={`Remove ${tag}`}
               >
                 <X size={12} />
@@ -209,12 +210,12 @@ const InfoItem = ({ icon: Icon, label, value, isLink, href }) => {
   if (!value) return null;
 
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-3.5 transition hover:border-slate-200 dark:border-slate-800/80 dark:bg-slate-800/30 dark:hover:border-slate-700/80">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 shadow-sm dark:bg-slate-800 dark:text-blue-400">
+    <div className="flex items-start gap-3 rounded-xl border border-coffee-200 bg-coffee-100/50 p-3.5 transition hover:border-slate-200 dark:border-slate-800/80 dark:bg-slate-800/30 dark:hover:border-slate-700/80">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-coffee-50 text-blue-600 shadow-sm dark:bg-slate-800 dark:text-blue-400">
         <Icon size={17} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-coffee-400">
           {label}
         </p>
         {isLink && href ? (
@@ -295,26 +296,37 @@ const ProfileSettings = () => {
 
   const sidebarItems = isAdmin
     ? [
-        { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Overview', path: '/admin/dashboard', icon: Home },
+        { category: 'Administration' },
         { label: 'Users', path: '#', icon: '👥' },
         { label: 'Courses', path: '#', icon: '📖' },
+        { category: 'Financial' },
         { label: 'Mentors', path: '#', icon: '🧑‍🏫' },
         { label: 'Revenue', path: '#', icon: '💰' },
+        { category: 'Account' },
         { label: 'Settings', path: '/admin/profile', icon: '⚙️' },
       ]
     : isInstructor
     ? [
-        { label: 'Dashboard', path: '/instructor/dashboard', icon: LayoutDashboard },
+        { label: 'Overview', path: '/instructor/dashboard', icon: Home },
+        { category: 'Management' },
         { label: 'My Students', path: '#', icon: '👥' },
         { label: 'Courses', path: '#', icon: '📖' },
+        { category: 'Engagement' },
         { label: 'Sessions', path: '#', icon: '📅' },
         { label: 'Analytics', path: '#', icon: '📊' },
+        { category: 'Account' },
         { label: 'Profile', path: '/instructor/profile', icon: '👤' },
       ]
     : [
-        { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
+        { label: 'Overview', path: '/student/dashboard', icon: Home },
+        { category: 'Learning' },
         { label: 'My Courses', path: '#', icon: '📖' },
         { label: 'Learning', path: '#', icon: '🎓' },
+        { category: 'Engagement' },
+        { label: 'Assignments', path: '#', icon: '📝' },
+        { label: 'Calendar', path: '#', icon: '📅' },
+        { category: 'Account' },
         { label: 'Profile', path: '/student/profile', icon: '👤' },
       ];
 
@@ -596,7 +608,7 @@ const ProfileSettings = () => {
       : true);
 
   const inputClass =
-    'w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800';
+    'w-full rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800';
 
   const labelClass =
     'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300';
@@ -614,7 +626,7 @@ const ProfileSettings = () => {
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
               Profile & Account Settings
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-coffee-400">
               Manage your personal information, role-specific attributes, and online presence.
             </p>
           </div>
@@ -627,7 +639,7 @@ const ProfileSettings = () => {
                     type="button"
                     onClick={handleCancelEdit}
                     disabled={saving}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-coffee-200 bg-coffee-50 px-4 py-2 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     <X size={15} />
                     Cancel
@@ -695,7 +707,7 @@ const ProfileSettings = () => {
           <ProfileSkeleton />
         ) : !isEditing ? (
           <div className="space-y-6">
-            <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 text-white shadow-xl shadow-slate-900/10 dark:border-slate-800 sm:p-8">
+            <div className="relative overflow-hidden rounded-3xl border border-coffee-200/80 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 text-white shadow-xl shadow-slate-900/10 dark:border-slate-800 sm:p-8">
               <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-blue-600/15 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-indigo-600/15 blur-3xl" />
 
@@ -752,7 +764,7 @@ const ProfileSettings = () => {
                   </div>
 
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-300 truncate">
-                    <Mail size={14} className="shrink-0 text-slate-400" />
+                    <Mail size={14} className="shrink-0 text-coffee-400" />
                     {userData?.email}
                   </p>
 
@@ -771,7 +783,7 @@ const ProfileSettings = () => {
                   )}
 
                   {profileData?.location && (
-                    <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
+                    <p className="mt-1 flex items-center gap-1.5 text-xs text-coffee-400">
                       <MapPin size={13} className="shrink-0" />
                       {profileData.location}
                     </p>
@@ -781,7 +793,7 @@ const ProfileSettings = () => {
 
               {profileData?.bio && (
                 <div className="relative mt-6 border-t border-white/10 pt-5">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-coffee-400">
                     About
                   </p>
                   <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-200">
@@ -793,8 +805,8 @@ const ProfileSettings = () => {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               <div className="space-y-6 lg:col-span-5">
-                <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                  <div className="mb-5 flex items-center gap-2.5 border-b border-slate-100 pb-4 dark:border-slate-800">
+                <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                  <div className="mb-5 flex items-center gap-2.5 border-b border-coffee-200 pb-4 dark:border-slate-800">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                       <User size={18} />
                     </div>
@@ -802,7 +814,7 @@ const ProfileSettings = () => {
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                         {isInstructor ? 'Professional Information' : 'Personal Details'}
                       </h3>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-coffee-400">
                         {isInstructor ? 'Instructor qualifications & contact' : 'Contact & identity'}
                       </p>
                     </div>
@@ -866,8 +878,8 @@ const ProfileSettings = () => {
                 </div>
 
                 {hasAnySocialLinks && (
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center gap-2.5 border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="mb-4 flex items-center gap-2.5 border-b border-coffee-200 pb-3 dark:border-slate-800">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
                         <Globe size={18} />
                       </div>
@@ -875,7 +887,7 @@ const ProfileSettings = () => {
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                           Social & Web Links
                         </h3>
-                        <p className="text-[11px] text-slate-400">Online presence and profiles</p>
+                        <p className="text-[11px] text-coffee-400">Online presence and profiles</p>
                       </div>
                     </div>
 
@@ -885,13 +897,13 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.linkedin)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-blue-900/50 dark:hover:bg-blue-950/30 dark:hover:text-blue-300"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-blue-900/50 dark:hover:bg-blue-950/30 dark:hover:text-blue-300"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Linkedin size={16} className="text-[#0A66C2] shrink-0" />
                             <span className="truncate">LinkedIn</span>
                           </div>
-                          <ExternalLink size={13} className="text-slate-400 shrink-0" />
+                          <ExternalLink size={13} className="text-coffee-400 shrink-0" />
                         </a>
                       )}
 
@@ -900,13 +912,13 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.github)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-slate-300 hover:bg-coffee-200 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Github size={16} className="text-slate-900 dark:text-white shrink-0" />
                             <span className="truncate">GitHub</span>
                           </div>
-                          <ExternalLink size={13} className="text-slate-400 shrink-0" />
+                          <ExternalLink size={13} className="text-coffee-400 shrink-0" />
                         </a>
                       )}
 
@@ -915,13 +927,13 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.website)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-emerald-900/50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-emerald-200 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-emerald-900/50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Globe size={16} className="text-emerald-600 shrink-0" />
                             <span className="truncate">Personal Website</span>
                           </div>
-                          <ExternalLink size={13} className="text-slate-400 shrink-0" />
+                          <ExternalLink size={13} className="text-coffee-400 shrink-0" />
                         </a>
                       )}
                     </div>
@@ -931,8 +943,8 @@ const ProfileSettings = () => {
 
               <div className="space-y-6 lg:col-span-7">
                 {hasExpertise && (
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
                           <Award size={18} />
@@ -941,7 +953,7 @@ const ProfileSettings = () => {
                           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                             Areas of Expertise
                           </h3>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-coffee-400">
                             Teaching subjects & specializations
                           </p>
                         </div>
@@ -960,8 +972,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasSkills && (
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                           <Sparkles size={18} />
@@ -970,7 +982,7 @@ const ProfileSettings = () => {
                           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                             Skills & Capabilities
                           </h3>
-                          <p className="text-[11px] text-slate-400">Technical & practical skills</p>
+                          <p className="text-[11px] text-coffee-400">Technical & practical skills</p>
                         </div>
                       </div>
                       <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
@@ -987,8 +999,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasInterests && (
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
                           <Heart size={18} />
@@ -997,7 +1009,7 @@ const ProfileSettings = () => {
                           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                             Interests & Passions
                           </h3>
-                          <p className="text-[11px] text-slate-400">Topics of curiosity and focus</p>
+                          <p className="text-[11px] text-coffee-400">Topics of curiosity and focus</p>
                         </div>
                       </div>
                       <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
@@ -1014,8 +1026,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasGoals && (
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
                           <Target size={18} />
@@ -1024,7 +1036,7 @@ const ProfileSettings = () => {
                           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                             Learning Goals
                           </h3>
-                          <p className="text-[11px] text-slate-400">Target milestones & objectives</p>
+                          <p className="text-[11px] text-coffee-400">Target milestones & objectives</p>
                         </div>
                       </div>
                       <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
@@ -1049,14 +1061,14 @@ const ProfileSettings = () => {
                 )}
 
                 {isProfileEmpty && (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-900">
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-coffee-50 p-8 text-center dark:border-slate-700 dark:bg-slate-900">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                       <Compass size={24} />
                     </div>
                     <h4 className="mt-3 text-base font-bold text-slate-900 dark:text-white">
                       Profile details not filled yet
                     </h4>
-                    <p className="mx-auto mt-1 max-w-md text-xs text-slate-500 dark:text-slate-400">
+                    <p className="mx-auto mt-1 max-w-md text-xs text-slate-500 dark:text-coffee-400">
                       {isStudent
                         ? 'Complete your profile by adding your bio, education, skills, interests, and learning goals.'
                         : isInstructor
@@ -1078,8 +1090,8 @@ const ProfileSettings = () => {
           </div>
         ) : (
           <form id="profile-edit-form" onSubmit={handleSaveProfile} className="space-y-6">
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-              <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
+            <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+              <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                   <User size={19} />
                 </div>
@@ -1087,7 +1099,7 @@ const ProfileSettings = () => {
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     Basic Information
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-coffee-400">
                     Your account display name and registered email.
                   </p>
                 </div>
@@ -1123,8 +1135,8 @@ const ProfileSettings = () => {
             </div>
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
                     {isInstructor ? <Briefcase size={19} /> : <GraduationCap size={19} />}
                   </div>
@@ -1132,7 +1144,7 @@ const ProfileSettings = () => {
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
                       {isInstructor ? 'Instructor Details' : 'Student Profile'}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-coffee-400">
                       Fields specific to your role on the platform.
                     </p>
                   </div>
@@ -1248,8 +1260,8 @@ const ProfileSettings = () => {
             )}
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
                     <Sparkles size={19} />
                   </div>
@@ -1257,7 +1269,7 @@ const ProfileSettings = () => {
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
                       {isInstructor ? 'Expertise' : 'Skills & Learning Focus'}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-coffee-400">
                       Type an item and press Enter or click Add to save tag.
                     </p>
                   </div>
@@ -1322,8 +1334,8 @@ const ProfileSettings = () => {
             )}
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
                     <Globe size={19} />
                   </div>
@@ -1331,7 +1343,7 @@ const ProfileSettings = () => {
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">
                       Social & Portfolio Links
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-coffee-400">
                       Add links to your professional profiles and website.
                     </p>
                   </div>
@@ -1343,7 +1355,7 @@ const ProfileSettings = () => {
                     <div className="relative">
                       <Linkedin
                         size={16}
-                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-coffee-400"
                       />
                       <input
                         type="url"
@@ -1362,7 +1374,7 @@ const ProfileSettings = () => {
                       <div className="relative">
                         <Github
                           size={16}
-                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-coffee-400"
                         />
                         <input
                           type="url"
@@ -1381,7 +1393,7 @@ const ProfileSettings = () => {
                     <div className="relative">
                       <Globe
                         size={16}
-                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-coffee-400"
                       />
                       <input
                         type="url"
@@ -1402,7 +1414,7 @@ const ProfileSettings = () => {
                 type="button"
                 onClick={handleCancelEdit}
                 disabled={saving}
-                className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="rounded-xl border border-slate-300 bg-coffee-50 px-5 py-2.5 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 Cancel
               </button>

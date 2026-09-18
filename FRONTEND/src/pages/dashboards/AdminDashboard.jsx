@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LayoutDashboard, Users, BookOpen, UserCheck, DollarSign, Settings, Activity, AlertCircle } from 'lucide-react';
+import { Home, Users, BookOpen, UserCheck, DollarSign, Settings, Activity } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import adminService from '../../services/admin.service';
@@ -32,11 +32,14 @@ const AdminDashboard = () => {
   }, []);
 
   const sidebarItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Overview', path: '/admin/dashboard', icon: Home },
+    { category: 'Administration' },
     { label: 'Users', path: '#', icon: '👥' },
     { label: 'Courses', path: '#', icon: '📖' },
+    { category: 'Financial' },
     { label: 'Mentors', path: '#', icon: '🧑‍🏫' },
     { label: 'Revenue', path: '#', icon: '💰' },
+    { category: 'Account' },
     { label: 'Settings', path: '/admin/profile', icon: '⚙️' },
   ];
 
@@ -58,7 +61,7 @@ const AdminDashboard = () => {
       
       <div className="bg-slate-900 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between shadow-lg dark:shadow-none shadow-slate-900/20">
         <div>
-          <div className="text-slate-400 text-xs font-bold tracking-widest uppercase mb-2">ADMIN CONTROL PANEL</div>
+          <div className="text-coffee-400 text-xs font-bold tracking-widest uppercase mb-2">ADMIN CONTROL PANEL</div>
           <h2 className="text-3xl font-bold mb-2">Welcome, {user?.name || 'Admin'} ⚙️</h2>
           <p className="text-slate-300 text-sm">
             {stats.alerts ? `Platform has ${stats.alerts} alerts needing attention.` : 'Platform is healthy. All systems operational.'}
@@ -69,19 +72,19 @@ const AdminDashboard = () => {
           {stats.totalUsers !== undefined && (
             <div className="text-center">
               <div className="text-2xl font-bold">{stats.totalUsers}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Total Users</div>
+              <div className="text-[10px] text-coffee-400 uppercase tracking-wider">Total Users</div>
             </div>
           )}
           {stats.courses !== undefined && (
             <div className="text-center">
               <div className="text-2xl font-bold">{stats.courses}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Courses</div>
+              <div className="text-[10px] text-coffee-400 uppercase tracking-wider">Courses</div>
             </div>
           )}
           {stats.uptime !== undefined && (
             <div className="text-center">
               <div className="text-2xl font-bold">{stats.uptime}%</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Uptime</div>
+              <div className="text-[10px] text-coffee-400 uppercase tracking-wider">Uptime</div>
             </div>
           )}
         </div>
@@ -96,9 +99,9 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">TOTAL USERS</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">TOTAL USERS</div>
             <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">{stats.totalUsers ?? (Array.isArray(usersList) ? usersList.length : '-')}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{stats.newUsersThisWeek ? `+${stats.newUsersThisWeek} this week` : 'Active accounts'}</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">{stats.newUsersThisWeek ? `+${stats.newUsersThisWeek} this week` : 'Active accounts'}</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
             <Users size={20} />
@@ -107,9 +110,9 @@ const AdminDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">REVENUE</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">REVENUE</div>
             <div className="text-2xl font-bold text-emerald-600">{stats.revenue ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">This month</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">This month</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <DollarSign size={20} />
@@ -118,9 +121,9 @@ const AdminDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">COURSES</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">COURSES</div>
             <div className="text-2xl font-bold text-blue-600">{stats.courses ?? '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{stats.activeCourses ? `${stats.activeCourses} active today` : 'Total published'}</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">{stats.activeCourses ? `${stats.activeCourses} active today` : 'Total published'}</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
             <BookOpen size={20} />
@@ -129,9 +132,9 @@ const AdminDashboard = () => {
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
-            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">COMPLETION</div>
+            <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">COMPLETION</div>
             <div className="text-2xl font-bold text-purple-600">{stats.completionRate ? `${stats.completionRate}%` : '-'}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Avg course rate</div>
+            <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Avg course rate</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
             <Activity size={20} />
@@ -152,7 +155,7 @@ const AdminDashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/50">
+                <tr className="text-[10px] font-bold text-coffee-400 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/50">
                   <th className="pb-3 px-2">User</th>
                   <th className="pb-3 px-2">Email</th>
                   <th className="pb-3 px-2">Role</th>
@@ -165,11 +168,11 @@ const AdminDashboard = () => {
                     <td className="py-3 px-2">
                       <div className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{u.name || 'Unknown'}</div>
                     </td>
-                    <td className="py-3 px-2 text-sm text-slate-500 dark:text-slate-400">
+                    <td className="py-3 px-2 text-sm text-slate-500 dark:text-coffee-400">
                       {u.email}
                     </td>
                     <td className="py-3 px-2">
-                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 capitalize">
+                      <span className="text-xs font-medium text-slate-600 dark:text-coffee-400 capitalize">
                         {u.role || 'User'}
                       </span>
                     </td>
@@ -181,7 +184,7 @@ const AdminDashboard = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="4" className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                    <td colSpan="4" className="py-8 text-center text-sm text-slate-500 dark:text-coffee-400">
                       No user data available.
                     </td>
                   </tr>
@@ -202,20 +205,20 @@ const AdminDashboard = () => {
             </div>
             
             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{user?.name}</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-6">Platform Administrator</p>
+            <p className="text-xs text-slate-500 dark:text-coffee-400 font-medium mb-6">Platform Administrator</p>
 
             <div className="w-full grid grid-cols-3 gap-2 border-t border-slate-100 dark:border-slate-800/50 pt-6">
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{Array.isArray(usersList) ? usersList.length : '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Users</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Users</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.courses ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Courses</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Courses</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.mentors ?? '-'}</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">Mentors</div>
+                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Mentors</div>
               </div>
             </div>
           </div>
@@ -224,15 +227,15 @@ const AdminDashboard = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-4">System Health</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Uptime</span>
+                <span className="text-sm text-slate-600 dark:text-coffee-400">Uptime</span>
                 <span className="text-sm font-semibold text-emerald-600">{stats.uptime ? `${stats.uptime}%` : '99.9%'}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-400">API Latency</span>
+                <span className="text-sm text-slate-600 dark:text-coffee-400">API Latency</span>
                 <span className="text-sm font-semibold text-blue-600">{stats.latency ? `${stats.latency}ms` : '120ms'}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-400">Database Load</span>
+                <span className="text-sm text-slate-600 dark:text-coffee-400">Database Load</span>
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{stats.dbLoad ? `${stats.dbLoad}%` : '24%'}</span>
               </div>
             </div>
