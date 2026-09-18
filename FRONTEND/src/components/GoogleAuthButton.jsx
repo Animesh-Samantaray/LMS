@@ -12,7 +12,7 @@ const GoogleAuthButton = ({
       type="button"
       onClick={onClick}
       disabled={loading || disabled}
-      className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 text-slate-200 hover:text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+      className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 pink:bg-pink-200/80 hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 border border-slate-700/80 hover:border-slate-600 text-slate-800 dark:text-slate-200 pink:text-pink-900 hover:text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
     >
       {loading ? (
         <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />

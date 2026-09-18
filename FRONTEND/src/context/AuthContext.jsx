@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../configs/firebase';
+import api from '../services/api.service';
 
 const AuthContext = createContext(null);
 
@@ -16,20 +17,32 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      const role = sessionStorage.getItem('lmsRole') || 'Student';
-      setUser({
-        ...firebaseUser,
-        name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Learner',
-        role,
-      });
-      setLoading(false);
+      try {
+        // Firebase token is automatically attached by our interceptor
+        const res = await api.get('/api/auth/me');
+        const dbUser = res.data?.user || res.data;
+        setUser({
+          ...firebaseUser,
+          ...dbUser, // Merge DB user properties (role, name, profileImage, etc.)
+        });
+      } catch (error) {
+        console.error("Failed to fetch user from DB:", error);
+        // Do not kick them out necessarily; maybe they haven't completed registration DB sync yet.
+        setUser({
+          ...firebaseUser,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Learner',
+          role: 'Student', // Temporary fallback
+        });
+      } finally {
+        setLoading(false);
+      }
     });
 
     return unsubscribe;
@@ -37,7 +50,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await signOut(auth);
-    sessionStorage.removeItem('lmsRole');
     setUser(null);
   };
 

@@ -94,10 +94,10 @@ const InstructorDashboard = () => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
+        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
             <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">STUDENTS</div>
-            <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">{stats.students ?? '-'}</div>
+            <div className="text-2xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.students ?? '-'}</div>
             <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Assigned to you</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -105,10 +105,10 @@ const InstructorDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
+        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
             <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AVG SCORE</div>
-            <div className="text-2xl font-bold text-slate-800 dark:text-slate-200">{stats.avgScore ? `${stats.avgScore}%` : '-'}</div>
+            <div className="text-2xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.avgScore ? `${stats.avgScore}%` : '-'}</div>
             <div className="text-xs text-slate-500 dark:text-coffee-400 mt-1">Cohort average</div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -116,7 +116,7 @@ const InstructorDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
+        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
             <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">AT RISK</div>
             <div className="text-2xl font-bold text-red-600">{stats.atRisk ?? '-'}</div>
@@ -127,7 +127,7 @@ const InstructorDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
+        <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between">
           <div>
             <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mb-1">SESSIONS</div>
             <div className="text-2xl font-bold text-purple-600">{stats.sessions ?? '-'}</div>
@@ -141,9 +141,9 @@ const InstructorDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
+        <div className="lg:col-span-2 bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-slate-800 dark:text-slate-200">Student Progress</h3>
+            <h3 className="font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">Student Progress</h3>
             <button className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors">
               View all &rarr;
             </button>
@@ -167,7 +167,7 @@ const InstructorDashboard = () => {
                         <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center">
                           {student.name?.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()}
                         </div>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300 text-sm">{student.name}</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 text-sm">{student.name}</span>
                       </div>
                     </td>
                     <td className="py-3 px-2 text-sm text-slate-500 dark:text-coffee-400 font-medium">
@@ -175,7 +175,7 @@ const InstructorDashboard = () => {
                     </td>
                     <td className="py-3 px-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-full overflow-hidden">
                           <div 
                             className={`h-full rounded-full ${student.progress < 50 ? 'bg-red-500' : 'bg-blue-500'}`} 
                             style={{ width: `${student.progress || 0}%` }}
@@ -207,7 +207,7 @@ const InstructorDashboard = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex flex-col items-center text-center">
+          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg dark:shadow-none shadow-blue-500/30 mb-4 overflow-hidden">
               {profileData?.user?.profileImage || profileData?.profile?.profileImage ? (
                 <img src={profileData?.user?.profileImage || profileData?.profile?.profileImage} alt="Profile" className="w-full h-full object-cover" />
@@ -223,28 +223,28 @@ const InstructorDashboard = () => {
 
             <div className="w-full grid grid-cols-3 gap-2 border-t border-slate-100 dark:border-slate-800/50 pt-6">
               <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.students ?? '-'}</div>
+                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.students ?? '-'}</div>
                 <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Students</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.courses ?? '-'}</div>
+                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.courses ?? '-'}</div>
                 <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Courses</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-slate-800 dark:text-slate-200">{stats.rating ?? '-'}</div>
+                <div className="text-lg font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.rating ?? '-'}</div>
                 <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Rating</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-            <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-4">Upcoming Sessions</h3>
+          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
+            <h3 className="font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mb-4">Upcoming Sessions</h3>
             {sessions.length > 0 ? (
               <div className="space-y-3">
                 {sessions.map((session, idx) => (
                   <div key={idx} className="p-3 border border-slate-100 dark:border-slate-800/50 rounded-xl hover:border-blue-100 transition-colors">
                     <div className="flex justify-between items-start mb-1">
-                      <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{session.title || session.studentName}</span>
+                      <span className="font-semibold text-sm text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{session.title || session.studentName}</span>
                       <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wide">
                         {session.type || 'Review'}
                       </span>

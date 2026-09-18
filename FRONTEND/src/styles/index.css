@@ -9,7 +9,7 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
 body {
@@ -29,7 +29,7 @@ body {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: currentColor; opacity: 0.3;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {

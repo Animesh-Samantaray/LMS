@@ -131,7 +131,7 @@ const TagInput = ({
   return (
     <div className="space-y-2.5">
       <div className="flex items-center justify-between">
-        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+        <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800">
           {Icon && <Icon size={14} className="text-slate-500 dark:text-coffee-400" />}
           {label}
         </label>
@@ -149,13 +149,13 @@ const TagInput = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1 rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800"
+          className="flex-1 rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200"
         />
         <button
           type="button"
           onClick={handleAdd}
           disabled={!inputValue.trim()}
-          className="flex items-center gap-1 rounded-xl bg-coffee-200 px-3.5 py-2.5 text-xs font-semibold text-coffee-700 transition hover:bg-coffee-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          className="flex items-center gap-1 rounded-xl bg-coffee-200 px-3.5 py-2.5 text-xs font-semibold text-coffee-700 transition hover:bg-coffee-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 dark:hover:bg-slate-700"
         >
           <Plus size={14} />
           Add
@@ -211,7 +211,7 @@ const InfoItem = ({ icon: Icon, label, value, isLink, href }) => {
 
   return (
     <div className="flex items-start gap-3 rounded-xl border border-coffee-200 bg-coffee-100/50 p-3.5 transition hover:border-slate-200 dark:border-slate-800/80 dark:bg-slate-800/30 dark:hover:border-slate-700/80">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-coffee-50 text-blue-600 shadow-sm dark:bg-slate-800 dark:text-blue-400">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-coffee-50 text-blue-600 shadow-sm dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 dark:text-blue-400">
         <Icon size={17} />
       </div>
       <div className="min-w-0 flex-1">
@@ -229,7 +229,7 @@ const InfoItem = ({ icon: Icon, label, value, isLink, href }) => {
             <ExternalLink size={12} className="shrink-0" />
           </a>
         ) : (
-          <p className="mt-0.5 break-words text-sm font-semibold text-slate-800 dark:text-slate-200">
+          <p className="mt-0.5 break-words text-sm font-semibold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">
             {value}
           </p>
         )}
@@ -240,14 +240,14 @@ const InfoItem = ({ icon: Icon, label, value, isLink, href }) => {
 
 const ProfileSkeleton = () => (
   <div className="mx-auto max-w-5xl space-y-6 animate-pulse">
-    <div className="h-56 rounded-3xl bg-slate-200 dark:bg-slate-800" />
+    <div className="h-56 rounded-3xl bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200" />
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-      <div className="h-64 rounded-2xl bg-slate-200 dark:bg-slate-800 md:col-span-1" />
-      <div className="h-64 rounded-2xl bg-slate-200 dark:bg-slate-800 md:col-span-2" />
+      <div className="h-64 rounded-2xl bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 md:col-span-1" />
+      <div className="h-64 rounded-2xl bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 md:col-span-2" />
     </div>
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div className="h-48 rounded-2xl bg-slate-200 dark:bg-slate-800" />
-      <div className="h-48 rounded-2xl bg-slate-200 dark:bg-slate-800" />
+      <div className="h-48 rounded-2xl bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200" />
+      <div className="h-48 rounded-2xl bg-slate-200 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200" />
     </div>
   </div>
 );
@@ -608,10 +608,10 @@ const ProfileSettings = () => {
       : true);
 
   const inputClass =
-    'w-full rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800';
+    'w-full rounded-xl border border-slate-300 bg-coffee-50 px-3.5 py-2.5 text-sm text-coffee-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 dark:bg-slate-800/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200';
 
   const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300';
+    'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800';
 
   return (
     <DashboardLayout sidebarItems={sidebarItems} roleTitle={roleTitle}>
@@ -639,7 +639,7 @@ const ProfileSettings = () => {
                     type="button"
                     onClick={handleCancelEdit}
                     disabled={saving}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-coffee-200 bg-coffee-50 px-4 py-2 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-coffee-200 bg-coffee-50 px-4 py-2 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200"
                   >
                     <X size={15} />
                     Cancel
@@ -707,13 +707,13 @@ const ProfileSettings = () => {
           <ProfileSkeleton />
         ) : !isEditing ? (
           <div className="space-y-6">
-            <div className="relative overflow-hidden rounded-3xl border border-coffee-200/80 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 text-white shadow-xl shadow-slate-900/10 dark:border-slate-800 sm:p-8">
+            <div className="relative overflow-hidden rounded-3xl border border-coffee-200/80 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 text-white shadow-xl shadow-slate-900/10 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 sm:p-8">
               <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-blue-600/15 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-indigo-600/15 blur-3xl" />
 
               <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
                 <div className="relative group shrink-0 self-start sm:self-center">
-                  <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center overflow-hidden rounded-2xl border-2 border-white/20 bg-slate-800 text-3xl font-bold shadow-lg">
+                  <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center overflow-hidden rounded-2xl border-2 border-white/20 bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 text-3xl font-bold shadow-lg">
                     {profileImage ? (
                       <img
                         src={profileImage}
@@ -763,7 +763,7 @@ const ProfileSettings = () => {
                     </span>
                   </div>
 
-                  <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-300 truncate">
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300 pink:text-pink-800 truncate">
                     <Mail size={14} className="shrink-0 text-coffee-400" />
                     {userData?.email}
                   </p>
@@ -796,7 +796,7 @@ const ProfileSettings = () => {
                   <p className="text-xs font-semibold uppercase tracking-wider text-coffee-400">
                     About
                   </p>
-                  <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-200">
+                  <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-800 dark:text-slate-200 pink:text-pink-900">
                     {profileData.bio}
                   </p>
                 </div>
@@ -805,8 +805,8 @@ const ProfileSettings = () => {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               <div className="space-y-6 lg:col-span-5">
-                <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                  <div className="mb-5 flex items-center gap-2.5 border-b border-coffee-200 pb-4 dark:border-slate-800">
+                <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                  <div className="mb-5 flex items-center gap-2.5 border-b border-coffee-200 pb-4 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                       <User size={18} />
                     </div>
@@ -878,8 +878,8 @@ const ProfileSettings = () => {
                 </div>
 
                 {hasAnySocialLinks && (
-                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center gap-2.5 border-b border-coffee-200 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                    <div className="mb-4 flex items-center gap-2.5 border-b border-coffee-200 pb-3 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
                         <Globe size={18} />
                       </div>
@@ -897,7 +897,7 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.linkedin)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-blue-900/50 dark:hover:bg-blue-950/30 dark:hover:text-blue-300"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-blue-200 hover:bg-blue-50/50 hover:text-blue-700 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-slate-800/40 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 dark:hover:border-blue-900/50 dark:hover:bg-blue-950/30 dark:hover:text-blue-300"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Linkedin size={16} className="text-[#0A66C2] shrink-0" />
@@ -912,7 +912,7 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.github)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-slate-300 hover:bg-coffee-200 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-slate-300 hover:bg-coffee-200 hover:text-slate-900 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-slate-800/40 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 dark:hover:border-slate-300 dark:border-slate-700 pink:border-pink-400 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 dark:hover:text-white"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Github size={16} className="text-slate-900 dark:text-white shrink-0" />
@@ -927,7 +927,7 @@ const ProfileSettings = () => {
                           href={normalizeUrl(socialLinks.website)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-emerald-200 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-emerald-900/50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300"
+                          className="flex items-center justify-between rounded-xl border border-coffee-200 bg-coffee-100/70 p-3 text-xs font-semibold text-coffee-700 transition hover:border-emerald-200 hover:bg-emerald-50/50 hover:text-emerald-700 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-slate-800/40 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 dark:hover:border-emerald-900/50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-300"
                         >
                           <div className="flex items-center gap-2.5 truncate">
                             <Globe size={16} className="text-emerald-600 shrink-0" />
@@ -943,8 +943,8 @@ const ProfileSettings = () => {
 
               <div className="space-y-6 lg:col-span-7">
                 {hasExpertise && (
-                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
                           <Award size={18} />
@@ -972,8 +972,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasSkills && (
-                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                           <Sparkles size={18} />
@@ -999,8 +999,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasInterests && (
-                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
                           <Heart size={18} />
@@ -1026,8 +1026,8 @@ const ProfileSettings = () => {
                 )}
 
                 {hasGoals && (
-                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-800">
+                  <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
+                    <div className="mb-4 flex items-center justify-between border-b border-coffee-200 pb-3 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
                           <Target size={18} />
@@ -1061,7 +1061,7 @@ const ProfileSettings = () => {
                 )}
 
                 {isProfileEmpty && (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-coffee-50 p-8 text-center dark:border-slate-700 dark:bg-slate-900">
+                  <div className="rounded-2xl border border-dashed border-slate-300 bg-coffee-50 p-8 text-center dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 dark:bg-white dark:bg-slate-900 pink:bg-pink-50">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                       <Compass size={24} />
                     </div>
@@ -1090,8 +1090,8 @@ const ProfileSettings = () => {
           </div>
         ) : (
           <form id="profile-edit-form" onSubmit={handleSaveProfile} className="space-y-6">
-            <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-              <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
+            <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 sm:p-8">
+              <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                   <User size={19} />
                 </div>
@@ -1135,8 +1135,8 @@ const ProfileSettings = () => {
             </div>
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
                     {isInstructor ? <Briefcase size={19} /> : <GraduationCap size={19} />}
                   </div>
@@ -1260,8 +1260,8 @@ const ProfileSettings = () => {
             )}
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
                     <Sparkles size={19} />
                   </div>
@@ -1334,8 +1334,8 @@ const ProfileSettings = () => {
             )}
 
             {!isAdmin && (
-              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-800">
+              <div className="rounded-2xl border border-coffee-200/80 bg-coffee-50 p-6 shadow-sm dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 sm:p-8">
+                <div className="mb-6 flex items-center gap-3 border-b border-coffee-200 pb-4 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
                     <Globe size={19} />
                   </div>
@@ -1414,7 +1414,7 @@ const ProfileSettings = () => {
                 type="button"
                 onClick={handleCancelEdit}
                 disabled={saving}
-                className="rounded-xl border border-slate-300 bg-coffee-50 px-5 py-2.5 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="rounded-xl border border-slate-300 bg-coffee-50 px-5 py-2.5 text-xs font-semibold text-coffee-700 shadow-sm transition hover:bg-coffee-100 disabled:opacity-50 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 dark:hover:bg-slate-700"
               >
                 Cancel
               </button>
