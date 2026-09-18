@@ -1,181 +1,140 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   GraduationCap, 
   BookOpen, 
-  Users, 
-  Star,
-  Moon,
   Sparkles,
   CheckCircle2,
-  ShieldCheck,
-  Zap
 } from 'lucide-react';
 
 const AuthLayout = ({
   title,
   subtitle,
   children,
-  badgeText = 'Welcome Back',
+  badgeText = 'Welcome',
   badgeIcon: BadgeIcon = Sparkles,
   footerPromptText,
   footerActionText,
   footerActionLink,
 }) => {
-  const location = useLocation();
-  const isLogin = location.pathname === '/login';
-
   return (
-    <div className="h-screen w-full flex bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 text-slate-900 dark:text-slate-100 pink:text-pink-950 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 overflow-hidden">
-
-      <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden bg-white dark:bg-slate-900 pink:bg-pink-50 border-r border-slate-200 dark:border-slate-800 pink:border-pink-300">
-
+    <div className="min-h-screen w-full flex bg-[#070b14] text-slate-100 font-sans selection:bg-indigo-500/30 overflow-hidden">
+      
+     
+      <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden bg-[#0b101d] border-r border-slate-800/80">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vh] bg-gradient-to-br from-indigo-600/20 via-purple-600/10 to-transparent blur-[130px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vh] bg-gradient-to-tl from-blue-600/15 via-indigo-600/10 to-transparent blur-[130px] rounded-full" />
-          <div 
-            className="absolute inset-0 opacity-[0.025]" 
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0)`,
-              backgroundSize: '28px 28px'
-            }} 
-          />
+          <div className="absolute top-[-10%] left-[-10%] w-[45vw] h-[45vh] bg-indigo-600/20 blur-[130px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vh] bg-purple-600/20 blur-[130px] rounded-full" />
         </div>
         
-        <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 2xl:p-20 justify-between">
-
+        <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 justify-between">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2.5 group transition-transform hover:scale-[1.02]">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:rotate-12 transition-transform duration-300">
-                <GraduationCap size={20} />
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+                <GraduationCap size={22} />
               </div>
               <span className="font-bold text-2xl tracking-tight text-white">
-                Edu<span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Flow</span>
+                Learn<span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Sphere</span>
               </span>
             </Link>
             
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 pink:bg-pink-200/80 border border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300 pink:text-pink-800">
-              <Sparkles size={14} className="text-purple-400" />
-              <span>Next-Gen Cloud LMS</span>
-            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 border border-indigo-500/30 text-indigo-300">
+              <Sparkles size={13} />
+              Next-Gen LMS
+            </span>
           </div>
 
-          <div className="space-y-6 mt-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-              10,000+ Active Students & Instructors
+          <div className="space-y-6 my-auto max-w-lg">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              10,000+ Active Learners & Mentors
             </div>
 
-            <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-extrabold tracking-tight text-white leading-tight">
-              Unlock Your Potential with{' '}
-              <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
-                Interactive Learning
+            <h1 className="text-3xl xl:text-4xl 2xl:text-5xl font-black tracking-tight text-white leading-tight">
+              Empower Your Future with{' '}
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                World-Class Mentorship
               </span>
             </h1>
 
-            <p className="text-base xl:text-lg text-slate-600 dark:text-slate-400 pink:text-pink-600 leading-relaxed max-w-lg">
-              Connect directly with certified instructors, access 1,000+ interactive course lessons, and earn verified credentials on EduFlow LMS.
+            <p className="text-sm xl:text-base text-slate-300 leading-relaxed">
+              Connect with experienced instructors, track real-time learning progress, and earn verified credentials on LearnSphere.
             </p>
 
-            <div className="grid grid-cols-2 gap-4 pt-4">
+            <div className="grid grid-cols-2 gap-4 pt-2">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5">
                   <CheckCircle2 size={16} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm mb-0.5">Instant automated grading</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Get feedback on your assignments immediately.</p>
+                  <h3 className="font-bold text-white text-xs mb-0.5">Interactive Tracks</h3>
+                  <p className="text-[11px] text-slate-400">Hands-on modules with immediate progress tracking.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shrink-0 mt-0.5">
                   <BookOpen size={16} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm mb-0.5">Resume lectures anytime</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Seamless sync across all your devices.</p>
+                  <h3 className="font-bold text-white text-xs mb-0.5">Live Cohort Sessions</h3>
+                  <p className="text-[11px] text-slate-400">Engage directly with certified instructors.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 relative rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-slate-950/80 border border-slate-800/90 p-5 shadow-2xl backdrop-blur-xl overflow-hidden max-w-md">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                  <BookOpen size={20} />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white">Full-Stack Architecture</div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">Module 4 • Lesson 8 of 12</div>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
-                84% Complete
-              </span>
-            </div>
-            <div className="space-y-2 relative z-10">
-              <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 w-[84%] transition-all duration-1000" />
-              </div>
-            </div>
+          <div className="text-xs text-slate-500">
+            &copy; {new Date().getFullYear()} LearnSphere LMS. All rights reserved.
           </div>
-
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex flex-col relative bg-slate-50 dark:bg-slate-950 pink:bg-pink-100 overflow-hidden h-full">
+    
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-10 overflow-y-auto relative">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[20%] right-[-10%] w-[35vw] h-[35vh] bg-indigo-600/10 blur-[120px] rounded-full" />
+        </div>
 
-
-
-        <div className="flex-1 flex flex-col justify-center items-center p-6 lg:p-12 z-10 h-full overflow-y-auto custom-scrollbar">
-          
-          <div className="w-full max-w-[520px] bg-slate-100/50 dark:bg-slate-900/50 pink:bg-pink-100/50 backdrop-blur-sm rounded-3xl border border-slate-800/80 p-8 sm:p-10 shadow-2xl">
-            
-            <div className="flex flex-col items-center text-center mb-6">
-              {badgeText && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-5">
-                  <BadgeIcon size={14} />
-                  <span>{badgeText}</span>
-                </div>
-              )}
-              
-              <h2 className="text-2xl font-bold text-white mb-1.5 tracking-tight">
-                {title}
-              </h2>
-              
-              {subtitle && (
-                <p className="text-slate-600 dark:text-slate-400 pink:text-pink-600 text-xs">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-
-            <div className="w-full">
-              {children}
-            </div>
-            
-            {footerPromptText && footerActionLink && (
-              <div className="mt-6 text-center">
-                <p className="text-xs text-slate-600 dark:text-slate-400 pink:text-pink-600">
-                  {footerPromptText}{' '}
-                  <Link
-                    to={footerActionLink}
-                    className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
-                  >
-                    {footerActionText}
-                  </Link>
-                </p>
+        <div className="w-full max-w-[480px] relative z-10 bg-[#0d1424]/90 backdrop-blur-xl border border-slate-800/90 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/50">
+          <div className="flex flex-col items-center text-center mb-6">
+            {badgeText && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-3">
+                <BadgeIcon size={13} />
+                <span>{badgeText}</span>
               </div>
             )}
             
+            <h2 className="text-2xl font-black text-white tracking-tight">
+              {title}
+            </h2>
+            
+            {subtitle && (
+              <p className="text-slate-400 text-xs mt-1">
+                {subtitle}
+              </p>
+            )}
           </div>
+
+          <div className="w-full">
+            {children}
+          </div>
+          
+          {footerPromptText && footerActionLink && (
+            <div className="mt-6 text-center pt-4 border-t border-slate-800">
+              <p className="text-xs text-slate-400">
+                {footerPromptText}{' '}
+                <Link
+                  to={footerActionLink}
+                  className="font-bold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors"
+                >
+                  {footerActionText}
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
-
       </div>
-
     </div>
   );
 };

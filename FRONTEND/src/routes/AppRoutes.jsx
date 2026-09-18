@@ -8,29 +8,48 @@ import StudentDashboard from '../pages/dashboards/StudentDashboard';
 import InstructorDashboard from '../pages/dashboards/InstructorDashboard';
 import AdminDashboard from '../pages/dashboards/AdminDashboard';
 import ProfileSettings from '../pages/dashboards/ProfileSettings';
-import { getDashboardPath, useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
+import { getDashboardPath } from '../utils/auth';
 
-const LoadingScreen = () => <div className="flex h-screen items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
+const LoadingScreen = () => (
+  <div className="flex h-screen items-center justify-center bg-slate-50">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 const ProtectedRoute = ({ roles }) => {
-  const { user, loading } = useAuth();
+  const { user, lmsProfileMissing, loading } = useAuth();
+
   if (loading) return <LoadingScreen />;
-  if (!user) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to={getDashboardPath(user.role)} replace />;
+  if (lmsProfileMissing) return <Navigate to="/signup" replace />;
+  if (!user || !user.role) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to={getDashboardPath(user.role)} replace />;
+  }
+
   return <Outlet />;
 };
 
 const PublicOnlyRoute = () => {
-  const { user, loading } = useAuth();
+  const { user, lmsProfileMissing, loading } = useAuth();
+
   if (loading) return <LoadingScreen />;
-  if (user) return <Navigate to={getDashboardPath(user.role)} replace />;
+  if (user && user.role && !lmsProfileMissing) {
+    return <Navigate to={getDashboardPath(user.role)} replace />;
+  }
+
   return <Outlet />;
 };
 
 const HomeRoute = () => {
-  const { user, loading } = useAuth();
+  const { user, lmsProfileMissing, loading } = useAuth();
+
   if (loading) return <LoadingScreen />;
-  return user ? <Navigate to={getDashboardPath(user.role)} replace /> : <LandingPage />;
+  if (user && user.role && !lmsProfileMissing) {
+    return <Navigate to={getDashboardPath(user.role)} replace />;
+  }
+
+  return <LandingPage />;
 };
 
 const AppRoutes = () => {

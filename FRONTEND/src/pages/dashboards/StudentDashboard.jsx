@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, ArrowRight, ChevronLeft, ChevronRight, BarChart, Cloud, Palette, Shield, Briefcase, Star, Home, BookOpen, PlayCircle, FileText, Calendar, User, TrendingUp, Clock, Book } from 'lucide-react';
+import { Home, BookOpen, Calendar, Activity, Star, BarChart, Cloud, Palette, Shield, Briefcase, ArrowRight, Sparkles, Clock, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import studentService from '../../services/student.service';
@@ -11,28 +11,42 @@ const StudentDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+    if (!user || user.role !== 'Student') {
+      return;
+    }
+
     const fetchProfile = async () => {
       try {
         setLoading(true);
         const data = await studentService.getStudentProfile();
-        setProfileData(data?.data || data);
+        if (isMounted) {
+          setProfileData(data?.profile || data?.data || data);
+          setError(null);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load profile');
+        if (isMounted) {
+          setError(err.message || 'Failed to load student profile');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     fetchProfile();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   const sidebarItems = [
     { label: 'Overview', path: '/student/dashboard', icon: Home },
     { category: 'Learning' },
-    { label: 'My Courses', path: '#', icon: '📖' },
-    { label: 'Learning', path: '#', icon: '🎓' },
-    { category: 'Engagement' },
-    { label: 'Assignments', path: '#', icon: '📝' },
-    { label: 'Calendar', path: '#', icon: '📅' },
+    { label: 'My Courses', path: '#', icon: BookOpen },
+    { label: 'Assignments', path: '#', icon: Activity },
+    { label: 'Calendar', path: '#', icon: Calendar },
     { category: 'Account' },
     { label: 'Profile', path: '/student/profile', icon: '👤' },
   ];
@@ -40,267 +54,221 @@ const StudentDashboard = () => {
   if (loading) {
     return (
       <DashboardLayout sidebarItems={sidebarItems} roleTitle="STUDENT">
-        <div className="flex h-64 items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="flex h-72 items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-3 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin"></div>
+            <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading student workspace...</p>
+          </div>
         </div>
-      
-</DashboardLayout>
+      </DashboardLayout>
     );
   }
 
   const courses = profileData?.courses || profileData?.enrolledCourses || [];
   const stats = profileData?.stats || {};
 
+  const getInitials = (name) => {
+    return name
+      ? name
+          .split(' ')
+          .filter(Boolean)
+          .map((n) => n[0])
+          .join('')
+          .substring(0, 2)
+          .toUpperCase()
+      : 'ST';
+  };
+
+  const recommendedCourses = [
+    { title: 'Data Science Fundamentals', category: 'Data Science', desc: 'Build a strong foundation in modern data analysis.', icon: BarChart },
+    { title: 'Cloud Computing Architecture', category: 'Cloud', desc: 'Learn AWS and Azure deployment workflows.', icon: Cloud },
+    { title: 'UI/UX Design Systems', category: 'Design', desc: 'Craft beautiful interactive user interfaces.', icon: Palette },
+    { title: 'Cybersecurity Essentials', category: 'Security', desc: 'Master modern defensive security practices.', icon: Shield },
+    { title: 'Technical Leadership', category: 'Business', desc: 'Sharpen communication and team leadership skills.', icon: Briefcase },
+  ];
+
   return (
     <DashboardLayout sidebarItems={sidebarItems} roleTitle="STUDENT">
-      
-      <div className="bg-blue-600 rounded-2xl p-6 md:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between shadow-lg dark:shadow-none shadow-blue-500/20">
-        <div>
-          <div className="text-blue-200 text-xs font-bold tracking-widest uppercase mb-2">STUDENT PORTAL</div>
-          <h2 className="text-3xl font-bold mb-2">Welcome, {user?.name || 'Student'} 👋</h2>
-          <p className="text-blue-100 text-sm">Ready to continue your learning journey today?</p>
+     
+      <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+        <div className="space-y-2 max-w-xl z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+            <Sparkles size={13} className="text-amber-300" />
+            Student Portal
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Welcome back, {user?.name || 'Learner'} 👋
+          </h2>
+          <p className="text-sm text-white/80 leading-relaxed">
+            Ready to continue your personalized learning journey today?
+          </p>
         </div>
 
-        {(stats.enrolled || stats.completed) && (
-          <div className="flex gap-6 mt-6 md:mt-0 bg-blue-700/50 p-4 rounded-xl border border-blue-500/30">
-            {stats.enrolled !== undefined && (
-              <div className="text-center">
-                <div className="text-2xl font-bold">{stats.enrolled}</div>
-                <div className="text-[10px] text-blue-200 uppercase tracking-wider">Courses</div>
-              </div>
-            )}
-            {stats.completed !== undefined && (
-              <div className="text-center">
-                <div className="text-2xl font-bold">{stats.completed}</div>
-                <div className="text-[10px] text-blue-200 uppercase tracking-wider">Completed</div>
-              </div>
-            )}
+       
+        <div className="flex items-center gap-4 sm:gap-6 bg-white/10 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-white/20 z-10">
+          <div className="text-center px-3">
+            <div className="text-2xl sm:text-3xl font-black">{stats.enrolled ?? courses.length}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Courses</div>
           </div>
-        )}
+          <div className="w-px h-8 bg-white/20"></div>
+          <div className="text-center px-3">
+            <div className="text-2xl sm:text-3xl font-black text-emerald-300">{stats.completed ?? 0}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Completed</div>
+          </div>
+        </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 text-sm">
+        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs sm:text-sm animate-fade-in">
           {error}
         </div>
       )}
 
+    
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">My Learning</h3>
-              <button className="text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors">
-                View all courses &rarr;
-              </button>
+      
+        <div className="lg:col-span-2 lms-glass-card p-6 space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-[var(--lms-text-primary)]">My Enrolled Courses</h3>
+              <p className="text-xs text-[var(--lms-text-secondary)]">Continue where you left off</p>
             </div>
+            <button className="text-xs font-semibold text-[var(--lms-accent)] hover:underline flex items-center gap-1">
+              Browse Catalog <ArrowRight size={13} />
+            </button>
+          </div>
 
-            {courses.length > 0 ? (
-              <div className="space-y-4">
-                {courses.map((course, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50 hover:border-slate-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 hover:shadow-sm dark:shadow-none transition-all">
-                    <div className="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                      <BookOpen size={24} />
+          {courses.length > 0 ? (
+            <div className="space-y-3">
+              {courses.map((course, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:border-[var(--lms-border-hover)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center shrink-0">
+                      <BookOpen size={20} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 truncate">{course.title || course.name || 'Course Name'}</h4>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-[var(--lms-text-primary)]">
+                        {course.title || course.name || 'Core Learning Track'}
+                      </h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-blue-500 rounded-full" 
+                        <div className="w-24 h-1.5 bg-[var(--lms-surface)] rounded-full overflow-hidden border border-[var(--lms-border)]">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
                             style={{ width: `${course.progress || 0}%` }}
                           />
                         </div>
-                        <span className="text-xs font-medium text-slate-500 dark:text-coffee-400">{course.progress || 0}%</span>
+                        <span className="text-[10px] text-[var(--lms-text-muted)] font-semibold">
+                          {course.progress || 0}% Complete
+                        </span>
                       </div>
                     </div>
-                    <button className="px-4 py-2 bg-blue-50 text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap">
-                      Continue
-                    </button>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10 px-4">
-                <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-700 dark:text-slate-300 pink:text-pink-800">
-                  <BookOpen size={32} />
+                  <button className="lms-btn-primary text-xs py-1.5 px-3 self-end sm:self-center">
+                    Continue Lesson
+                  </button>
                 </div>
-                <h4 className="font-semibold text-slate-700 dark:text-slate-700 dark:text-slate-300 pink:text-pink-800 mb-1">No courses found</h4>
-                <p className="text-sm text-slate-500 dark:text-coffee-400">You are not enrolled in any active courses.</p>
+              ))}
+            </div>
+          ) : (
+            <div className="py-10 px-4 text-center rounded-2xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border-subtle)]">
+              <div className="w-12 h-12 rounded-2xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center mx-auto mb-3">
+                <BookOpen size={22} />
               </div>
+              <h4 className="text-sm font-bold text-[var(--lms-text-primary)] mb-1">No active courses enrolled</h4>
+              <p className="text-xs text-[var(--lms-text-secondary)] max-w-sm mx-auto">
+                Explore the course catalog to enroll in top interactive tracks and start learning.
+              </p>
+            </div>
+          )}
+        </div>
+
+      
+        <div className="lms-glass-card p-6 text-center space-y-4">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 text-white flex items-center justify-center text-2xl font-black mx-auto shadow-lg shadow-indigo-500/20 overflow-hidden border-2 border-white/20">
+            {profileData?.user?.profileImage || profileData?.profile?.profileImage ? (
+              <img
+                src={profileData?.user?.profileImage || profileData?.profile?.profileImage}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              getInitials(user?.name)
             )}
           </div>
-        </div>
 
-        <div className="space-y-6">
-          <div className="bg-white dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 shadow-sm dark:shadow-none flex flex-col items-center text-center">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center text-3xl font-bold shadow-lg dark:shadow-none shadow-blue-500/30 mb-4 overflow-hidden">
-              {profileData?.user?.profileImage || profileData?.profile?.profileImage ? (
-                <img src={profileData?.user?.profileImage || profileData?.profile?.profileImage} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                 user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : 'ST'
-              )}
+          <div>
+            <h4 className="text-base font-bold text-[var(--lms-text-primary)]">{user?.name}</h4>
+            <p className="text-xs text-[var(--lms-text-muted)] font-medium mt-0.5">{user?.email}</p>
+            <span className="lms-badge mt-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
+              Student Scholar
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--lms-border)]">
+            <div className="p-3 rounded-xl bg-[var(--lms-surface-subtle)]">
+              <div className="text-base font-bold text-[var(--lms-text-primary)]">{courses.length}</div>
+              <div className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">Enrolled</div>
             </div>
-            
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white">{user?.name}</h3>
-            <p className="text-sm text-slate-500 dark:text-coffee-400 font-medium mb-6">{user?.email}</p>
-
-            <div className="w-full grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800/50 pt-6">
-              <div className="text-center">
-                <div className="text-xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{courses.length}</div>
-                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Enrolled</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-slate-800 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">{stats.completed || 0}</div>
-                <div className="text-[10px] uppercase font-bold text-coffee-400 tracking-wider mt-1">Certificates</div>
-              </div>
+            <div className="p-3 rounded-xl bg-[var(--lms-surface-subtle)]">
+              <div className="text-base font-bold text-emerald-500">{stats.completed || 0}</div>
+              <div className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">Certificates</div>
             </div>
           </div>
         </div>
       </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Upcoming Assignments */}
-        <div className="bg-coffee-50 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-coffee-200 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-          <div className="flex justify-between items-start mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                <Calendar size={20} />
-              </div>
-              <div>
-                <h3 className="font-bold text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">Upcoming Assignments</h3>
-                <p className="text-xs text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600">Stay on top of your deadlines</p>
-              </div>
+
+ 
+      <div className="lms-glass-card p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/25 text-amber-500 flex items-center justify-center">
+              <Star size={16} />
             </div>
-            <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-              View all <ArrowRight size={14} />
-            </a>
-          </div>
-          <div className="text-center py-6">
-            <div className="w-12 h-12 bg-coffee-100 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-full flex items-center justify-center mx-auto mb-3 text-coffee-400 dark:text-slate-500">
-              <BookOpen size={20} />
+            <div>
+              <h3 className="text-sm font-bold text-[var(--lms-text-primary)]">Recommended For You</h3>
+              <p className="text-xs text-[var(--lms-text-secondary)]">Curated courses tailored to your skills and goals</p>
             </div>
-            <h4 className="font-bold text-sm text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">No upcoming assignments</h4>
-            <p className="text-xs text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1">You're all caught up! New assignments will appear here.</p>
           </div>
+          <button className="text-xs font-semibold text-[var(--lms-accent)] hover:underline flex items-center gap-1">
+            View all <ArrowRight size={13} />
+          </button>
         </div>
 
-        {/* Recent Activity */}
-        <div className="bg-coffee-50 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-coffee-200 dark:border-slate-800/50 shadow-sm dark:shadow-none">
-          <div className="flex justify-between items-start mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                <Activity size={20} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          {recommendedCourses.map((c, idx) => {
+            const Icon = c.icon;
+            return (
+              <div
+                key={idx}
+                className="p-4 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:border-[var(--lms-border-hover)] hover:-translate-y-0.5 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center mb-3">
+                    <Icon size={18} />
+                  </div>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)]">
+                    {c.category}
+                  </span>
+                  <h4 className="text-xs font-bold text-[var(--lms-text-primary)] mt-2 leading-tight">
+                    {c.title}
+                  </h4>
+                  <p className="text-[11px] text-[var(--lms-text-secondary)] mt-1 line-clamp-2">
+                    {c.desc}
+                  </p>
+                </div>
+                <button className="mt-4 w-full text-[11px] font-semibold text-[var(--lms-accent)] hover:underline text-left">
+                  Explore Course &rarr;
+                </button>
               </div>
-              <div>
-                <h3 className="font-bold text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">Recent Activity</h3>
-                <p className="text-xs text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600">Your latest learning activity</p>
-              </div>
-            </div>
-            <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-              View all <ArrowRight size={14} />
-            </a>
-          </div>
-          <div className="text-center py-6">
-            <div className="w-12 h-12 bg-coffee-100 dark:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 rounded-full flex items-center justify-center mx-auto mb-3 text-coffee-400 dark:text-slate-500">
-              <FileText size={20} />
-            </div>
-            <h4 className="font-bold text-sm text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">No recent activity</h4>
-            <p className="text-xs text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1">Start learning to see your activity here.</p>
-          </div>
+            );
+          })}
         </div>
       </div>
-
-      {/* Recommended Courses */}
-      <div className="bg-coffee-50 dark:bg-white dark:bg-slate-900 pink:bg-pink-50 rounded-2xl p-6 border border-coffee-200 dark:border-slate-800/50 shadow-sm dark:shadow-none mt-6 mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center">
-              <Star size={20} />
-            </div>
-            <div>
-              <h3 className="font-bold text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900">Recommended Courses</h3>
-              <p className="text-xs text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600">Based on your interests</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 ml-auto sm:ml-0">
-            <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-              View all <ArrowRight size={14} />
-            </a>
-            <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-full border border-coffee-200 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 flex items-center justify-center text-coffee-600 hover:bg-coffee-100 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 transition">
-                <ChevronLeft size={16} />
-              </button>
-              <button className="w-8 h-8 rounded-full border border-coffee-200 dark:border-slate-300 dark:border-slate-700 pink:border-pink-400 flex items-center justify-center text-coffee-600 hover:bg-coffee-100 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 dark:hover:bg-slate-100 dark:bg-slate-800 pink:bg-pink-200 transition">
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-          {/* Card 1 */}
-          <div className="border border-coffee-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 rounded-xl p-4 flex items-start gap-3 hover:border-blue-300 transition cursor-pointer bg-white dark:bg-slate-800/50">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-              <BarChart size={24} />
-            </div>
-            <div>
-              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Data Science</span>
-              <h4 className="font-bold text-[11px] text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mt-1.5 leading-tight">Data Science Fundamentals</h4>
-              <p className="text-[10px] text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1 leading-tight">Build a strong foundation in data science.</p>
-            </div>
-          </div>
-          
-          {/* Card 2 */}
-          <div className="border border-coffee-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 rounded-xl p-4 flex items-start gap-3 hover:border-blue-300 transition cursor-pointer bg-white dark:bg-slate-800/50">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-              <Cloud size={24} />
-            </div>
-            <div>
-              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Cloud Computing</span>
-              <h4 className="font-bold text-[11px] text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mt-1.5 leading-tight">Cloud Computing Basics</h4>
-              <p className="text-[10px] text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1 leading-tight">Learn cloud concepts with real-world examples.</p>
-            </div>
-          </div>
-          
-          {/* Card 3 */}
-          <div className="border border-coffee-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 rounded-xl p-4 flex items-start gap-3 hover:border-purple-300 transition cursor-pointer bg-white dark:bg-slate-800/50">
-            <div className="w-12 h-12 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center shrink-0">
-              <Palette size={24} />
-            </div>
-            <div>
-              <span className="text-[9px] font-bold text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-400 px-1.5 py-0.5 rounded">Design</span>
-              <h4 className="font-bold text-[11px] text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mt-1.5 leading-tight">UI/UX Design</h4>
-              <p className="text-[10px] text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1 leading-tight">Create amazing user experiences.</p>
-            </div>
-          </div>
-          
-          {/* Card 4 */}
-          <div className="border border-coffee-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 rounded-xl p-4 flex items-start gap-3 hover:border-emerald-300 transition cursor-pointer bg-white dark:bg-slate-800/50">
-            <div className="w-12 h-12 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <Shield size={24} />
-            </div>
-            <div>
-              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Security</span>
-              <h4 className="font-bold text-[11px] text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mt-1.5 leading-tight">Cybersecurity Essentials</h4>
-              <p className="text-[10px] text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1 leading-tight">Understand modern security practices.</p>
-            </div>
-          </div>
-          
-          {/* Card 5 */}
-          <div className="border border-coffee-200 dark:border-slate-200 dark:border-slate-800 pink:border-pink-300 rounded-xl p-4 flex items-start gap-3 hover:border-blue-300 transition cursor-pointer bg-white dark:bg-slate-800/50">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-              <Briefcase size={24} />
-            </div>
-            <div>
-              <span className="text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded">Business</span>
-              <h4 className="font-bold text-[11px] text-coffee-900 dark:text-slate-800 dark:text-slate-200 pink:text-pink-900 mt-1.5 leading-tight">Business Communication</h4>
-              <p className="text-[10px] text-coffee-500 dark:text-slate-600 dark:text-slate-400 pink:text-pink-600 mt-1 leading-tight">Improve professional communication skills.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-</DashboardLayout>
+    </DashboardLayout>
   );
 };
 
