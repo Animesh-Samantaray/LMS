@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    
     firebaseUid: {
       type: String,
       required: true,
@@ -44,6 +43,31 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "inactive", "suspended"],
       default: "active",
       index: true,
+    },
+
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    twoFactorOtp: {
+      type: String,
+      default: null,
+    },
+
+    twoFactorOtpExpiresAt: {
+      type: Date,
+      default: null,
+    },
+
+    twoFactorOtpSentAt: {
+      type: Date,
+      default: null,
+    },
+
+    twoFactorOtpAttempts: {
+      type: Number,
+      default: 0,
     },
   },
   {
