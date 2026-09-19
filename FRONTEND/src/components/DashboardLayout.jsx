@@ -11,10 +11,15 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
   const location = useLocation();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeItemLabel, setActiveItemLabel] = useState("");
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true');
+  const toggleCollapse = () => { 
+    setIsCollapsed(!isCollapsed); 
+    localStorage.setItem('sidebarCollapsed', !isCollapsed); 
+  };
   const themeDropdownRef = useRef(null);
 
-  
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target)) {
@@ -48,7 +53,7 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
   const themeOptions = [
     { id: 'dark', label: 'Dark Theme', icon: Moon, desc: 'Deep glassmorphism' },
     { id: 'light', label: 'Light Theme', icon: Sun, desc: 'Crisp soft glass' },
-    { id: 'pink', label: 'Pink Theme', icon: Sparkles, desc: 'Rose blush glass' },
+    { id: 'cream', label: 'Cream Theme', icon: Sparkles, desc: 'Warm pastel glass' },
   ];
 
   const profilePath =
@@ -60,7 +65,7 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
 
   return (
     <div className="h-screen overflow-hidden flex bg-lms-bg text-lms-text font-sans selection:bg-indigo-500/30">
-     
+      
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm animate-fade-in"
@@ -68,29 +73,36 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
         />
       )}
 
-      
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 lms-glass-sidebar transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:flex lg:flex-col ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 lms-glass-sidebar transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:flex lg:flex-col ${
+          mobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
+        } ${isCollapsed && !mobileMenuOpen ? 'w-20' : 'w-64'}`}
       >
-       
-        <div className="h-16 flex items-center justify-between px-6 border-b border-[var(--lms-border)]">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-[var(--lms-border)] overflow-hidden">
+          <div 
+            onClick={() => {
+               if (window.innerWidth >= 1024) toggleCollapse();
+               else navigate('/');
+            }}
+            className={`flex items-center gap-3 group cursor-pointer w-full ${isCollapsed && !mobileMenuOpen ? 'justify-center' : ''}`}
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/25 shrink-0 group-hover:scale-105 transition-transform">
               LS
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-sm leading-tight text-[var(--lms-text-primary)]">
-                LearnSphere
-              </span>
-              <span className="text-[10px] text-[var(--lms-text-muted)] font-medium tracking-wide">
-                LMS Platform
-              </span>
-            </div>
-          </Link>
+            {(!isCollapsed || mobileMenuOpen) && (
+              <div className="flex flex-col min-w-0 overflow-hidden transition-all duration-300 opacity-100">
+                <span className="font-bold text-sm leading-tight text-[var(--lms-text-primary)] truncate">
+                  LearnSphere
+                </span>
+                <span className="text-[10px] text-[var(--lms-text-muted)] font-medium tracking-wide truncate">
+                  LMS Platform
+                </span>
+              </div>
+            )}
+          </div>
           <button
-            className="lg:hidden text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] p-1 rounded-lg"
+            className="lg:hidden text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] p-1 rounded-lg shrink-0"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close sidebar"
           >
@@ -98,9 +110,8 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
           </button>
         </div>
 
-      
-        <div className="flex-1 overflow-y-auto py-5 px-3.5 space-y-1">
-          <div className="text-[10px] font-bold text-[var(--lms-text-muted)] mb-3 px-3 tracking-widest uppercase">
+        <div className="flex-1 py-5 px-3 space-y-1 overflow-visible relative">
+          <div className={`text-[10px] font-bold text-[var(--lms-text-muted)] px-3 tracking-widest uppercase transition-all duration-300 whitespace-nowrap overflow-hidden ${isCollapsed && !mobileMenuOpen ? 'opacity-0 h-0 my-0' : 'opacity-100 mb-3'}`}>
             {roleTitle} PORTAL
           </div>
 
@@ -110,45 +121,57 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
                 return (
                   <div
                     key={`cat-${index}`}
-                    className="text-[10px] font-bold text-[var(--lms-text-muted)] mt-5 mb-2 px-3 tracking-wider uppercase"
+                    className={`text-[10px] font-bold text-[var(--lms-text-muted)] px-3 tracking-wider uppercase transition-all duration-300 whitespace-nowrap overflow-hidden ${isCollapsed && !mobileMenuOpen ? 'opacity-0 h-0 my-0 py-0' : 'opacity-100 mt-5 mb-2'}`}
                   >
                     {item.category}
                   </div>
                 );
               }
 
-              const isActive =
-                item.path && item.path !== '#'
-                  ? location.pathname === item.path
-                  : false;
+              const isPathActive = item.path && item.path !== '#' && location.pathname === item.path;
+              const isActive = activeItemLabel ? activeItemLabel === item.label : isPathActive;
+              const isOnlyIcon = isCollapsed && !mobileMenuOpen;
 
               return (
                 <Link
                   key={item.label}
                   to={item.path !== '#' ? item.path : '#'}
                   onClick={(e) => {
+                    setActiveItemLabel(item.label);
                     if (item.path === '#') e.preventDefault();
                     if (mobileMenuOpen) setMobileMenuOpen(false);
                   }}
-                  className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                  className={`group relative flex items-center ${isOnlyIcon ? 'justify-center px-0' : 'px-3 gap-3'} py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     isActive
                       ? 'bg-[var(--lms-accent)] text-white shadow-md shadow-indigo-500/25'
                       : 'text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-subtle)]'
                   }`}
                 >
-                  {typeof item.icon === 'string' ? (
-                    <span className="text-base w-4 flex items-center justify-center select-none">
-                      {item.icon}
-                    </span>
-                  ) : (
-                    <item.icon
-                      size={17}
-                      className={isActive ? 'text-white' : 'text-[var(--lms-text-muted)] group-hover:text-[var(--lms-accent)] transition-colors'}
-                    />
+                  <div className="flex items-center justify-center shrink-0 w-5">
+                    {typeof item.icon === 'string' ? (
+                      <span className="text-base flex items-center justify-center select-none">
+                        {item.icon}
+                      </span>
+                    ) : (
+                      <item.icon
+                        size={17}
+                        className={isActive ? 'text-white' : 'text-[var(--lms-text-muted)] group-hover:text-[var(--lms-accent)] transition-colors'}
+                      />
+                    )}
+                  </div>
+                  
+                  {!isOnlyIcon && (
+                    <span className="whitespace-nowrap truncate flex-1">{item.label}</span>
                   )}
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-auto w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                  
+                  {!isOnlyIcon && item.badge && (
+                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shrink-0"></span>
+                  )}
+
+                  {isOnlyIcon && (
+                    <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#1e293b] dark:bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-[999] shadow-2xl translate-x-[-10px] group-hover:translate-x-0 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-1 before:border-[5px] before:border-transparent before:border-r-slate-700">
+                      {item.label}
+                    </div>
                   )}
                 </Link>
               );
@@ -156,11 +179,10 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
           </nav>
         </div>
 
-        {/* User Mini Profile in Sidebar */}
-        <div className="p-3 border-t border-[var(--lms-border)]">
+        <div className="p-3 border-t border-[var(--lms-border)] relative">
           <Link
             to={profilePath}
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
+            className={`group flex items-center ${isCollapsed && !mobileMenuOpen ? 'justify-center p-1' : 'gap-3 p-2'} rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors relative`}
           >
             <div className="w-8 h-8 rounded-lg bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
               {user?.profileImage ? (
@@ -173,21 +195,28 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
                 getInitials(user?.name)
               )}
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-[var(--lms-text-primary)] truncate">
+            
+            {(!isCollapsed || mobileMenuOpen) && (
+              <div className="min-w-0 flex-1 whitespace-nowrap overflow-hidden">
+                <p className="text-xs font-semibold text-[var(--lms-text-primary)] truncate">
+                  {user?.name || 'My Account'}
+                </p>
+                <p className="text-[10px] text-[var(--lms-text-muted)] truncate capitalize">
+                  {user?.role || 'User'}
+                </p>
+              </div>
+            )}
+            
+            {isCollapsed && !mobileMenuOpen && (
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#1e293b] dark:bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-[999] shadow-2xl translate-x-[-10px] group-hover:translate-x-0 before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-1 before:border-[5px] before:border-transparent before:border-r-slate-700">
                 {user?.name || 'My Account'}
-              </p>
-              <p className="text-[10px] text-[var(--lms-text-muted)] truncate capitalize">
-                {user?.role || 'User'}
-              </p>
-            </div>
+              </div>
+            )}
           </Link>
         </div>
       </aside>
 
-      {/* Main App Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header */}
         <header className="h-16 lms-glass-header flex items-center justify-between px-4 sm:px-6 z-20">
           <div className="flex items-center gap-3">
             <button
@@ -207,15 +236,12 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
             </div>
           </div>
 
-          {/* Right Header Controls */}
           <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Role Badge */}
             <span className="lms-badge hidden md:inline-flex">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
               {user?.role || 'Learner'}
             </span>
 
-            {/* Theme Selector Dropdown */}
             <div className="relative" ref={themeDropdownRef}>
               <button
                 onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
@@ -224,8 +250,8 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
               >
                 {theme === 'dark' ? (
                   <Moon size={15} className="text-indigo-400" />
-                ) : theme === 'pink' ? (
-                  <Sparkles size={15} className="text-pink-500" />
+                ) : theme === 'cream' ? (
+                  <Sparkles size={15} className="text-amber-500" />
                 ) : (
                   <Sun size={15} className="text-amber-500" />
                 )}
@@ -269,7 +295,6 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
               )}
             </div>
 
-            {/* Notifications */}
             <button
               className="relative p-2 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
               title="Notifications"
@@ -278,10 +303,8 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
             </button>
 
-            {/* Divider */}
             <div className="h-6 w-px bg-[var(--lms-border)] mx-0.5"></div>
 
-            {/* Profile Link */}
             <Link
               to={profilePath}
               className="flex items-center gap-2 group p-1 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
@@ -300,7 +323,6 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
               </div>
             </Link>
 
-            {/* Logout Button */}
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/20 text-xs font-semibold transition-all"
@@ -312,7 +334,6 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
           </div>
         </header>
 
-        {/* Scrollable Main Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
             {children}

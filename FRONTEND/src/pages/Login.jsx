@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { getDashboardPath } from '../utils/auth';
 
 const Login = () => {
-  const { user, loading: authLoading, lmsProfileMissing } = useAuth();
+  const { user, loading: authLoading, lmsProfileMissing, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ const Login = () => {
       setActionLoading(true);
       console.log('[Login:Email] Authenticating with Firebase...');
       await login(formData.email.trim(), formData.password);
-      // AuthContext.onAuthStateChanged will automatically fetch /api/auth/me and set user.role
+      await refreshUser();
     } catch (err) {
       console.error('[Login:Email] Firebase auth error:', err);
       setActionLoading(false);
@@ -80,7 +80,7 @@ const Login = () => {
       setProviderLoading(true);
       console.log(`[Login:${providerName}] Opening popup...`);
       await providerFn();
-      // AuthContext.onAuthStateChanged will automatically fetch /api/auth/me and set user.role
+      await refreshUser();
     } catch (err) {
       console.error(`[Login:${providerName}] Popup error:`, err);
       setProviderLoading(false);

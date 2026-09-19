@@ -101,7 +101,7 @@ const OtpInput = ({ length = 6, value = '', onChange, disabled = false, hasError
               ? 'bg-red-500/10 border-2 border-red-500/80 text-red-300 shadow-sm shadow-red-500/20'
               : digit
               ? 'bg-indigo-600/10 border-2 border-indigo-500 text-indigo-300 shadow-md shadow-indigo-500/20 scale-[1.03]'
-              : 'bg-slate-950/70 border border-slate-200 dark:border-slate-800 pink:border-pink-300 text-slate-900 dark:text-slate-100 pink:text-pink-950 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 focus:scale-[1.04]'
+              : 'bg-slate-950/70 border border-slate-200 dark:border-slate-800 cream:border-pink-300 text-slate-900 dark:text-slate-100 cream:text-pink-950 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 focus:scale-[1.04]'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
         />
       ))}

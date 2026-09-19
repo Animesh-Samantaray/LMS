@@ -256,30 +256,52 @@ const ProfileSettings = () => {
 
   const roleTitle = isAdmin ? 'ADMIN' : isInstructor ? 'MENTOR' : 'STUDENT';
 
-  const sidebarItems = isAdmin
+            const sidebarItems = isAdmin
     ? [
         { label: 'Overview', path: '/admin/dashboard', icon: Home },
         { category: 'Administration' },
-        { label: 'Users', path: '#', icon: Users },
-        { label: 'Courses', path: '#', icon: BookOpen },
+        { label: 'Approve Users', path: '#', icon: '\u2705' },
+        { label: 'Manage Users', path: '#', icon: '\uD83D\uDC65' },
+        { label: 'Manager List', path: '#', icon: '\uD83D\uDCCB' },
+        { label: 'Groups', path: '#', icon: '\uD83C\uDFD8\uFE0F' },
+        { category: 'Management' },
+        { label: 'Approve Courses', path: '#', icon: '\uD83C\uDF93' },
+        { label: 'Assign Courses', path: '#', icon: '\u2795' },
+        { label: 'Grace Timers', path: '#', icon: '\u23F1\uFE0F' },
+        { category: 'Engagement' },
+        { label: 'Group messages', path: '#', icon: '\uD83D\uDCAC' },
+        { label: 'Support Queries', path: '#', icon: '\u2753' },
+        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
         { category: 'Account' },
-        { label: 'Settings', path: '/admin/profile', icon: Settings },
+        { label: 'Settings', path: '/admin/profile', icon: '\u2699\uFE0F' }
       ]
     : isInstructor
     ? [
         { label: 'Overview', path: '/instructor/dashboard', icon: Home },
-        { category: 'Management' },
-        { label: 'My Students', path: '#', icon: Users },
-        { label: 'Courses', path: '#', icon: BookOpen },
+        { category: 'Manager' },
+        { label: 'View Students', path: '#', icon: '\uD83D\uDC65' },
+        { label: 'Course Progress', path: '#', icon: '\uD83D\uDCD6' },
+        { label: 'Exam Progress', path: '#', icon: '\uD83D\uDCDD' },
+        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
         { category: 'Account' },
-        { label: 'Profile', path: '/instructor/profile', icon: User },
-      ]
+        { label: 'Settings', path: '/instructor/profile', icon: '\u2699\uFE0F' }
+  ]
     : [
         { label: 'Overview', path: '/student/dashboard', icon: Home },
         { category: 'Learning' },
-        { label: 'My Courses', path: '#', icon: BookOpen },
+        { label: 'My Courses', path: '#', icon: '\uD83D\uDCD6' },
+        { label: 'Mock Test', path: '#', icon: '\uD83D\uDCC4' },
+        { label: 'Practice Arena', path: '#', icon: '\uD83C\uDFAF' },
+        { label: 'Exams', path: '#', icon: '\uD83D\uDCDD' },
+        { label: 'Weekly Contests', path: '#', icon: '\uD83C\uDFC6' },
+        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
+        { category: 'Engagement' },
+        { label: 'My Groups', path: '#', icon: '\uD83D\uDC65' },
+        { label: 'My Reviews', path: '#', icon: '\u2B50' },
+        { label: 'Messages', path: '#', icon: '\uD83D\uDCAC' },
+        { label: 'Calendar', path: '#', icon: '\uD83D\uDCC5' },
         { category: 'Account' },
-        { label: 'Profile', path: '/student/profile', icon: User },
+        { label: 'Settings', path: '/student/profile', icon: '\u2699\uFE0F' }
       ];
 
   const fetchProfile = async () => {
