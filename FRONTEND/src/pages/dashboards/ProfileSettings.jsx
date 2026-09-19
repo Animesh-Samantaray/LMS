@@ -567,7 +567,7 @@ const ProfileSettings = () => {
   return (
     <DashboardLayout sidebarItems={sidebarItems} roleTitle={roleTitle}>
       <div className="space-y-6">
-        {/* Top Header Bar with Action Controls */}
+        
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -630,7 +630,7 @@ const ProfileSettings = () => {
           )}
         </div>
 
-        {/* Status Alerts */}
+        
         {error && (
           <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs sm:text-sm flex items-center justify-between gap-2 animate-fade-in">
             <div className="flex items-center gap-2">
@@ -658,14 +658,14 @@ const ProfileSettings = () => {
         {loading ? (
           <ProfileSkeleton />
         ) : !isEditing ? (
-          /* ==========================================
-             VIEW MODE
-             ========================================== */
+          
+
+
           <div className="space-y-6">
-            {/* Unified Glass Profile Hero Banner */}
+            
             <div className="lms-glass-hero p-6 sm:p-8 text-white relative">
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 z-10 relative">
-                {/* Avatar with Upload Badge */}
+                
                 <div className="relative group shrink-0 self-start sm:self-center">
                   <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white/20 border-2 border-white/30 backdrop-blur-xl flex items-center justify-center text-3xl font-black text-white shadow-xl overflow-hidden">
                     {profileImage ? (
@@ -692,7 +692,7 @@ const ProfileSettings = () => {
                   </label>
                 </div>
 
-                {/* Metadata */}
+                
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight truncate">
@@ -732,7 +732,7 @@ const ProfileSettings = () => {
                 </div>
               </div>
 
-              {/* Bio snippet */}
+              
               {profileData?.bio && (
                 <div className="mt-6 pt-5 border-t border-white/15 z-10 relative">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-white/60 mb-1">About</p>
@@ -743,9 +743,9 @@ const ProfileSettings = () => {
               )}
             </div>
 
-            {/* Split Details Cards */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Personal Contact & Info */}
+              
               <div className="lms-glass-card p-6 space-y-4 md:col-span-1">
                 <h3 className="text-sm font-bold text-[var(--lms-text-primary)] flex items-center gap-2">
                   <User size={16} className="text-[var(--lms-accent)]" />
@@ -765,7 +765,7 @@ const ProfileSettings = () => {
                   )}
                 </div>
 
-                {/* Social Links */}
+                
                 {(hasLinkedIn || hasGithub || hasWebsite) && (
                   <div className="pt-4 border-t border-[var(--lms-border)] space-y-2.5">
                     <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--lms-text-muted)]">
@@ -804,14 +804,14 @@ const ProfileSettings = () => {
                 )}
               </div>
 
-              {/* Professional & Skills Section */}
+              
               <div className="lms-glass-card p-6 space-y-5 md:col-span-2">
                 <h3 className="text-sm font-bold text-[var(--lms-text-primary)] flex items-center gap-2">
                   <Award size={16} className="text-[var(--lms-accent)]" />
                   {isInstructor ? 'Professional Background & Expertise' : 'Learning Goals & Skills'}
                 </h3>
 
-                {/* Instructor Credentials */}
+                
                 {isInstructor && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {profileData?.qualification && (
@@ -823,12 +823,12 @@ const ProfileSettings = () => {
                   </div>
                 )}
 
-                {/* Student Education */}
+                
                 {isStudent && profileData?.education && (
                   <InfoItem icon={GraduationCap} label="Highest Education" value={profileData.education} />
                 )}
 
-                {/* Expertise Tags (Instructor) */}
+                
                 {isInstructor && (
                   <div className="space-y-2 pt-2 border-t border-[var(--lms-border)]">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--lms-text-muted)]">
@@ -846,7 +846,7 @@ const ProfileSettings = () => {
                   </div>
                 )}
 
-                {/* Skills Tags (Student) */}
+                
                 {isStudent && (
                   <>
                     <div className="space-y-2 pt-2 border-t border-[var(--lms-border)]">
@@ -884,9 +884,9 @@ const ProfileSettings = () => {
             </div>
           </div>
         ) : (
-          /* ==========================================
-             EDIT MODE
-             ========================================== */
+          
+
+
           <form id="profile-edit-form" onSubmit={handleSaveProfile} className="space-y-6">
             <div className="lms-glass-card p-6 sm:p-8 space-y-6">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)] border-b border-[var(--lms-border)] pb-3">
@@ -948,7 +948,7 @@ const ProfileSettings = () => {
                 </div>
               </div>
 
-              {/* Bio */}
+              
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[var(--lms-text-secondary)] mb-1.5">
                   Bio / About You
@@ -963,7 +963,7 @@ const ProfileSettings = () => {
                 />
               </div>
 
-              {/* Instructor Specific Fields */}
+              
               {isInstructor && (
                 <div className="pt-4 border-t border-[var(--lms-border)] space-y-4">
                   <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">
@@ -1021,7 +1021,7 @@ const ProfileSettings = () => {
                 </div>
               )}
 
-              {/* Student Specific Fields */}
+              
               {isStudent && (
                 <div className="pt-4 border-t border-[var(--lms-border)] space-y-4">
                   <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">
@@ -1071,7 +1071,7 @@ const ProfileSettings = () => {
                 </div>
               )}
 
-              {/* Social Links */}
+              
               <div className="pt-4 border-t border-[var(--lms-border)] space-y-4">
                 <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">
                   Social & Portfolio Links

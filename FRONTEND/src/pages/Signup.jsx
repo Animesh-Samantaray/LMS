@@ -31,7 +31,7 @@ const Signup = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [providerLoading, setProviderLoading] = useState(false);
 
-  // Automatically navigate once MongoDB LMS user is resolved in AuthContext
+  
   useEffect(() => {
     if (!authLoading && user?.role) {
       console.log('[Signup] Authenticated LMS user detected, navigating to dashboard:', user.role);
