@@ -47,13 +47,23 @@ const AdminDashboard = () => {
     };
   }, [user]);
 
-  const sidebarItems = [
+        const sidebarItems = [
     { label: 'Overview', path: '/admin/dashboard', icon: Home },
     { category: 'Administration' },
-    { label: 'Users', path: '#', icon: Users },
-    { label: 'Courses', path: '#', icon: BookOpen },
+    { label: 'Approve Users', path: '#', icon: '\u2705' },
+    { label: 'Manage Users', path: '#', icon: '\uD83D\uDC65' },
+    { label: 'Manager List', path: '#', icon: '\uD83D\uDCCB' },
+    { label: 'Groups', path: '#', icon: '\uD83C\uDFD8\uFE0F' },
+    { category: 'Management' },
+    { label: 'Approve Courses', path: '#', icon: '\uD83C\uDF93' },
+    { label: 'Assign Courses', path: '#', icon: '\u2795' },
+    { label: 'Grace Timers', path: '#', icon: '\u23F1\uFE0F' },
+    { category: 'Engagement' },
+    { label: 'Group messages', path: '#', icon: '\uD83D\uDCAC' },
+    { label: 'Support Queries', path: '#', icon: '\u2753' },
+    { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
     { category: 'Account' },
-    { label: 'Settings', path: '/admin/profile', icon: Settings },
+    { label: 'Settings', path: '/admin/profile', icon: '\u2699\uFE0F' }
   ];
 
   if (loading) {

@@ -16,9 +16,20 @@ const authMiddleware = async (req, res, next) => {
 
     const decodedToken = await getAuth().verifyIdToken(idToken);
 
-    const user = await User.findOne({
+    let user = await User.findOne({
       firebaseUid: decodedToken.uid,
     });
+
+    // Fallback for older accounts that don't have firebaseUid yet
+    if (!user && decodedToken.email) {
+      user = await User.findOne({
+        email: decodedToken.email.toLowerCase().trim(),
+      });
+      if (user) {
+        user.firebaseUid = decodedToken.uid;
+        await user.save();
+      }
+    }
 
     if (!user) {
       return res.status(404).json({
@@ -65,9 +76,19 @@ export const optionalAuth = async (req, res, next) => {
 
     const decodedToken = await getAuth().verifyIdToken(idToken);
 
-    const user = await User.findOne({
+    let user = await User.findOne({
       firebaseUid: decodedToken.uid,
     });
+
+    if (!user && decodedToken.email) {
+      user = await User.findOne({
+        email: decodedToken.email.toLowerCase().trim(),
+      });
+      if (user) {
+        user.firebaseUid = decodedToken.uid;
+        await user.save();
+      }
+    }
 
     if (user && user.accountStatus === "active") {
       req.user = {

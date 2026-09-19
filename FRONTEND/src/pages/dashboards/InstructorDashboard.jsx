@@ -41,16 +41,15 @@ const InstructorDashboard = () => {
     };
   }, [user]);
 
-  const sidebarItems = [
+        const sidebarItems = [
     { label: 'Overview', path: '/instructor/dashboard', icon: Home },
-    { category: 'Management' },
-    { label: 'My Students', path: '#', icon: Users },
-    { label: 'Courses', path: '#', icon: BookOpen },
-    { category: 'Engagement' },
-    { label: 'Sessions', path: '#', icon: Calendar },
-    { label: 'Analytics', path: '#', icon: BarChart2 },
+    { category: 'Manager' },
+    { label: 'View Students', path: '#', icon: '\uD83D\uDC65' },
+    { label: 'Course Progress', path: '#', icon: '\uD83D\uDCD6' },
+    { label: 'Exam Progress', path: '#', icon: '\uD83D\uDCDD' },
+    { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
     { category: 'Account' },
-    { label: 'Profile', path: '/instructor/profile', icon: User },
+    { label: 'Settings', path: '/instructor/profile', icon: '\u2699\uFE0F' }
   ];
 
   if (loading) {

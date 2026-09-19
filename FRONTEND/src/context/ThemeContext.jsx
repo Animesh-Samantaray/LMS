@@ -17,12 +17,12 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('dark', 'light', 'theme-pink');
+    root.classList.remove('dark', 'light', 'theme-cream');
 
     if (theme === 'dark') {
       root.classList.add('dark');
-    } else if (theme === 'pink') {
-      root.classList.add('theme-pink');
+    } else if (theme === 'cream') {
+      root.classList.add('theme-cream');
     } else {
       root.classList.add('light');
     }

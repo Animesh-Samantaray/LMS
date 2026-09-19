@@ -66,5 +66,5 @@ export default {
     },
   },
   plugins: [
-    plugin(function({ addVariant }) { addVariant('pink', '.theme-pink &') }),],
+    plugin(function({ addVariant }) { addVariant('cream', '.theme-cream &') }),],
 }

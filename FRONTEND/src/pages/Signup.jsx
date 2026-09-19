@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, GraduationCap, Laptop, Shield, Github } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2, Loader2, Sparkles, GraduationCap, Laptop, Shield, Github, Users } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import { getAuthErrorMessage, googleLogin, githubLogin, register, verifyEmail } from '../services/firebaseAuth.service';
@@ -12,6 +12,7 @@ import api from '../services/api.service';
 const Signup = () => {
   const { user, firebaseUser, loading: authLoading, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState(location.state?.alert || '');
   const [successMsg, setSuccessMsg] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [providerLoading, setProviderLoading] = useState(false);
@@ -57,6 +58,9 @@ const Signup = () => {
   const handleRoleSelect = (role) => {
     setFormData((prev) => ({ ...prev, role }));
     if (errorMsg) setErrorMsg('');
+    setTimeout(() => {
+      setStep(2);
+    }, 150);
   };
 
   const handleEmailSubmit = async (e) => {
@@ -223,33 +227,46 @@ const Signup = () => {
           <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-2">
             Select Your Role
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {['Student', 'Instructor', 'Admin'].map((r) => {
-              const Icon = r === 'Admin' ? Shield : r === 'Instructor' ? Laptop : GraduationCap;
-              const isSelected = formData.role === r;
+          <div className="grid grid-cols-1 gap-4">
+            {[
+              { id: 'Student', title: 'Student Account', desc: 'Access courses, exams, and track your progress.', icon: GraduationCap },
+              { id: 'Instructor', title: 'Instructor Account', desc: 'Create and manage courses, assessments, and students.', icon: Users },
+              { id: 'Admin', title: 'Admin Account', desc: 'Manage the entire platform and system settings.', icon: Shield }
+            ].map((r) => {
+              const Icon = r.icon;
+              const isSelected = formData.role === r.id;
               return (
                 <button
-                  key={r}
+                  key={r.id}
                   type="button"
-                  onClick={() => handleRoleSelect(r)}
-                  className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all duration-200 ${
+                  onClick={() => handleRoleSelect(r.id)}
+                  className={`relative flex items-center gap-5 p-4 rounded-xl border transition-all duration-200 text-left overflow-hidden ${
                     isSelected
-                      ? 'bg-indigo-600/25 border-indigo-500 text-white shadow-md shadow-indigo-500/25 ring-1 ring-indigo-500/50'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900/80 hover:text-white'
+                      ? 'bg-indigo-500/10 border-indigo-500 ring-1 ring-indigo-500/50'
+                      : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
                   }`}
                 >
-                  <Icon size={24} className={isSelected ? 'text-indigo-400' : 'text-slate-400'} />
-                  <span className="text-sm font-semibold">{r}</span>
+                  <div className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${
+                    isSelected 
+                      ? 'bg-indigo-500 text-white' 
+                      : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 '
+                  }`}>
+                    <Icon size={22} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-bold text-sm mb-1 ${isSelected ? 'text-indigo-400' : 'text-slate-200'}`}>{r.title}</h3>
+                    <p className="text-[12px] text-slate-400 leading-snug">{r.desc}</p>
+                  </div>
+                  {isSelected && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500">
+                      <CheckCircle2 size={18} />
+                    </div>
+                  )}
                 </button>
               );
             })}
           </div>
-          <button
-            onClick={() => setStep(2)}
-            className="w-full flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all"
-          >
-            Continue <ArrowRight size={16} />
-          </button>
+          
         </div>
       ) : (
         <div className="space-y-5 animate-fade-in">
