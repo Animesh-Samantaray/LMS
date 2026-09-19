@@ -3,9 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import TwoFactorToggle from './TwoFactorToggle';
 
 const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
-  const { user, logout } = useAuth();
+  const { user, setUser, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -236,7 +237,9 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <TwoFactorToggle user={user} setUser={setUser} />
+
             <span className="lms-badge hidden md:inline-flex">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
               {user?.role || 'Learner'}

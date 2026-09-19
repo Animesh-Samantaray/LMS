@@ -18,22 +18,41 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [firebaseUser, setFirebaseUser] = useState(null);
+
   const [lmsProfileMissing, setLmsProfileMissing] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
-  /**
-   * Fetch MongoDB LMS user using the currently authenticated
-   * Firebase user.
-   *
-   * IMPORTANT:
-   * AuthContext is the ONLY place that automatically calls /me.
-   */
-  const fetchLmsUser = useCallback(async (fbUser) => {
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+
+  const [twoFactorVerified, setTwoFactorVerified] = useState(false);
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const loadAuthState = useCallback(async (fbUser) => {
     if (!fbUser) {
       setUser(null);
       setFirebaseUser(null);
       setLmsProfileMissing(false);
+      setTwoFactorRequired(false);
+      setTwoFactorVerified(false);
       setLoading(false);
+
       return null;
     }
 
@@ -42,11 +61,59 @@ export const AuthProvider = ({ children }) => {
 
     try {
       console.log(
-        "[AuthContext] Fetching LMS user | UID:",
-        fbUser.uid,
-        "| Email:",
-        fbUser.email
+        `[AuthContext] Firebase user detected | UID: ${fbUser.uid} | Email: ${fbUser.email}`
       );
+
+      
+
+
+
+      console.log("[AuthContext] Checking 2FA...");
+
+      const twoFactorResponse = await api.post(
+        "/api/auth/2fa/check"
+      );
+
+      const isTwoFactorRequired =
+        twoFactorResponse.data?.twoFactorRequired === true;
+
+      console.log(
+        "[AuthContext] 2FA required:",
+        isTwoFactorRequired
+      );
+
+      if (isTwoFactorRequired) {
+        
+
+
+
+        setUser(null);
+        setFirebaseUser(fbUser);
+        setLmsProfileMissing(false);
+        setTwoFactorRequired(true);
+        setTwoFactorVerified(false);
+        setLoading(false);
+
+        return null;
+      }
+
+      
+
+
+      setTwoFactorRequired(false);
+
+      
+
+
+
+
+      setTwoFactorVerified(true);
+
+      
+
+
+
+      console.log("[AuthContext] Fetching LMS user...");
 
       const response = await api.get("/api/auth/me");
 
@@ -64,7 +131,16 @@ export const AuthProvider = ({ children }) => {
       };
 
       setUser(mergedUser);
+      setFirebaseUser(fbUser);
       setLmsProfileMissing(false);
+
+      
+
+
+
+      if (!dbUser.twoFactorEnabled) {
+        setTwoFactorVerified(false);
+      }
 
       console.log(
         "[AuthContext] LMS user loaded | Role:",
@@ -77,35 +153,60 @@ export const AuthProvider = ({ children }) => {
         error?.response?.status ??
         error?.status;
 
+      const code =
+        error?.response?.data?.code;
+
       const message =
         error?.response?.data?.message ??
         error?.message ??
         "Unknown error";
 
       console.log(
-        "[AuthContext] /api/auth/me failed | Status:",
-        status,
-        "| Message:",
-        message
+        "[AuthContext] Authentication flow failed",
+        {
+          status,
+          code,
+          message,
+        }
       );
 
-      /**
-       * Firebase authentication succeeded,
-       * but MongoDB LMS account does not exist.
-       *
-       * This is NOT a Firebase logout condition.
-       */
+      
+
+
+
       if (status === 404) {
         setUser(null);
         setFirebaseUser(fbUser);
         setLmsProfileMissing(true);
+        setTwoFactorRequired(false);
+        setTwoFactorVerified(false);
 
         return null;
       }
 
-      /**
-       * Account exists but is inactive/suspended.
-       */
+      
+
+
+
+
+
+
+      if (
+        status === 403 &&
+        code === "TWO_FACTOR_REQUIRED"
+      ) {
+        setUser(null);
+        setFirebaseUser(fbUser);
+        setLmsProfileMissing(false);
+        setTwoFactorRequired(true);
+        setTwoFactorVerified(false);
+
+        return null;
+      }
+
+      
+
+
       if (status === 403) {
         setUser({
           ...fbUser,
@@ -116,18 +217,20 @@ export const AuthProvider = ({ children }) => {
 
         setFirebaseUser(fbUser);
         setLmsProfileMissing(false);
+        setTwoFactorRequired(false);
+        setTwoFactorVerified(false);
 
         return null;
       }
 
-      /**
-       * Network/server/authentication error.
-       * Keep Firebase user available but don't pretend
-       * that the LMS account was successfully loaded.
-       */
+      
+
+
       setUser(null);
       setFirebaseUser(fbUser);
       setLmsProfileMissing(false);
+      setTwoFactorRequired(false);
+      setTwoFactorVerified(false);
 
       return null;
     } finally {
@@ -135,32 +238,43 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  /**
-   * Firebase authentication listener.
-   *
-   * This is the single source of truth for authentication state.
-   */
+  
+
+
+
+
+
+
+
+
   useEffect(() => {
     let mounted = true;
 
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
-      if (!mounted) return;
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (fbUser) => {
+        if (!mounted) return;
 
-      await fetchLmsUser(fbUser);
-    });
+        console.log(
+          "[AuthContext] Firebase auth state changed:",
+          fbUser ? fbUser.email : "logged out"
+        );
+
+        await loadAuthState(fbUser);
+      }
+    );
 
     return () => {
       mounted = false;
       unsubscribe();
     };
-  }, [fetchLmsUser]);
+  }, [loadAuthState]);
 
-  /**
-   * Manually refresh the MongoDB LMS user.
-   *
-   * Useful immediately after successful registration,
-   * profile update, role/profile creation, etc.
-   */
+  
+
+
+
+
   const refreshUser = useCallback(async () => {
     const currentFirebaseUser = auth.currentUser;
 
@@ -168,31 +282,61 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setFirebaseUser(null);
       setLmsProfileMissing(false);
+      setTwoFactorRequired(false);
+      setTwoFactorVerified(false);
+      setLoading(false);
+
       return null;
     }
 
-    return await fetchLmsUser(currentFirebaseUser);
-  }, [fetchLmsUser]);
+    return await loadAuthState(currentFirebaseUser);
+  }, [loadAuthState]);
 
-  /**
-   * Logout from Firebase.
-   *
-   * Firebase auth state listener will automatically
-   * clear the LMS state as well.
-   */
+  
+
+
+
+
+
   const logout = useCallback(async () => {
     try {
+      
+
+
+      try {
+        await api.post("/api/auth/logout");
+      } catch (error) {
+        console.warn(
+          "[AuthContext] Backend logout failed:",
+          error?.message
+        );
+      }
+
+      
+
+
       await signOut(auth);
+
+      setUser(null);
+      setFirebaseUser(null);
+      setLmsProfileMissing(false);
+      setTwoFactorRequired(false);
+      setTwoFactorVerified(false);
     } catch (error) {
-      console.error("[AuthContext] Logout failed:", error);
+      console.error(
+        "[AuthContext] Logout failed:",
+        error
+      );
+
       throw error;
     }
   }, []);
 
   const isAuthenticated = Boolean(
     user &&
-    user.role &&
-    !lmsProfileMissing
+      user.role &&
+      !lmsProfileMissing &&
+      (!user.twoFactorEnabled || twoFactorVerified)
   );
 
   return (
@@ -212,6 +356,12 @@ export const AuthProvider = ({ children }) => {
         refreshUser,
 
         logout,
+
+        twoFactorRequired,
+        setTwoFactorRequired,
+
+        twoFactorVerified,
+        setTwoFactorVerified,
       }}
     >
       {children}
