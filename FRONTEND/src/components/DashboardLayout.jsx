@@ -138,19 +138,12 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
             className={`flex items-center gap-3 group cursor-pointer w-full ${isCollapsed && !mobileMenuOpen ? 'justify-center' : ''}`}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-500/25 shrink-0 group-hover:scale-105 transition-transform">
-              LS
-            </div>
-            {(!isCollapsed || mobileMenuOpen) && (
-              <div className="flex flex-col min-w-0 overflow-hidden transition-all duration-300 opacity-100">
-                <span className="font-bold text-sm leading-tight text-[var(--lms-text-primary)] truncate">
-                  LearnSphere
-                </span>
-                <span className="text-[10px] text-[var(--lms-text-muted)] font-medium tracking-wide truncate">
-                  LMS Platform
-                </span>
-              </div>
-            )}
+              <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[32px] object-contain shrink-0" />
+              {(!isCollapsed || mobileMenuOpen) && (
+                <div className="flex flex-col min-w-0 overflow-hidden transition-all duration-300 opacity-100 justify-center">
+                  <span className="text-xl font-extrabold text-[var(--lms-text-primary)] tracking-tight ml-1">LMS</span>
+                </div>
+              )}
           </div>
           <button
             className="lg:hidden text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] p-1 rounded-lg shrink-0"
