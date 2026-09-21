@@ -43,9 +43,10 @@ const InstructorDashboard = () => {
 
   const sidebarItems = [
     { label: 'Overview', path: '/instructor/dashboard', icon: Home },
-    { category: 'Manager' },
+    { category: 'Learning' },
+    { label: 'All Courses', path: '/courses', icon: BookOpen },
     { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
-    { label: 'Create Course', path: '/instructor/courses/create', icon: BookOpen },
+    { category: 'Manager' },
     { label: 'View Students', path: '#', icon: Users },
     { label: 'Course Progress', path: '#', icon: BarChart2 },
     { label: 'Certificates', path: '#', icon: Sparkles },

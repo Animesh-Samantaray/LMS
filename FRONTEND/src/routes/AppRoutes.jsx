@@ -8,6 +8,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import VerifyTwoFactor from "../pages/VerifyTwoFactor";
 
 import StudentDashboard from "../pages/dashboards/StudentDashboard";
+import StudentMyCourses from "../pages/dashboards/student/StudentMyCourses";
 import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import CategoryManagement from "../pages/dashboards/admin/CategoryManagement";
@@ -225,12 +226,21 @@ const AppRoutes = () => {
         />
 
         <Route
+          path="/student/courses"
+          element={<CourseList />}
+        />
+
+        <Route
+          path="/student/courses/my"
+          element={<StudentMyCourses />}
+        />
+
+        <Route
           path="/student/profile"
           element={<ProfileSettings />}
         />
       </Route>
 
-      
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
         <Route
           path="/instructor/dashboard"
@@ -239,6 +249,11 @@ const AppRoutes = () => {
         
         <Route
           path="/instructor/courses"
+          element={<MyCourses />}
+        />
+
+        <Route
+          path="/instructor/courses/my"
           element={<MyCourses />}
         />
         

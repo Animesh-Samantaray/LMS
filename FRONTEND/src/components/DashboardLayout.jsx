@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
 
-const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
+const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashboard" }) => {
   const { user, setUser, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
@@ -56,6 +56,56 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
     { id: 'light', label: 'Light Theme', icon: Sun, desc: 'Crisp soft glass' },
     { id: 'cream', label: 'Cream Theme', icon: Sparkles, desc: 'Warm pastel glass' },
   ];
+
+  const effectiveRoleTitle =
+    roleTitle ||
+    (user?.role === 'Admin' ? 'ADMIN' : user?.role === 'Instructor' ? 'MENTOR' : 'STUDENT');
+
+  const defaultSidebarItems =
+    user?.role === 'Admin'
+      ? [
+          { label: 'Overview', path: '/admin/dashboard', icon: Home },
+          { category: 'Administration' },
+          { label: 'Manage Users', path: '#', icon: Users },
+          { category: 'Management' },
+          { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
+          { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+          { label: 'Certificates', path: '#', icon: Sparkles },
+          { category: 'Account' },
+          { label: 'Settings', path: '/admin/profile', icon: Settings }
+        ]
+      : user?.role === 'Instructor'
+      ? [
+          { label: 'Overview', path: '/instructor/dashboard', icon: Home },
+          { category: 'Learning' },
+          { label: 'All Courses', path: '/courses', icon: BookOpen },
+          { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
+          { category: 'Manager' },
+          { label: 'View Students', path: '#', icon: Users },
+          { label: 'Certificates', path: '#', icon: Sparkles },
+          { category: 'Account' },
+          { label: 'Settings', path: '/instructor/profile', icon: UserIcon }
+        ]
+      : [
+          { label: 'Overview', path: '/student/dashboard', icon: Home },
+          { category: 'Learning' },
+          { label: 'All Courses', path: '/courses', icon: BookOpen },
+          { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
+          { label: 'Mock Test', path: '#', icon: '📄' },
+          { label: 'Practice Arena', path: '#', icon: '🎯' },
+          { label: 'Exams', path: '#', icon: '📝' },
+          { label: 'Weekly Contests', path: '#', icon: '🏆' },
+          { label: 'Certificates', path: '#', icon: '🎖️' },
+          { category: 'Engagement' },
+          { label: 'My Groups', path: '#', icon: '👥' },
+          { label: 'My Reviews', path: '#', icon: '⭐' },
+          { label: 'Messages', path: '#', icon: '💬' },
+          { label: 'Calendar', path: '#', icon: '📅' },
+          { category: 'Account' },
+          { label: 'Settings', path: '/student/profile', icon: Settings }
+        ];
+
+  const effectiveSidebarItems = sidebarItems && sidebarItems.length > 0 ? sidebarItems : defaultSidebarItems;
 
   const profilePath =
     user?.role === 'Admin'
@@ -113,11 +163,11 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
 
         <div className="flex-1 py-5 px-3 space-y-1 overflow-visible relative">
           <div className={`text-[10px] font-bold text-[var(--lms-text-muted)] px-3 tracking-widest uppercase transition-all duration-300 whitespace-nowrap overflow-hidden ${isCollapsed && !mobileMenuOpen ? 'opacity-0 h-0 my-0' : 'opacity-100 mb-3'}`}>
-            {roleTitle} PORTAL
+            {effectiveRoleTitle} PORTAL
           </div>
 
           <nav className="space-y-1">
-            {sidebarItems.map((item, index) => {
+            {effectiveSidebarItems.map((item, index) => {
               if (item.category) {
                 return (
                   <div
@@ -229,10 +279,10 @@ const DashboardLayout = ({ children, sidebarItems = [], roleTitle }) => {
             </button>
             <div className="hidden sm:block">
               <div className="text-[10px] font-bold text-[var(--lms-accent)] uppercase tracking-widest leading-none mb-1">
-                {roleTitle} PORTAL
+                {effectiveRoleTitle} PORTAL
               </div>
               <h1 className="text-lg font-bold text-[var(--lms-text-primary)] leading-tight">
-                Dashboard
+                {pageTitle}
               </h1>
             </div>
           </div>
