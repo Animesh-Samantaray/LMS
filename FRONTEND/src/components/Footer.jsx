@@ -1,74 +1,69 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Github, Twitter, Linkedin, Youtube, Heart } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Globe } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className="bg-slate-50 pt-16 pb-8 border-t border-gray-200">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="footer-grid">
-          <div>
-            <Link to="/" className="navbar-logo" style={{ marginBottom: '1.25rem' }}>
-              <div className="navbar-logo-icon">
-                <GraduationCap size={22} />
-              </div>
-              <span>Edu<span className="text-gradient">Flow</span></span>
-            </Link>
-            <p style={{ maxWidth: '320px', fontSize: '0.92rem', lineHeight: '1.6' }}>
-              Empowering global learning through modern, cloud-native LMS tools for students, instructors, and forward-thinking institutions.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="footer-col-title">Platform</h4>
-            <ul className="footer-links">
-              <li><Link to="/" className="footer-link">Overview</Link></li>
-              <li><a href="#features" className="footer-link">Features</a></li>
-              <li><a href="#courses" className="footer-link">Course Catalog</a></li>
-              <li><a href="#analytics" className="footer-link">Analytics Dashboard</a></li>
-              <li><Link to="/login" className="footer-link">Student Portal</Link></li>
-              <li><Link to="/login" className="footer-link">Instructor Portal</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="footer-col-title">Popular Domains</h4>
-            <ul className="footer-links">
-              <li><a href="#courses" className="footer-link">Software Engineering</a></li>
-              <li><a href="#courses" className="footer-link">Artificial Intelligence</a></li>
-              <li><a href="#courses" className="footer-link">Data Science & Analytics</a></li>
-              <li><a href="#courses" className="footer-link">UI/UX Design</a></li>
-              <li><a href="#courses" className="footer-link">Cloud Computing & DevOps</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="footer-col-title">Connect With Us</h4>
-            <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
-              Have questions? Reach out to our 24/7 academic support team.
-            </p>
-            <div style={{ display: 'flex', gap: '0.85rem', marginTop: '1rem' }}>
-              <a href="#" className="btn btn-secondary" style={{ padding: '0.6rem', borderRadius: '50%' }} aria-label="GitHub">
-                <Github size={18} />
-              </a>
-              <a href="#" className="btn btn-secondary" style={{ padding: '0.6rem', borderRadius: '50%' }} aria-label="Twitter">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="btn btn-secondary" style={{ padding: '0.6rem', borderRadius: '50%' }} aria-label="LinkedIn">
-                <Linkedin size={18} />
-              </a>
-              <a href="#" className="btn btn-secondary" style={{ padding: '0.6rem', borderRadius: '50%' }} aria-label="YouTube">
-                <Youtube size={18} />
-              </a>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              <Link to="/" className="flex items-center gap-1">
+                <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+                <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
+              </Link>
+              <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+                SHNOOR LMS platform, built specifically for education centers which are dedicated to teaching and involve learners.
+              </p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
+                <a key={i} href="#" className="w-9 h-9 rounded bg-white shadow-sm flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
+                  <Icon size={16} />
+                </a>
+              ))}
             </div>
           </div>
+  
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Company</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-500">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">About us</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Contact us</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">News and Blogs</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Library</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Career</a></li>
+            </ul>
+          </div>
+  
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Community</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-500">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Documentation</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Faq</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Forum</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Sitemap</a></li>
+            </ul>
+          </div>
+  
+          <div>
+            <h4 className="font-bold text-gray-900 mb-4">Teaching</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-500">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Become a teacher</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">How to guide</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
+            </ul>
+          </div>
         </div>
-
-        <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} EduFlow LMS. All rights reserved.</p>
-          <p style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            Designed with <Heart size={15} color="#ef4444" fill="#ef4444" /> for modern learning.
-          </p>
+  
+        <div className="flex flex-col lg:flex-row items-center justify-between pt-8 border-t border-gray-200 gap-4">
+          <p className="text-gray-500 text-sm">Copyrights &copy; {new Date().getFullYear()} SHNOOR LMS. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-gray-500">
+            <a href="#" className="flex items-center gap-1 hover:text-gray-900"><Globe size={14}/> Language</a>
+            <a href="#" className="hover:text-gray-900">Terms of use</a>
+            <a href="#" className="hover:text-gray-900">Privacy policy</a>
+          </div>
         </div>
       </div>
     </footer>

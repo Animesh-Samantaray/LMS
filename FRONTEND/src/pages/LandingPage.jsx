@@ -5,10 +5,13 @@ import {
   Clock, Video, Search, ChevronDown, CheckCircle2,
   TrendingUp, Laptop, PenTool, PieChart, Shield, GraduationCap,
   LayoutGrid, Mail, CheckCircle, Heart, Bookmark, Facebook, Instagram, Twitter, Linkedin,
-  Atom, Figma, Apple, PlayCircle, Globe
+  Atom, Figma, Apple, PlayCircle, Globe, MoreHorizontal, User, Settings,
+  LifeBuoy, FileText, ToggleLeft, CloudDownload, Puzzle, Clipboard
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import CountdownBanner from '../components/CountdownBanner';
+import Footer from '../components/Footer';
 
 const LandingNavbar = () => {
   const { user, isLoggedIn } = useAuth();
@@ -49,24 +52,315 @@ const LandingNavbar = () => {
     <header className={`w-full bg-white fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${scrolled ? 'shadow-md' : 'border-b border-gray-100'} ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
       <div className="container mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between">
         <div className="flex items-center gap-4 lg:gap-8">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center text-white">
-              <GraduationCap size={20} />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">Edu<span className="text-gray-900">Flow</span></span>
+          <Link to="/" className="flex items-center gap-1">
+            <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+            <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
           </Link>
-          <button className="hidden lg:flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-md font-semibold text-sm hover:bg-blue-100 transition-colors">
-            <LayoutGrid size={16} />
-            Category
-          </button>
+          <div className="relative group hidden lg:block">
+            <button className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-md font-semibold text-sm hover:bg-blue-100 transition-colors cursor-default">
+              <LayoutGrid size={16} />
+              Category
+            </button>
+            
+            <div className="absolute top-full left-0 pt-2 w-64 hidden group-hover:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                <div className="relative group/dev px-5 py-2.5 hover:bg-blue-50 flex items-center justify-between cursor-pointer text-gray-700 hover:text-blue-600 font-medium text-sm transition-colors">
+                  <span>Development</span>
+                  <MoreHorizontal size={16} className="text-gray-400 group-hover/dev:text-blue-500" />
+                  
+                  <div className="absolute top-0 left-full pl-2 w-[280px] hidden group-hover/dev:block z-50">
+                    <div className="bg-white rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 py-3">
+                      <div className="relative group/web px-5 py-2.5 bg-blue-50 flex items-center justify-between cursor-pointer text-blue-600 font-medium text-sm">
+                        <span>Web Development</span>
+                        <MoreHorizontal size={16} className="text-blue-500" />
+                        
+                        <div className="absolute top-0 left-full pl-2 w-48 hidden group-hover/web:block z-50">
+                          <div className="bg-white rounded-lg shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 py-3">
+                            {['CSS', 'JavaScript', 'Angular', 'PHP', 'HTML', 'React'].map((item, idx) => (
+                              <div key={idx} className="px-5 py-2.5 hover:bg-gray-50 hover:text-blue-600 cursor-pointer text-gray-600 font-medium text-sm transition-colors">{item}</div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      {['Data Science', 'Mobile Development', 'Programing Language', 'Software Testing', 'Software Engineering', 'Software Development Tools'].map((item, idx) => (
+                        <div key={idx} className="px-5 py-2.5 hover:bg-blue-50 hover:text-blue-600 cursor-pointer text-gray-600 font-medium text-sm transition-colors">{item}</div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {['Design', 'Marketing', 'Music', 'Lifestyle', 'IT & software', 'Personal development', 'Health & fitness', 'Teaching', 'Social science', 'Math & logic'].map((item, idx) => (
+                  <div key={idx} className="px-5 py-2.5 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-between cursor-pointer text-gray-700 font-medium text-sm transition-colors">
+                    <span>{item}</span>
+                    {idx === 1 && <MoreHorizontal size={16} className="text-gray-400" />}
+                  </div>
+                ))}
+
+                <div className="px-4 pt-3 mt-2 border-t border-gray-100">
+                  <button className="w-full py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold rounded-md text-sm transition-colors text-center">
+                    View all categories
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <nav className="hidden lg:flex items-center gap-6">
-          <Link to="#" className="flex items-center gap-1 text-blue-600 font-semibold text-sm">Demos <ChevronDown size={14} /></Link>
-          <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Pages <ChevronDown size={14} /></Link>
-          <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Accounts <ChevronDown size={14} /></Link>
-          <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Megamenu <ChevronDown size={14} /></Link>
-          <span className="text-gray-400 cursor-pointer">•••</span>
+        <nav className="hidden lg:flex items-center gap-6 h-full">
+          {/* Demos Menu */}
+          <div className="relative group/nav h-full flex items-center">
+            <Link to="#" className="flex items-center gap-1 text-blue-600 font-semibold text-sm">Demos <ChevronDown size={14} /></Link>
+            <div className="absolute top-full left-0 pt-2 w-56 hidden group-hover/nav:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                <div className="px-5 py-2.5 bg-blue-50 text-blue-600 font-medium text-sm cursor-pointer">Home Default</div>
+                {['Home Education', 'Home Academy', 'Home Course', 'Home University', 'Home Kindergarten', 'Home Landing', 'Home Tutor', 'Home School', 'Home Abroad', 'Home Workshop'].map((item, idx) => (
+                  <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Pages Menu */}
+          <div className="relative group/nav h-full flex items-center">
+            <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Pages <ChevronDown size={14} /></Link>
+            <div className="absolute top-full left-0 pt-2 w-56 hidden group-hover/nav:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                <div className="relative group/course px-5 py-2.5 bg-blue-50 text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between">
+                  <span>Course</span>
+                  <MoreHorizontal size={16} />
+                  <div className="absolute top-0 left-full pl-2 w-64 hidden group-hover/course:block z-50">
+                    <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                      {['Course Categories', 'Course Grid Classic', 'Course Grid Minimal', 'Course List Classic', 'Course List Minimal', 'Course Detail Classic', 'Course Detail Minimal', 'Course Detail Advance', 'Course Detail Module', 'Course Full Screen Video'].map((item, idx) => (
+                        <div key={idx} className={`px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors ${[0, 2, 4].includes(idx) ? 'border-b border-gray-100 mb-1 pb-3' : ''}`}>{item}</div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                  <div className="relative group/about px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between transition-colors">
+                    <span>About</span>
+                    <MoreHorizontal size={16} className="text-gray-400 group-hover/about:text-blue-500" />
+                    <div className="absolute top-0 left-full pl-2 w-48 hidden group-hover/about:block z-50">
+                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                        {['About Us', 'Contact Us', 'Blog Grid', 'Blog Masonry', 'Blog Detail', 'Pricing'].map((item, idx) => (
+                          <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative group/hero px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between transition-colors">
+                    <span>Hero Banner</span>
+                    <MoreHorizontal size={16} className="text-gray-400 group-hover/hero:text-blue-500" />
+                    <div className="absolute top-0 left-full pl-2 w-48 hidden group-hover/hero:block z-50">
+                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                        {['Hero Form', 'Hero Vector', 'Coming soon....'].map((item, idx) => (
+                          <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {['Instructor List', 'Instructor Single', 'Become an Instructor', 'Abroad Single', 'Workshop Detail', 'Event Detail', 'Shop'].map((item, idx) => (
+                    <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                  ))}
+
+                  <div className="relative group/help px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between transition-colors">
+                    <span>Help</span>
+                    <MoreHorizontal size={16} className="text-gray-400 group-hover/help:text-blue-500" />
+                    <div className="absolute top-0 left-full pl-2 w-48 hidden group-hover/help:block z-50">
+                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                        {['Help Center', 'Help Center Single', 'FAQs'].map((item, idx) => (
+                          <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative group/auth px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between transition-colors">
+                    <span>Authentication</span>
+                    <MoreHorizontal size={16} className="text-gray-400 group-hover/auth:text-blue-500" />
+                    <div className="absolute top-0 left-full pl-2 w-48 hidden group-hover/auth:block z-50">
+                      <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                        {['Sign In', 'Sign Up', 'Forgot Password'].map((item, idx) => (
+                          <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {['Form', 'Specialty'].map((item, idx) => (
+                    <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer transition-colors">{item}</div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Accounts Menu */}
+          <div className="relative group/nav h-full flex items-center">
+            <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Accounts <ChevronDown size={14} /></Link>
+            <div className="absolute top-full left-0 pt-2 w-56 hidden group-hover/nav:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                <div className="relative group/inst px-5 py-2.5 bg-blue-50 text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between">
+                  <div className="flex items-center gap-2"><User size={16}/> Instructor</div>
+                  <MoreHorizontal size={16} />
+                  <div className="absolute top-0 left-full pl-2 w-56 hidden group-hover/inst:block z-50">
+                    <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                      {['Dashboard', 'Courses', 'Create Course', 'Course Added', 'Quiz', 'Earnings', 'Students', 'Orders', 'Reviews', 'Payout'].map((item, idx) => (
+                        <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-2 transition-colors">
+                          <LayoutGrid size={14} className="text-gray-400" /> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative group/stud px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between border-b border-gray-100 pb-3 mb-1">
+                  <div className="flex items-center gap-2"><GraduationCap size={16}/> Student</div>
+                  <MoreHorizontal size={16} className="text-gray-400 group-hover/stud:text-blue-500" />
+                  <div className="absolute top-0 left-full pl-2 w-56 hidden group-hover/stud:block z-50">
+                    <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                      {['Dashboard', 'My Subscriptions', 'Courses', 'Course Resume', 'Quiz', 'Payment Info', 'Wishlist'].map((item, idx) => (
+                        <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-2 transition-colors">
+                          <LayoutGrid size={14} className="text-gray-400" /> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2 mb-2">
+                  <Settings size={16}/> Admin
+                </div>
+
+                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2">
+                  <PenTool size={16}/> Edit Profile
+                </div>
+                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2">
+                  <Settings size={16}/> Settings
+                </div>
+                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2 border-b border-gray-100 pb-3 mb-1">
+                  <span className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"><span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span></span> Delete Profile
+                </div>
+
+                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between">
+                  <span>Dropdown levels</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Megamenu (Full width) */}
+          <div className="group/nav h-full flex items-center">
+            <Link to="#" className="flex items-center gap-1 text-gray-600 font-semibold text-sm hover:text-blue-600 transition-colors">Megamenu <ChevronDown size={14} /></Link>
+            <div className="absolute top-full left-0 w-full pt-2 hidden group-hover/nav:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 p-8 w-full left-0 container mx-auto relative">
+                <div className="grid grid-cols-4 gap-8">
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Get started</h3>
+                    <ul className="space-y-3">
+                      {['Market research', 'Advertising', 'Consumer behavior', 'Digital marketing', 'Marketing ethics', 'Social media marketing', 'Public relations', 'Advertising', 'Decision science', 'SEO', 'Business marketing'].map((item, idx) => (
+                        <li key={idx} className="text-sm font-medium text-gray-500 hover:text-blue-600 cursor-pointer transition-colors">{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Degree</h3>
+                    <div className="space-y-5">
+                      <div>
+                        <div className="font-bold text-gray-800 text-sm">Contact management</div>
+                        <div className="text-xs text-gray-400 mt-1">Speedily say has suitable disposal add boy. On forth doubt miles of child.</div>
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-800 text-sm">Sales pipeline</div>
+                        <div className="text-xs text-gray-400 mt-1">Speedily say has suitable disposal add boy. On forth doubt miles of child.</div>
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-800 text-sm">Security & Permission</div>
+                        <div className="text-xs text-gray-400 mt-1">Speedily say has suitable disposal add boy. On forth doubt miles of child.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Certificate</h3>
+                    <div className="space-y-5">
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0"><span className="text-red-500 font-bold">G</span></div>
+                        <div>
+                          <div className="font-bold text-gray-800 text-sm">Google SEO certificate</div>
+                          <div className="text-xs text-gray-400 mt-0.5">No prerequisites</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0"><span className="text-blue-600 font-bold text-xs">in</span></div>
+                        <div>
+                          <div className="font-bold text-gray-800 text-sm">Business Development Executive(BDE)</div>
+                          <div className="text-xs text-gray-400 mt-0.5">No prerequisites</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0"><span className="text-blue-500 font-bold">f</span></div>
+                        <div>
+                          <div className="font-bold text-gray-800 text-sm">Facebook social media marketing</div>
+                          <div className="text-xs text-gray-400 mt-0.5">Expert advice</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">Download SHNOOR</h3>
+                    <div className="bg-blue-50 rounded-lg p-6 flex flex-col items-center justify-center mb-4 text-center min-h-[160px]">
+                      <img src="/shnoor-logo.png" alt="SHNOOR" className="w-36 h-auto object-contain drop-shadow-sm mb-2" />
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      <div className="bg-gray-900 text-white rounded px-2 py-1 flex items-center gap-1 cursor-pointer w-1/2">
+                        <PlayCircle size={14} />
+                        <div className="flex flex-col"><span className="text-[8px] uppercase">Get it on</span><span className="text-[10px] font-bold leading-none">Google Play</span></div>
+                      </div>
+                      <div className="bg-gray-900 text-white rounded px-2 py-1 flex items-center gap-1 cursor-pointer w-1/2">
+                        <Apple size={14} />
+                        <div className="flex flex-col"><span className="text-[8px] uppercase">Download on the</span><span className="text-[10px] font-bold leading-none">App Store</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6 bg-emerald-100/50 rounded-lg p-3 flex items-center gap-3">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jessica" className="w-8 h-8 rounded-full" alt="avatar" />
+                  <span className="text-sm text-emerald-700">The personality development class starts at 2:00 pm, click to <span className="font-bold cursor-pointer hover:underline">Join Now</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* More Menu */}
+          <div className="relative group/nav h-full flex items-center">
+            <span className="text-gray-400 hover:text-blue-600 transition-colors cursor-pointer p-2"><MoreHorizontal size={20} /></span>
+            <div className="absolute top-full right-0 pt-2 w-56 hidden group-hover/nav:block z-50">
+              <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors">
+                  <LifeBuoy size={16} className="text-yellow-500" /> Support
+                </div>
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors border-b border-gray-100 pb-3 mb-1">
+                  <FileText size={16} className="text-red-500" /> Documentation
+                </div>
+                
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors">
+                  <ToggleLeft size={16} className="text-cyan-500" /> RTL demo
+                </div>
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors border-b border-gray-100 pb-3 mb-1">
+                  <CloudDownload size={16} className="text-emerald-500" /> Buy Eduport!
+                </div>
+
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors">
+                  <Puzzle size={16} className="text-orange-500" /> Components
+                </div>
+                <div className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-3 transition-colors">
+                  <Clipboard size={16} className="text-indigo-500" /> Snippets
+                </div>
+              </div>
+            </div>
+          </div>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -95,15 +389,15 @@ const LandingFooter = () => (
     <div className="container mx-auto px-4 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
         <div className="lg:col-span-2">
-          <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-gray-900 rounded-md flex items-center justify-center text-white">
-              <GraduationCap size={20} />
-            </div>
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">EduFlow</span>
-          </Link>
-          <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
-            EduFlow education theme, built specifically for the education centers which is dedicated to teaching and involve learners.
-          </p>
+          <div className="space-y-6">
+            <Link to="/" className="flex items-center gap-1">
+              <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+              <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
+            </Link>
+            <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+              SHNOOR LMS platform, built specifically for education centers which are dedicated to teaching and involve learners.
+            </p>
+          </div>
           <div className="flex gap-3">
             {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
               <a key={i} href="#" className="w-9 h-9 rounded bg-white shadow-sm flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
@@ -145,7 +439,7 @@ const LandingFooter = () => (
       </div>
 
       <div className="flex flex-col lg:flex-row items-center justify-between pt-8 border-t border-gray-200 gap-4">
-        <p className="text-gray-500 text-sm">Copyrights © {new Date().getFullYear()} EduFlow. Built with ❤️</p>
+        <p className="text-gray-500 text-sm">Copyrights &copy; {new Date().getFullYear()} SHNOOR LMS. All rights reserved.</p>
         <div className="flex items-center gap-6 text-sm text-gray-500">
           <a href="#" className="flex items-center gap-1 hover:text-gray-900"><Globe size={14}/> Language</a>
           <a href="#" className="hover:text-gray-900">Terms of use</a>
@@ -235,6 +529,7 @@ const LandingPage = () => {
             <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-4">
               
               <motion.div className="w-full lg:w-5/12 text-center lg:text-left pt-10" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+                <CountdownBanner />
                 <h1 className="text-[2.8rem] lg:text-[4rem] font-extrabold text-gray-900 leading-[1.1] mb-6">
                   Limitless learning at your{' '}
                   <span className="relative inline-block mt-2">
@@ -547,7 +842,7 @@ const LandingPage = () => {
 
       </main>
 
-      <LandingFooter />
+      <Footer />
     </div>
   );
 };
