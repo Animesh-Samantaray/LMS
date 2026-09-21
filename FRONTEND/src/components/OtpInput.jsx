@@ -96,13 +96,7 @@ const OtpInput = ({ length = 6, value = '', onChange, disabled = false, hasError
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
           onFocus={(e) => e.target.select()}
-          className={`w-11 h-12 sm:w-13 sm:h-14 text-center font-heading font-bold text-lg sm:text-xl rounded-xl sm:rounded-2xl transition-all duration-200 outline-none select-none ${
-            hasError
-              ? 'bg-red-500/10 border-2 border-red-500/80 text-red-300 shadow-sm shadow-red-500/20'
-              : digit
-              ? 'bg-indigo-600/10 border-2 border-indigo-500 text-indigo-300 shadow-md shadow-indigo-500/20 scale-[1.03]'
-              : 'bg-slate-950/70 border border-slate-200 dark:border-slate-800 cream:border-pink-300 text-slate-900 dark:text-slate-100 cream:text-pink-950 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 focus:scale-[1.04]'
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-11 h-12 sm:w-14 sm:h-16 text-center font-bold text-xl sm:text-2xl rounded-xl transition-all duration-200 outline-none select-none ${hasError ? 'bg-rose-50 border-2 border-rose-500 text-rose-600 shadow-sm' : digit ? 'bg-white border-2 border-blue-500 text-blue-600 shadow-[0_4px_12px_rgba(59,130,246,0.15)] scale-[1.02]' : 'bg-gray-50 border border-gray-200 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/20 focus:scale-[1.03]'} disabled:opacity-50 disabled:cursor-not-allowed`}
         />
       ))}
     </div>

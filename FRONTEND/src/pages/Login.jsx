@@ -268,12 +268,12 @@ const Login = () => {
             handleProviderLogin(githubLogin, "GitHub")
           }
           disabled={isAnyLoading}
-          className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 text-slate-100 hover:text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-900 hover:text-gray-900 font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           {providerLoading ? (
             <Loader2 size={18} className="animate-spin" />
           ) : (
-            <Github size={18} className="text-white" />
+            <Github size={18} className="text-gray-900" />
           )}
 
           Continue with GitHub
@@ -282,9 +282,9 @@ const Login = () => {
 
     
       <div className="relative flex items-center justify-center my-6">
-        <div className="w-full border-t border-slate-800" />
+        <div className="w-full border-t border-gray-200" />
 
-        <span className="absolute bg-[#0d1424] px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <span className="absolute bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
           or sign in with email
         </span>
       </div>
@@ -296,14 +296,14 @@ const Login = () => {
       >
        
         <div>
-          <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
             Email Address
           </label>
 
           <div className="relative flex items-center">
             <Mail
               size={17}
-              className="absolute left-3.5 text-slate-400 pointer-events-none"
+              className="absolute left-3.5 text-gray-500 pointer-events-none"
             />
 
             <input
@@ -315,7 +315,7 @@ const Login = () => {
               disabled={isAnyLoading}
               autoComplete="email"
               required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 transition-all disabled:opacity-50"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
             />
           </div>
         </div>
@@ -323,13 +323,13 @@ const Login = () => {
     
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
               Password
             </label>
 
             <Link
               to="/forgot-password"
-              className="text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:underline"
+              className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
             >
               Forgot password?
             </Link>
@@ -338,7 +338,7 @@ const Login = () => {
           <div className="relative flex items-center">
             <Lock
               size={17}
-              className="absolute left-3.5 text-slate-400 pointer-events-none"
+              className="absolute left-3.5 text-gray-500 pointer-events-none"
             />
 
             <input
@@ -350,7 +350,7 @@ const Login = () => {
               disabled={isAnyLoading}
               autoComplete="current-password"
               required
-              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 transition-all disabled:opacity-50"
+              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
             />
 
             <button
@@ -359,7 +359,7 @@ const Login = () => {
                 setShowPassword((prev) => !prev)
               }
               disabled={isAnyLoading}
-              className="absolute right-3 p-1 text-slate-400 hover:text-slate-200 disabled:opacity-50"
+              className="absolute right-3 p-1 text-gray-500 hover:text-gray-700 disabled:opacity-50"
               aria-label={
                 showPassword
                   ? "Hide password"
@@ -379,7 +379,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={isAnyLoading}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {actionLoading ? (
             <>

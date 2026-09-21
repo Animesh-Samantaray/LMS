@@ -93,11 +93,11 @@ const ForgotPassword = () => {
       {step === 'email' && (
         <form onSubmit={handleSendOtp} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
               Account Email Address
             </label>
             <div className="relative flex items-center">
-              <Mail size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+              <Mail size={17} className="absolute left-3.5 text-gray-500 pointer-events-none" />
               <input
                 type="email"
                 name="email"
@@ -106,7 +106,7 @@ const ForgotPassword = () => {
                 placeholder="name@example.com"
                 disabled={loading}
                 autoFocus
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 transition-all disabled:opacity-50"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
               />
             </div>
           </div>
@@ -114,7 +114,7 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="group relative w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -136,13 +136,13 @@ const ForgotPassword = () => {
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
             <ShieldCheck size={30} />
           </div>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-gray-700">
             You can now log in with your updated password.
           </p>
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all"
           >
             Go to Login <ArrowRight size={16} />
           </button>
