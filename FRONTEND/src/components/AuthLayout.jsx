@@ -19,11 +19,9 @@ const AuthLayout = ({
       <div className="hidden lg:flex w-1/2 flex-col relative overflow-hidden border-r border-gray-200" style={{ background: 'linear-gradient(160deg, #fdf8eb 0%, #f3faf8 100%)' }}>
         <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 justify-between">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#111827] rounded-md flex items-center justify-center text-white shadow-sm">
-                <GraduationCap size={20} />
-              </div>
-              <span className="text-2xl font-bold text-gray-900 tracking-tight">EduFlow</span>
+            <Link to="/" className="flex items-center gap-1">
+              <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[46px] object-contain" />
+              <span className="text-3xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
             </Link>
             
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50/80 text-blue-600">
@@ -42,9 +40,9 @@ const AuthLayout = ({
               Limitless learning at your <span className="text-blue-600">fingertips</span>
             </h1>
 
-            <p className="text-[15px] text-gray-500 leading-relaxed max-w-md">
-              Connect with experienced instructors, track real-time learning progress, and earn verified credentials on EduFlow.
-            </p>
+              <p className="text-[15px] text-gray-500 leading-relaxed max-w-md">
+                Connect with experienced instructors, track real-time learning progress, and earn verified credentials on our LMS.
+              </p>
 
             <div className="grid grid-cols-2 gap-4 pt-4">
               <div className="flex items-start gap-3">
@@ -70,7 +68,7 @@ const AuthLayout = ({
           </div>
 
           <div className="text-xs text-gray-400 font-medium">
-            &copy; {new Date().getFullYear()} EduFlow LMS. All rights reserved.
+            &copy; {new Date().getFullYear()} SHNOOR LMS. All rights reserved.
           </div>
         </div>
       </div>

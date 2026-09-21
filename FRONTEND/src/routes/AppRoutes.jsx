@@ -11,6 +11,8 @@ import StudentDashboard from "../pages/dashboards/StudentDashboard";
 import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import ProfileSettings from "../pages/dashboards/ProfileSettings";
+import PremiumCoursesPage from "../pages/PremiumCoursesPage";
+import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -185,6 +187,8 @@ const AppRoutes = () => {
     <Routes>
       
       <Route path="/" element={<HomeRoute />} />
+      <Route path="/premium-courses" element={<PremiumCoursesPage />} />
+      <Route path="/course/:id" element={<PremiumCourseDetailsPage />} />
 
       
       <Route element={<PublicOnlyRoute />}>
