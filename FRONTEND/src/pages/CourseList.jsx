@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, Star, Search, Loader, Clock, User, Heart, ChevronRight, LayoutGrid } from 'lucide-react';
+import { Search, Loader, AlertCircle, BookOpen } from 'lucide-react';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import CourseCard from '../components/CourseCard';
 import api from '../services/api.service';
 
 const CourseList = () => {
-  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -28,128 +26,90 @@ const CourseList = () => {
     fetchCourses();
   }, []);
 
-  const filteredCourses = courses.filter(c => 
-    c.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCourses = courses.filter(c => {
+    const categoryName = typeof c.category === 'object' && c.category !== null
+      ? c.category.name
+      : c.category || '';
+    return (
+      c.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      categoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
-    <div className="min-h-screen bg-[var(--lms-bg)] flex flex-col pt-16">
+    <div className="min-h-screen bg-[var(--lms-bg)] text-[var(--lms-text-primary)] flex flex-col pt-16">
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white py-16 lg:py-20 relative overflow-hidden border-b border-white/10">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl lg:text-5xl font-extrabold mb-6 leading-tight">
-              Expand Your Horizons with Expert-Led Courses
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight">
+              Explore Top-Rated Courses
             </h1>
-            <p className="text-lg text-blue-100 mb-8 max-w-2xl">
-              Join thousands of learners discovering new skills and transforming their careers. Browse our catalog of meticulously crafted courses.
+            <p className="text-sm sm:text-base text-slate-300 mb-8 max-w-xl mx-auto">
+              Learn in-demand skills from industry experts. Advance your career with our project-based curriculum.
             </p>
             
-            <div className="relative max-w-xl">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search size={20} className="text-gray-400" />
+            <div className="relative max-w-xl mx-auto">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <Search size={18} />
               </div>
               <input 
                 type="text" 
-                placeholder="Search for topics, skills, or specific courses..." 
+                placeholder="Search by course title, category, or topic..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-xl text-gray-900 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl text-sm font-medium"
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-16 flex-1">
+      <div className="container mx-auto px-4 py-12 flex-1">
         
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader size={48} className="animate-spin text-blue-600 mb-4" />
-            <p className="text-[var(--lms-text-secondary)] font-medium text-lg">Loading courses...</p>
+            <div className="w-12 h-12 border-3 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin mb-4"></div>
+            <p className="text-[var(--lms-text-secondary)] font-medium text-sm">Loading catalog courses...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-20 max-w-lg mx-auto">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-4">
-              <AlertCircle size={32} />
+          <div className="text-center py-16 max-w-md mx-auto lms-glass-card rounded-2xl p-8 border border-rose-500/20">
+            <div className="w-14 h-14 bg-rose-500/15 rounded-2xl flex items-center justify-center text-rose-500 mx-auto mb-3">
+              <AlertCircle size={28} />
             </div>
-            <h2 className="text-2xl font-bold text-[var(--lms-text-primary)] mb-2">Oops! Something went wrong</h2>
-            <p className="text-[var(--lms-text-secondary)]">{error}</p>
+            <h2 className="text-lg font-bold text-[var(--lms-text-primary)] mb-1">Unable to load courses</h2>
+            <p className="text-xs text-[var(--lms-text-secondary)] mb-4">{error}</p>
+            <button onClick={() => window.location.reload()} className="lms-btn lms-btn-primary text-xs">Try Again</button>
           </div>
         ) : filteredCourses.length === 0 ? (
-          <div className="text-center py-20 max-w-lg mx-auto bg-[var(--lms-surface)] rounded-2xl border border-[var(--lms-border)]">
-            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mx-auto mb-4">
-              <Search size={40} />
+          <div className="text-center py-16 max-w-md mx-auto lms-glass-card rounded-2xl border border-[var(--lms-border)] p-8">
+            <div className="w-16 h-16 bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+              <BookOpen size={28} />
             </div>
-            <h2 className="text-2xl font-bold text-[var(--lms-text-primary)] mb-2">No courses found</h2>
-            <p className="text-[var(--lms-text-secondary)] mb-6">We couldn't find any courses matching your search criteria. Try adjusting your keywords.</p>
-            <button onClick={() => setSearchTerm('')} className="lms-btn lms-btn-primary">Clear Search</button>
+            <h2 className="text-base font-bold text-[var(--lms-text-primary)] mb-1">No courses found</h2>
+            <p className="text-xs text-[var(--lms-text-secondary)] mb-4">No courses currently match your search criteria. Try adjusting your query.</p>
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="lms-btn lms-btn-secondary text-xs">Clear Search</button>
+            )}
           </div>
         ) : (
           <div>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-[var(--lms-text-primary)]">All Courses ({filteredCourses.length})</h2>
+              <div>
+                <h2 className="text-xl font-bold text-[var(--lms-text-primary)]">Available Courses</h2>
+                <p className="text-xs text-[var(--lms-text-secondary)]">Showing {filteredCourses.length} published learning paths</p>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCourses.map((course, i) => (
-                <div 
-                  key={course._id} 
-                  onClick={() => navigate(`/courses/${course._id}`)}
-                  className="bg-[var(--lms-surface)] rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.05)] border border-[var(--lms-border)] hover:-translate-y-1 transition-transform cursor-pointer group flex flex-col"
-                >
-                  <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center overflow-hidden">
-                    {course.thumbnail ? (
-                      <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <LayoutGrid size={48} className="text-blue-200" />
-                    )}
-                    <div className="absolute top-3 right-3">
-                      <div className="w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm text-gray-400 hover:text-red-500 transition-colors">
-                        <Heart size={16} />
-                      </div>
-                    </div>
-                    {course.category?.name && (
-                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[11px] font-bold px-2.5 py-1 rounded-md text-blue-700 shadow-sm">
-                        {course.category.name}
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h4 className="text-lg font-bold text-[var(--lms-text-primary)] leading-snug mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {course.title}
-                    </h4>
-                    <p className="text-sm text-[var(--lms-text-secondary)] line-clamp-2 mb-4 flex-1">
-                      {course.description || "Learn the fundamentals and advanced concepts in this comprehensive course."}
-                    </p>
-                    
-                    <div className="flex items-center gap-1 mb-4">
-                      {[1,2,3,4,5].map(s => <Star key={s} size={14} className="text-amber-400 fill-amber-400" />)}
-                      <span className="text-sm text-[var(--lms-text-primary)] font-semibold ml-1">5.0</span>
-                      <span className="text-xs text-[var(--lms-text-muted)] ml-1">(124)</span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-[var(--lms-border)]">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-[10px]">
-                          {course.instructor?.name ? course.instructor.name.charAt(0).toUpperCase() : 'I'}
-                        </div>
-                        <span className="text-xs font-medium text-[var(--lms-text-secondary)] truncate max-w-[100px]">
-                          {course.instructor?.name || 'Instructor'}
-                        </span>
-                      </div>
-                      <span className="text-sm font-bold text-blue-600 flex items-center gap-1">
-                        View <ChevronRight size={14} />
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              {filteredCourses.map((course) => (
+                <CourseCard
+                  key={course._id || course.id}
+                  course={course}
+                  isManagement={false}
+                />
               ))}
             </div>
           </div>
@@ -162,3 +122,4 @@ const CourseList = () => {
 };
 
 export default CourseList;
+

@@ -18,6 +18,13 @@ const router = express.Router();
 
 router.get("/", getAllCourses);
 
+router.post(
+  "/",
+  authMiddleware,
+  authorizeRoles("Instructor", "Admin"),
+  createCourse
+);
+
 router.patch(
   "/:id/publish",
   authMiddleware,
@@ -26,22 +33,14 @@ router.patch(
 );
 
 
-router.get("/:id", getCourseById);
-
-
-router.post(
-  "/",
-  authMiddleware,
-  authorizeRoles("Instructor", "Admin"),
-  createCourse
-);
-
 router.get(
   "/instructor/my",
   authMiddleware,
   authorizeRoles("Instructor", "Admin"),
   getMyCourses
 );
+
+router.get("/:id", getCourseById);
 
 router.put(
   "/:id",

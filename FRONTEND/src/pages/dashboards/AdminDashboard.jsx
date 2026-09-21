@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Home, Users, BookOpen, UserCheck, DollarSign, Settings, Activity, Shield, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { Home, Users, BookOpen, FolderOpen, UserCheck, DollarSign, Settings, Activity, Shield, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import adminService from '../../services/admin.service';
@@ -47,25 +47,16 @@ const AdminDashboard = () => {
     };
   }, [user]);
 
-        const sidebarItems = [
+  const sidebarItems = [
     { label: 'Overview', path: '/admin/dashboard', icon: Home },
     { category: 'Administration' },
-    { label: 'Approve Users', path: '#', icon: '\u2705' },
-    { label: 'Manage Users', path: '#', icon: '\uD83D\uDC65' },
-    { label: 'Manager List', path: '#', icon: '\uD83D\uDCCB' },
-    { label: 'Groups', path: '#', icon: '\uD83C\uDFD8\uFE0F' },
+    { label: 'Manage Users', path: '#', icon: Users },
     { category: 'Management' },
-      { label: 'Categories', path: '/admin/categories', icon: '??' },
-      { label: 'Courses', path: '/admin/courses', icon: '??' },
-    { label: 'Approve Courses', path: '#', icon: '\uD83C\uDF93' },
-    { label: 'Assign Courses', path: '#', icon: '\u2795' },
-    { label: 'Grace Timers', path: '#', icon: '\u23F1\uFE0F' },
-    { category: 'Engagement' },
-    { label: 'Group messages', path: '#', icon: '\uD83D\uDCAC' },
-    { label: 'Support Queries', path: '#', icon: '\u2753' },
-    { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
+    { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
+    { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+    { label: 'Certificates', path: '#', icon: Sparkles },
     { category: 'Account' },
-    { label: 'Settings', path: '/admin/profile', icon: '\u2699\uFE0F' }
+    { label: 'Settings', path: '/admin/profile', icon: Settings }
   ];
 
   if (loading) {

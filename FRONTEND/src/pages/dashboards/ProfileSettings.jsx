@@ -35,6 +35,7 @@ import {
   Shield,
   Clock,
   Check,
+  FolderOpen,
 } from 'lucide-react';
 
 const formatDisplayDate = (dateString) => {
@@ -260,48 +261,32 @@ const ProfileSettings = () => {
     ? [
         { label: 'Overview', path: '/admin/dashboard', icon: Home },
         { category: 'Administration' },
-        { label: 'Approve Users', path: '#', icon: '\u2705' },
-        { label: 'Manage Users', path: '#', icon: '\uD83D\uDC65' },
-        { label: 'Manager List', path: '#', icon: '\uD83D\uDCCB' },
-        { label: 'Groups', path: '#', icon: '\uD83C\uDFD8\uFE0F' },
+        { label: 'Manage Users', path: '#', icon: Users },
         { category: 'Management' },
-        { label: 'Approve Courses', path: '#', icon: '\uD83C\uDF93' },
-        { label: 'Assign Courses', path: '#', icon: '\u2795' },
-        { label: 'Grace Timers', path: '#', icon: '\u23F1\uFE0F' },
-        { category: 'Engagement' },
-        { label: 'Group messages', path: '#', icon: '\uD83D\uDCAC' },
-        { label: 'Support Queries', path: '#', icon: '\u2753' },
-        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
+        { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
+        { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+        { label: 'Certificates', path: '#', icon: Sparkles },
         { category: 'Account' },
-        { label: 'Settings', path: '/admin/profile', icon: '\u2699\uFE0F' }
+        { label: 'Settings', path: '/admin/profile', icon: Settings }
       ]
     : isInstructor
     ? [
         { label: 'Overview', path: '/instructor/dashboard', icon: Home },
         { category: 'Manager' },
-        { label: 'View Students', path: '#', icon: '\uD83D\uDC65' },
-        { label: 'Course Progress', path: '#', icon: '\uD83D\uDCD6' },
-        { label: 'Exam Progress', path: '#', icon: '\uD83D\uDCDD' },
-        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
+        { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
+        { label: 'Create Course', path: '/instructor/courses/create', icon: Plus },
+        { label: 'View Students', path: '#', icon: Users },
+        { label: 'Certificates', path: '#', icon: Sparkles },
         { category: 'Account' },
-        { label: 'Settings', path: '/instructor/profile', icon: '\u2699\uFE0F' }
-  ]
+        { label: 'Settings', path: '/instructor/profile', icon: Settings }
+      ]
     : [
         { label: 'Overview', path: '/student/dashboard', icon: Home },
         { category: 'Learning' },
-        { label: 'My Courses', path: '#', icon: '\uD83D\uDCD6' },
-        { label: 'Mock Test', path: '#', icon: '\uD83D\uDCC4' },
-        { label: 'Practice Arena', path: '#', icon: '\uD83C\uDFAF' },
-        { label: 'Exams', path: '#', icon: '\uD83D\uDCDD' },
-        { label: 'Weekly Contests', path: '#', icon: '\uD83C\uDFC6' },
-        { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
-        { category: 'Engagement' },
-        { label: 'My Groups', path: '#', icon: '\uD83D\uDC65' },
-        { label: 'My Reviews', path: '#', icon: '\u2B50' },
-        { label: 'Messages', path: '#', icon: '\uD83D\uDCAC' },
-        { label: 'Calendar', path: '#', icon: '\uD83D\uDCC5' },
+        { label: 'Browse Courses', path: '/courses', icon: BookOpen },
+        { label: 'Certificates', path: '#', icon: Sparkles },
         { category: 'Account' },
-        { label: 'Settings', path: '/student/profile', icon: '\u2699\uFE0F' }
+        { label: 'Settings', path: '/student/profile', icon: Settings }
       ];
 
   const fetchProfile = async () => {
