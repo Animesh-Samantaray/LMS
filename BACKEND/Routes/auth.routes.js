@@ -45,13 +45,13 @@ router.post(
 
 router.post(
   "/2fa/enable",
-  lmsAuthMiddleware,
+  authMiddleware,
   enableTwoFactor
 );
 
 router.post(
   "/2fa/disable",
-  lmsAuthMiddleware,
+  authMiddleware,
   disableTwoFactor
 );
 

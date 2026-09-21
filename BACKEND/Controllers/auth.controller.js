@@ -663,6 +663,17 @@ export const enableTwoFactor = async (req, res) => {
 
     await user.save();
 
+    const sessionToken = createTwoFactorSession(
+      user,
+      req.firebaseAuthTime
+    );
+
+    res.cookie(
+      "lms_2fa",
+      sessionToken,
+      twoFactorCookieOptions()
+    );
+
     return res.status(200).json({
       success: true,
       message:
