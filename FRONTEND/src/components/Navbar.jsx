@@ -66,45 +66,11 @@ const Navbar = () => {
 
         <Link
           to="/"
-          onClick={() =>
-            setMobileMenuOpen(false)
-          }
-          className="group flex items-center gap-2.5"
+          onClick={() => setMobileMenuOpen(false)}
+          className="flex items-center gap-1 group relative z-10"
         >
-          <motion.div
-            whileHover={{
-              rotate: -6,
-              scale: 1.08,
-            }}
-            whileTap={{
-              scale: 0.95,
-            }}
-            className="
-              flex h-10 w-10 items-center
-              justify-center rounded-xl
-              bg-gradient-to-br
-              from-violet-500 to-purple-600
-              shadow-lg shadow-purple-500/20
-            "
-          >
-            <GraduationCap
-              size={22}
-              className="text-white"
-            />
-          </motion.div>
-
-          <span className="text-xl font-bold tracking-tight text-white">
-            Edu
-            <span
-              className="
-                bg-gradient-to-r
-                from-violet-400 to-purple-400
-                bg-clip-text text-transparent
-              "
-            >
-              Flow
-            </span>
-          </span>
+          <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+          <span className="text-2xl font-extrabold text-white tracking-tight ml-1">LMS</span>
         </Link>
 
         
