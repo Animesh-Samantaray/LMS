@@ -9,12 +9,11 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
   const auth = useAuth();
   const user = propUser || auth?.user;
   const setUser = propSetUser || auth?.setUser;
+  const { setTwoFactorVerified } = auth || {};
 
   const [loading, setLoading] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [toast, setToast] = useState(null); 
+  const [toast, setToast] = useState(null);
 
-  
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => {
@@ -27,18 +26,14 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
 
   const enabled = Boolean(user?.twoFactorEnabled);
 
-  const handleToggleClick = (e) => {
+  const handleToggle = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (loading) return;
-    setConfirmOpen(true);
-  };
 
-  const handleConfirm = async () => {
-    setConfirmOpen(false);
     if (loading) return;
 
     const action = enabled ? "disable" : "enable";
+    const nextState = !enabled;
 
     try {
       setLoading(true);
@@ -46,12 +41,15 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
       const response = await api.post(`/api/auth/2fa/${action}`);
 
       if (response.data?.success || response.status === 200) {
-        const nextState = !enabled;
         if (setUser) {
           setUser((previous) => ({
             ...previous,
             twoFactorEnabled: nextState,
           }));
+        }
+
+        if (setTwoFactorVerified) {
+          setTwoFactorVerified(nextState);
         }
 
         setToast({
@@ -76,115 +74,6 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
       setLoading(false);
     }
   };
-
-  const modalContent = confirmOpen && typeof document !== "undefined" ? (
-    ReactDOM.createPortal(
-      <AnimatePresence>
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => !loading && setConfirmOpen(false)}
-          />
-
-          
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 10 }}
-            transition={{ type: "spring", duration: 0.3, bounce: 0.2 }}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--lms-border,#334155)] bg-[var(--lms-surface-elevated,#0f172a)] p-6 shadow-2xl z-10 text-slate-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => setConfirmOpen(false)}
-              className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors"
-              aria-label="Close dialog"
-            >
-              <X size={18} />
-            </button>
-
-            
-            <div className="flex items-start gap-4 mb-4">
-              <div
-                className={`p-3 rounded-2xl shrink-0 ${
-                  enabled
-                    ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                    : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                }`}
-              >
-                {enabled ? (
-                  <AlertTriangle size={24} className="text-rose-400" />
-                ) : (
-                  <ShieldCheck size={24} className="text-emerald-400" />
-                )}
-              </div>
-
-              <div>
-                <h3 className="text-base font-bold text-white leading-tight mb-1">
-                  {enabled
-                    ? "Disable two-factor authentication?"
-                    : "Enable two-factor authentication?"}
-                </h3>
-                <p className="text-xs text-slate-300 dark:text-slate-300 leading-relaxed">
-                  {enabled
-                    ? "Your account will no longer require an email verification code when you log in."
-                    : "You will receive a verification code by email whenever you log in."}
-                </p>
-              </div>
-            </div>
-
-            
-            <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-slate-700/60">
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => setConfirmOpen(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors border border-transparent"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleConfirm}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition-all ${
-                  enabled
-                    ? "bg-rose-600 hover:bg-rose-500 shadow-rose-600/25"
-                    : "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/25"
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 size={15} className="animate-spin" />
-                    <span>Processing...</span>
-                  </>
-                ) : enabled ? (
-                  <>
-                    <ShieldOff size={15} />
-                    <span>Disable 2FA</span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck size={15} />
-                    <span>Enable 2FA</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </AnimatePresence>,
-      document.body
-    )
-  ) : null;
 
   const toastContent = toast && typeof document !== "undefined" ? (
     ReactDOM.createPortal(
@@ -223,19 +112,19 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
     <>
       <motion.button
         type="button"
-        onClick={handleToggleClick}
+        onClick={handleToggle}
         disabled={loading}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         title={
           enabled
-            ? "Two-factor authentication is active. Click to manage."
+            ? "Two-factor authentication is active. Click to disable."
             : "Two-factor authentication is inactive. Click to enable."
         }
         aria-label={enabled ? "Disable two-factor authentication" : "Enable two-factor authentication"}
         className={`
           group relative flex items-center gap-2 px-2.5 py-1.5 rounded-xl border text-xs font-semibold
-          transition-all duration-300 select-none shadow-sm
+          transition-all duration-300 select-none shadow-sm cursor-pointer
           disabled:cursor-not-allowed disabled:opacity-60
           ${
             enabled
@@ -244,7 +133,6 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
           }
         `}
       >
-        
         <div className="flex items-center justify-center shrink-0 w-4 h-4">
           <AnimatePresence mode="wait" initial={false}>
             {loading ? (
@@ -281,19 +169,16 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
           </AnimatePresence>
         </div>
 
-        
         <span className={`font-bold tracking-tight text-[11px] whitespace-nowrap ${compact ? "hidden sm:inline" : ""}`}>
-          {enabled ? "2FA ON" : "2FA OFF"}
+          {loading ? "Updating..." : enabled ? "2FA ON" : "2FA OFF"}
         </span>
 
-        
         <div
           className={`
             relative inline-flex h-4 w-7 shrink-0 items-center rounded-full p-0.5 transition-colors duration-300
             ${enabled ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-700"}
           `}
         >
-          
           <motion.div
             layout
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -305,10 +190,6 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
         </div>
       </motion.button>
 
-      
-      {modalContent}
-
-      
       {toastContent}
     </>
   );
