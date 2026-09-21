@@ -8,6 +8,7 @@ import authRoutes from "./Routes/auth.routes.js";
 import studentRoutes from "./Routes/student.route.js";
 import instructorRoutes from "./Routes/instructor.route.js";
 import adminRoutes from "./Routes/admin.route.js";
+import categoryRoutes from "./Routes/category.route.js";
 import "./Configs/firebaseAdmin.js";
 
 const app = express();
@@ -47,6 +48,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/instructor", instructorRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);
