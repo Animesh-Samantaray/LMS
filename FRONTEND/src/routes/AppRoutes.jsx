@@ -10,9 +10,16 @@ import VerifyTwoFactor from "../pages/VerifyTwoFactor";
 import StudentDashboard from "../pages/dashboards/StudentDashboard";
 import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
+import CategoryManagement from "../pages/dashboards/admin/CategoryManagement";
+import CourseManagement from "../pages/dashboards/admin/CourseManagement";
+import MyCourses from "../pages/dashboards/instructor/MyCourses";
+import CreateCourse from "../pages/dashboards/instructor/CreateCourse";
+import EditCourse from "../pages/dashboards/instructor/EditCourse";
 import ProfileSettings from "../pages/dashboards/ProfileSettings";
 import PremiumCoursesPage from "../pages/PremiumCoursesPage";
 import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
+import CourseList from "../pages/CourseList";
+import CourseDetails from "../pages/CourseDetails";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -189,6 +196,8 @@ const AppRoutes = () => {
       <Route path="/" element={<HomeRoute />} />
       <Route path="/premium-courses" element={<PremiumCoursesPage />} />
       <Route path="/course/:id" element={<PremiumCourseDetailsPage />} />
+      <Route path="/courses" element={<CourseList />} />
+      <Route path="/courses/:id" element={<CourseDetails />} />
 
       
       <Route element={<PublicOnlyRoute />}>
@@ -227,6 +236,21 @@ const AppRoutes = () => {
           path="/instructor/dashboard"
           element={<InstructorDashboard />}
         />
+        
+        <Route
+          path="/instructor/courses"
+          element={<MyCourses />}
+        />
+        
+        <Route
+          path="/instructor/courses/create"
+          element={<CreateCourse />}
+        />
+        
+        <Route
+          path="/instructor/courses/:id/edit"
+          element={<EditCourse />}
+        />
 
         <Route
           path="/instructor/profile"
@@ -239,6 +263,16 @@ const AppRoutes = () => {
         <Route
           path="/admin/dashboard"
           element={<AdminDashboard />}
+        />
+
+        <Route
+          path="/admin/categories"
+          element={<CategoryManagement />}
+        />
+        
+        <Route
+          path="/admin/courses"
+          element={<CourseManagement />}
         />
 
         <Route

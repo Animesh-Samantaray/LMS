@@ -55,6 +55,8 @@ const AdminDashboard = () => {
     { label: 'Manager List', path: '#', icon: '\uD83D\uDCCB' },
     { label: 'Groups', path: '#', icon: '\uD83C\uDFD8\uFE0F' },
     { category: 'Management' },
+      { label: 'Categories', path: '/admin/categories', icon: '??' },
+      { label: 'Courses', path: '/admin/courses', icon: '??' },
     { label: 'Approve Courses', path: '#', icon: '\uD83C\uDF93' },
     { label: 'Assign Courses', path: '#', icon: '\u2795' },
     { label: 'Grace Timers', path: '#', icon: '\u23F1\uFE0F' },
