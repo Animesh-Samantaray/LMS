@@ -5,7 +5,7 @@ import { GraduationCap, Github, Twitter, Linkedin, Youtube, Heart } from 'lucide
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="container">
+      <div className="container mx-auto px-4 lg:px-8">
         <div className="footer-grid">
           <div>
             <Link to="/" className="navbar-logo" style={{ marginBottom: '1.25rem' }}>

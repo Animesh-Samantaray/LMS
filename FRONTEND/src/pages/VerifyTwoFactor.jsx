@@ -1,3 +1,4 @@
+import OtpInput from "../components/OtpInput";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -35,10 +36,6 @@ const VerifyTwoFactor = () => {
 
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  
-
-
-
   useEffect(() => {
     if (authLoading) return;
 
@@ -46,11 +43,6 @@ const VerifyTwoFactor = () => {
       navigate("/login", { replace: true });
       return;
     }
-
-    
-
-
-
 
     if (!twoFactorRequired) {
       navigate("/", { replace: true });
@@ -64,8 +56,6 @@ const VerifyTwoFactor = () => {
     twoFactorRequired,
     navigate,
   ]);
-
-  
 
 
   useEffect(() => {
@@ -133,18 +123,6 @@ const VerifyTwoFactor = () => {
       );
 
       
-
-
-
-
-
-
-
-
-
-
-
-
       const updatedUser = await refreshUser();
 
       if (updatedUser?.role) {
@@ -213,9 +191,6 @@ const VerifyTwoFactor = () => {
         "A new verification code has been sent to your email."
       );
 
-      
-
-
       setResendCooldown(60);
 
       inputRef.current?.focus();
@@ -228,7 +203,6 @@ const VerifyTwoFactor = () => {
       if (retryAfter) {
         setResendCooldown(Number(retryAfter));
       }
-
       setErrorMsg(
         error?.response?.data?.message ||
           error?.message ||
@@ -283,24 +257,24 @@ const VerifyTwoFactor = () => {
           <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
             <ShieldCheck
               size={32}
-              className="text-indigo-400"
+              className="text-blue-600"
             />
           </div>
         </div>
 
         
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-900/60 border border-slate-700/60">
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50/50 border border-blue-100">
           <Mail
             size={18}
-            className="text-indigo-400 mt-0.5 flex-shrink-0"
+            className="text-blue-600 mt-0.5 flex-shrink-0"
           />
 
           <div className="min-w-0">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-gray-500">
               Verification code sent to
             </p>
 
-            <p className="text-sm font-medium text-slate-200 truncate">
+            <p className="text-sm font-medium text-gray-700 truncate">
               {firebaseUser?.email || "your email address"}
             </p>
           </div>
@@ -342,26 +316,14 @@ const VerifyTwoFactor = () => {
           <div>
             <label
               htmlFor="twoFactorOtp"
-              className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+              className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2"
             >
               Verification Code
             </label>
 
-            <input
-              ref={inputRef}
-              id="twoFactorOtp"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              value={otp}
-              onChange={handleOtpChange}
-              placeholder="000000"
-              disabled={isLoading}
-              className="w-full px-4 py-4 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-600 text-center text-2xl font-semibold tracking-[0.5em] focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 transition-all disabled:opacity-50"
-            />
+            <OtpInput length={6} value={otp} onChange={setOtp} disabled={isLoading} />
 
-            <p className="mt-2 text-xs text-slate-500 text-center">
+            <p className="mt-2 text-xs text-gray-400 text-center">
               Enter the 6-digit code from your email.
             </p>
           </div>
@@ -369,7 +331,7 @@ const VerifyTwoFactor = () => {
           <button
             type="submit"
             disabled={isLoading || otp.length !== 6}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {verifyLoading ? (
               <>
@@ -390,7 +352,7 @@ const VerifyTwoFactor = () => {
 
         
         <div className="text-center">
-          <p className="text-xs text-slate-500 mb-2">
+          <p className="text-xs text-gray-400 mb-2">
             Didn't receive the code?
           </p>
 
@@ -401,7 +363,7 @@ const VerifyTwoFactor = () => {
               isLoading ||
               resendCooldown > 0
             }
-            className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 disabled:text-slate-600 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-600 disabled:cursor-not-allowed transition-colors"
           >
             <RefreshCw
               size={15}
@@ -418,12 +380,12 @@ const VerifyTwoFactor = () => {
           </button>
         </div>
 
-        <div className="pt-2 border-t border-slate-800">
+        <div className="pt-2 border-t border-gray-200">
           <button
             type="button"
             onClick={handleLogout}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50/60 transition-all disabled:opacity-50"
           >
             <LogOut size={16} />
             Sign out and use another account

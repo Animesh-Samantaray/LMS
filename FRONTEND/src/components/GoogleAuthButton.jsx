@@ -12,10 +12,10 @@ const GoogleAuthButton = ({
       type="button"
       onClick={onClick}
       disabled={loading || disabled}
-      className="group relative w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-850 hover:bg-slate-800 text-white border border-slate-700/80 hover:border-slate-600 font-semibold text-sm shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+      className="group relative w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 hover:border-gray-300 font-semibold text-sm shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+        <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
       ) : (
         <svg className="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110 duration-200" viewBox="0 0 24 24">
           <path
@@ -36,7 +36,7 @@ const GoogleAuthButton = ({
           />
         </svg>
       )}
-      <span className="text-slate-100">{loading ? 'Connecting Google...' : text}</span>
+      <span className="text-gray-700 font-semibold">{loading ? 'Connecting Google...' : text}</span>
     </button>
   );
 };

@@ -224,7 +224,7 @@ const Signup = () => {
 
       {step === 1 ? (
         <div className="space-y-4">
-          <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-2">
             Select Your Role
           </label>
           <div className="grid grid-cols-1 gap-4">
@@ -242,24 +242,28 @@ const Signup = () => {
                   onClick={() => handleRoleSelect(r.id)}
                   className={`relative flex items-center gap-5 p-4 rounded-xl border transition-all duration-200 text-left overflow-hidden ${
                     isSelected
-                      ? 'bg-indigo-500/10 border-indigo-500 ring-1 ring-indigo-500/50'
-                      : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+                      ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500/50'
+                      : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${
                     isSelected 
-                      ? 'bg-indigo-500 text-white' 
-                      : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 '
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-500'
                   }`}>
-                    <Icon size={22} strokeWidth={2.5} />
+                    <Icon size={22} className={isSelected ? 'text-white' : ''} />
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`font-bold text-sm mb-1 ${isSelected ? 'text-indigo-400' : 'text-slate-200'}`}>{r.title}</h3>
-                    <p className="text-[12px] text-slate-400 leading-snug">{r.desc}</p>
+                  <div>
+                    <h3 className={`font-bold text-sm mb-0.5 ${isSelected ? 'text-blue-600' : 'text-gray-900'}`}>
+                      {r.title}
+                    </h3>
+                    <p className={`text-[12px] leading-snug ${isSelected ? 'text-blue-600/80' : 'text-gray-500'}`}>
+                      {r.desc}
+                    </p>
                   </div>
                   {isSelected && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500">
-                      <CheckCircle2 size={18} />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500">
+                      <CheckCircle2 size={20} />
                     </div>
                   )}
                 </button>
@@ -270,7 +274,7 @@ const Signup = () => {
         </div>
       ) : (
         <div className="space-y-5 animate-fade-in">
-          <button onClick={() => setStep(1)} className="text-xs text-indigo-400 hover:text-indigo-300 hover:underline mb-2">
+          <button onClick={() => setStep(1)} className="text-xs text-blue-600 hover:text-blue-700 hover:underline mb-2">
             &larr; Back to Role Selection ({formData.role})
           </button>
 
@@ -286,13 +290,13 @@ const Signup = () => {
                 type="button"
                 onClick={() => handleProviderSignup(githubLogin, 'GitHub')}
                 disabled={isAnyLoading}
-                className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 text-slate-100 hover:text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-900 hover:text-gray-900 font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
               >
-                <Github size={18} className="text-white" /> Sign up with GitHub
+                <Github size={18} className="text-gray-900" /> Sign up with GitHub
               </button>
               <div className="relative flex items-center justify-center my-6">
-                <div className="w-full border-t border-slate-800"></div>
-                <span className="absolute bg-[#0d1424] px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                <div className="w-full border-t border-gray-200"></div>
+                <span className="absolute bg-white px-3 text-[10px] font-semibold uppercase tracking-wider text-gray-500">
                   or register with email
                 </span>
               </div>
@@ -302,11 +306,11 @@ const Signup = () => {
           <form onSubmit={handleEmailSubmit} className="space-y-3">
             {formData.role === 'Admin' && (
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">
                   Admin Access Token
                 </label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
                   <input
                     type="password"
                     name="adminAccessToken"
@@ -315,7 +319,7 @@ const Signup = () => {
                     placeholder="Enter admin access token"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -323,9 +327,9 @@ const Signup = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Full Name</label>
+                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Full Name</label>
                 <div className="relative flex items-center">
-                  <User size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+                  <User size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
                   <input
                     type="text"
                     name="fullName"
@@ -334,14 +338,14 @@ const Signup = () => {
                     placeholder="John Doe"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Email</label>
+                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Email</label>
                 <div className="relative flex items-center">
-                  <Mail size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+                  <Mail size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
                   <input
                     type="email"
                     name="email"
@@ -350,7 +354,7 @@ const Signup = () => {
                     placeholder="you@example.com"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -358,9 +362,9 @@ const Signup = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Password</label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -369,17 +373,17 @@ const Signup = () => {
                     placeholder="••••••••"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 text-slate-400 hover:text-slate-200">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 text-gray-500 hover:text-gray-700">
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Confirm</label>
+                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Confirm</label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     name="confirmPassword"
@@ -388,7 +392,7 @@ const Signup = () => {
                     placeholder="••••••••"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-slate-700/80 bg-slate-950/70 text-slate-100 placeholder-slate-500 text-sm focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -397,7 +401,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60"
             >
               {actionLoading ? <Loader2 className="animate-spin" size={18} /> : `Create ${formData.role} Account`}
             </button>
