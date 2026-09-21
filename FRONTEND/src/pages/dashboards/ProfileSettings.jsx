@@ -257,7 +257,7 @@ const ProfileSettings = () => {
 
   const roleTitle = isAdmin ? 'ADMIN' : isInstructor ? 'MENTOR' : 'STUDENT';
 
-            const sidebarItems = isAdmin
+  const sidebarItems = isAdmin
     ? [
         { label: 'Overview', path: '/admin/dashboard', icon: Home },
         { category: 'Administration' },
@@ -272,9 +272,10 @@ const ProfileSettings = () => {
     : isInstructor
     ? [
         { label: 'Overview', path: '/instructor/dashboard', icon: Home },
-        { category: 'Manager' },
+        { category: 'Learning' },
+        { label: 'All Courses', path: '/courses', icon: BookOpen },
         { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
-        { label: 'Create Course', path: '/instructor/courses/create', icon: Plus },
+        { category: 'Manager' },
         { label: 'View Students', path: '#', icon: Users },
         { label: 'Certificates', path: '#', icon: Sparkles },
         { category: 'Account' },
@@ -283,7 +284,8 @@ const ProfileSettings = () => {
     : [
         { label: 'Overview', path: '/student/dashboard', icon: Home },
         { category: 'Learning' },
-        { label: 'Browse Courses', path: '/courses', icon: BookOpen },
+        { label: 'All Courses', path: '/courses', icon: BookOpen },
+        { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
         { label: 'Certificates', path: '#', icon: Sparkles },
         { category: 'Account' },
         { label: 'Settings', path: '/student/profile', icon: Settings }

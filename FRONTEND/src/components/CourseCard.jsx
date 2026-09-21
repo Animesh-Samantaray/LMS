@@ -5,6 +5,7 @@ import { Star, Clock, LayoutGrid, Heart, Bookmark, Eye, Edit2, Trash2, Send, Loa
 const CourseCard = ({
   course,
   isManagement = false,
+  isEnrolled = false,
   onPublish = null,
   onDelete = null,
   onEdit = null,
@@ -141,7 +142,11 @@ const CourseCard = ({
               <span className="text-xs font-bold text-[var(--lms-text-primary)] ml-1">{rating}</span>
             </div>
             {!isManagement && (
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{price}</span>
+              isEnrolled ? (
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">Enrolled</span>
+              ) : (
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{price}</span>
+              )
             )}
           </div>
 

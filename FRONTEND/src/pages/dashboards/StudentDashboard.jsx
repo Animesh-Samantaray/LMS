@@ -41,22 +41,23 @@ const StudentDashboard = () => {
     };
   }, [user]);
 
-        const sidebarItems = [
+  const sidebarItems = [
     { label: 'Overview', path: '/student/dashboard', icon: Home },
     { category: 'Learning' },
-    { label: 'My Courses', path: '#', icon: '\uD83D\uDCD6' },
-    { label: 'Mock Test', path: '#', icon: '\uD83D\uDCC4' },
-    { label: 'Practice Arena', path: '#', icon: '\uD83C\uDFAF' },
-    { label: 'Exams', path: '#', icon: '\uD83D\uDCDD' },
-    { label: 'Weekly Contests', path: '#', icon: '\uD83C\uDFC6' },
-    { label: 'Certificates', path: '#', icon: '\uD83C\uDF96\uFE0F' },
+    { label: 'All Courses', path: '/courses', icon: BookOpen },
+    { label: 'My Courses', path: '/student/courses/my', icon: '📖' },
+    { label: 'Mock Test', path: '#', icon: '📄' },
+    { label: 'Practice Arena', path: '#', icon: '🎯' },
+    { label: 'Exams', path: '#', icon: '📝' },
+    { label: 'Weekly Contests', path: '#', icon: '🏆' },
+    { label: 'Certificates', path: '#', icon: '🎖️' },
     { category: 'Engagement' },
-    { label: 'My Groups', path: '#', icon: '\uD83D\uDC65' },
-    { label: 'My Reviews', path: '#', icon: '\u2B50' },
-    { label: 'Messages', path: '#', icon: '\uD83D\uDCAC' },
-    { label: 'Calendar', path: '#', icon: '\uD83D\uDCC5' },
+    { label: 'My Groups', path: '#', icon: '👥' },
+    { label: 'My Reviews', path: '#', icon: '⭐' },
+    { label: 'Messages', path: '#', icon: '💬' },
+    { label: 'Calendar', path: '#', icon: '📅' },
     { category: 'Account' },
-    { label: 'Settings', path: '/student/profile', icon: '\u2699\uFE0F' }
+    { label: 'Settings', path: '/student/profile', icon: '⚙️' }
   ];
 
   if (loading) {

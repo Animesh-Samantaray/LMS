@@ -209,11 +209,11 @@ const LandingNavbar = () => {
                       <Link to="/instructor/dashboard" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
                         <LayoutGrid size={14} className="text-gray-400" /> Dashboard
                       </Link>
+                      <Link to="/courses" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> All Courses
+                      </Link>
                       <Link to="/instructor/courses" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
                         <LayoutGrid size={14} className="text-gray-400" /> My Courses
-                      </Link>
-                      <Link to="/instructor/courses/create" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
-                        <LayoutGrid size={14} className="text-gray-400" /> Create Course
                       </Link>
                     </div>
                   </div>
@@ -228,7 +228,10 @@ const LandingNavbar = () => {
                         <LayoutGrid size={14} className="text-gray-400" /> Dashboard
                       </Link>
                       <Link to="/courses" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
-                        <LayoutGrid size={14} className="text-gray-400" /> Browse Courses
+                        <LayoutGrid size={14} className="text-gray-400" /> All Courses
+                      </Link>
+                      <Link to="/student/courses/my" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> My Courses
                       </Link>
                     </div>
                   </div>

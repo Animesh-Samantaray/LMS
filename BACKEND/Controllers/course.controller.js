@@ -242,7 +242,6 @@ export const publishCourse = async (req, res) => {
     }
 
     course.status = "published";
-
     await course.save();
 
     return res.status(200).json({
@@ -252,10 +251,79 @@ export const publishCourse = async (req, res) => {
     });
   } catch (error) {
     console.error("Publish Course Error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Failed to publish course",
+    });
+  }
+};
+
+export const enrollInCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    if (course.status !== "published") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot enroll in an unpublished course",
+      });
+    }
+
+    const userId = req.user._id || req.user.id;
+    const alreadyEnrolled = course.enrolled.some(
+      (e) => e.toString() === userId.toString()
+    );
+
+    if (alreadyEnrolled) {
+      return res.status(400).json({
+        success: false,
+        message: "Already enrolled in this course",
+      });
+    }
+
+    course.enrolled.push(userId);
+    await course.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Enrolled successfully",
+      course,
+    });
+  } catch (error) {
+    console.error("Enroll Course Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to enroll in course",
+    });
+  }
+};
+
+export const getStudentEnrolledCourses = async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.id;
+    const courses = await Course.find({
+      enrolled: userId,
+    })
+      .populate("createdBy", "name email profileImage role")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      courses,
+    });
+  } catch (error) {
+    console.error("Get Enrolled Courses Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch enrolled courses",
     });
   }
 };

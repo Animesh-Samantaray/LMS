@@ -7,16 +7,31 @@ import {
   getMyCourses,
   updateCourse,
   deleteCourse,
-  publishCourse
+  publishCourse,
+  enrollInCourse,
+  getStudentEnrolledCourses
 } from "../Controllers/course.controller.js";
 
 import authMiddleware from "../Middlewares/auth.middleware.js";
-import  authorizeRoles  from "../Middlewares/role.middleware.js";
+import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
-
 router.get("/", getAllCourses);
+
+router.get(
+  "/enrolled/my",
+  authMiddleware,
+  authorizeRoles("Student", "Instructor", "Admin"),
+  getStudentEnrolledCourses
+);
+
+router.post(
+  "/:id/enroll",
+  authMiddleware,
+  authorizeRoles("Student", "Instructor", "Admin"),
+  enrollInCourse
+);
 
 router.post(
   "/",
@@ -31,7 +46,6 @@ router.patch(
   authorizeRoles("Instructor", "Admin"),
   publishCourse
 );
-
 
 router.get(
   "/instructor/my",
