@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { PlayCircle, Check, ChevronDown, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle } from 'lucide-react';
+import { PlayCircle, Check, ChevronDown, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle, User } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../services/api.service';
@@ -60,11 +60,13 @@ const CourseDetails = () => {
     );
   }
 
+  const categoryName = typeof course.category === 'object' ? course.category?.name : course.category;
+  const instructorName = course.instructor?.name || course.createdBy?.name || 'Instructor';
+
   return (
     <div className="min-h-screen bg-[var(--lms-bg)] flex flex-col pt-16">
       <Navbar />
 
-      {/* Hero Section */}
       <div className="bg-gray-900 text-white">
         <div className="container mx-auto px-4 py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
@@ -75,9 +77,9 @@ const CourseDetails = () => {
               </Link>
               
               <div className="flex items-center gap-3 mb-6">
-                {course.category?.name && (
+                {categoryName && (
                   <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    {course.category.name}
+                    {categoryName}
                   </span>
                 )}
                 {course.status === 'draft' && (
@@ -106,7 +108,7 @@ const CourseDetails = () => {
                 
                 <div className="flex items-center gap-2 text-gray-300">
                   <User size={16} />
-                  <span>By <span className="font-semibold text-blue-400 underline decoration-blue-400/30 underline-offset-2">{course.instructor?.name || 'Instructor'}</span></span>
+                  <span>By <span className="font-semibold text-blue-400 underline decoration-blue-400/30 underline-offset-2">{instructorName}</span></span>
                 </div>
                 
                 <div className="flex items-center gap-2 text-gray-300">
@@ -121,17 +123,14 @@ const CourseDetails = () => {
               </div>
             </div>
 
-            {/* Sticky Sidebar Container (Desktop) */}
             <div className="hidden lg:block w-[380px] shrink-0"></div>
 
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="container mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8 lg:gap-16 relative">
         
-        {/* Left Column - Details */}
         <div className="flex-1 lg:max-w-[calc(100%-444px)]">
           
           <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl p-6 sm:p-8 mb-12 shadow-sm">
@@ -162,7 +161,6 @@ const CourseDetails = () => {
               <span className="text-[var(--lms-text-secondary)] text-sm font-medium">5 Modules • 24 Lessons • 12h 30m total length</span>
             </div>
             
-            {/* STATIC PLACEHOLDER FOR MODULES */}
             <div className="border border-[var(--lms-border)] rounded-xl overflow-hidden bg-[var(--lms-surface)] shadow-sm">
               <div className="p-8 text-center">
                 <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -189,12 +187,10 @@ const CourseDetails = () => {
           </section>
         </div>
 
-        {/* Right Column - Sticky Sidebar */}
         <div className="lg:w-[380px] shrink-0">
           <div className="lg:absolute lg:-top-[340px] lg:right-4 xl:right-auto lg:w-[380px]">
             <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl overflow-hidden shadow-2xl sticky top-24">
               
-              {/* Sidebar Image */}
               <div className="relative aspect-video bg-gray-900 flex items-center justify-center group">
                 {course.thumbnail ? (
                   <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover opacity-80" />
@@ -208,7 +204,6 @@ const CourseDetails = () => {
                 </div>
               </div>
 
-              {/* Sidebar Content */}
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-3xl font-bold text-[var(--lms-text-primary)]">Free</span>

@@ -206,11 +206,15 @@ const LandingNavbar = () => {
                   <MoreHorizontal size={16} />
                   <div className="absolute top-0 left-full pl-2 w-56 hidden group-hover/inst:block z-50">
                     <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
-                      {['Dashboard', 'Courses', 'Create Course', 'Course Added', 'Quiz', 'Earnings', 'Students', 'Orders', 'Reviews', 'Payout'].map((item, idx) => (
-                        <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-2 transition-colors">
-                          <LayoutGrid size={14} className="text-gray-400" /> {item}
-                        </div>
-                      ))}
+                      <Link to="/instructor/dashboard" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> Dashboard
+                      </Link>
+                      <Link to="/instructor/courses" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> My Courses
+                      </Link>
+                      <Link to="/instructor/courses/create" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> Create Course
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -220,32 +224,19 @@ const LandingNavbar = () => {
                   <MoreHorizontal size={16} className="text-gray-400 group-hover/stud:text-blue-500" />
                   <div className="absolute top-0 left-full pl-2 w-56 hidden group-hover/stud:block z-50">
                     <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-3">
-                      {['Dashboard', 'My Subscriptions', 'Courses', 'Course Resume', 'Quiz', 'Payment Info', 'Wishlist'].map((item, idx) => (
-                        <div key={idx} className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm cursor-pointer flex items-center gap-2 transition-colors">
-                          <LayoutGrid size={14} className="text-gray-400" /> {item}
-                        </div>
-                      ))}
+                      <Link to="/student/dashboard" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> Dashboard
+                      </Link>
+                      <Link to="/courses" className="px-5 py-2.5 text-gray-600 hover:text-blue-600 hover:bg-gray-50 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <LayoutGrid size={14} className="text-gray-400" /> Browse Courses
+                      </Link>
                     </div>
                   </div>
                 </div>
 
-                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2 mb-2">
+                <Link to="/admin/dashboard" className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm flex items-center gap-2 mb-2">
                   <Settings size={16}/> Admin
-                </div>
-
-                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2">
-                  <PenTool size={16}/> Edit Profile
-                </div>
-                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2">
-                  <Settings size={16}/> Settings
-                </div>
-                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center gap-2 border-b border-gray-100 pb-3 mb-1">
-                  <span className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"><span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span></span> Delete Profile
-                </div>
-
-                <div className="px-5 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-blue-600 font-medium text-sm cursor-pointer flex items-center justify-between">
-                  <span>Dropdown levels</span>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -624,7 +615,7 @@ const LandingPage = () => {
         </motion.section>
 
         
-        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.1 }} className="py-16">
+        <motion.section id="courses" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.1 }} className="py-16">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="text-center mb-10">
               <h2 className="text-3xl lg:text-[2.5rem] font-bold text-gray-900 mb-4">Most Popular Courses</h2>
