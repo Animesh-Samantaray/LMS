@@ -559,10 +559,13 @@ const LandingPage = () => {
               </motion.div>
 
               <motion.div className="w-full lg:w-6/12 relative mt-10 lg:mt-0 flex justify-center" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
-                <div className="absolute inset-0 bg-[#1e293b] rounded-full scale-[0.85] origin-center -z-10 translate-y-4"></div>
-                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop" alt="Student" className="relative z-10 w-full max-w-[450px] h-auto object-cover object-top rounded-b-full scale-110 drop-shadow-2xl" style={{ clipPath: 'circle(45% at 50% 50%)' }} />
-                
-                <div className="absolute top-24 left-4 bg-white p-3 rounded-xl shadow-xl z-20 animate-bounce" style={{ animationDuration: '4s' }}><Atom size={28} className="text-indigo-600" /></div>
+                  <img 
+                    src="/hero-vector.png" 
+                    alt="LMS Learning Platform" 
+                    className="relative z-10 w-full max-w-[550px] h-auto object-contain drop-shadow-xl" 
+                  />
+                  
+                  <div className="absolute top-12 left-0 lg:-left-6 bg-white p-3 rounded-xl shadow-xl z-20 animate-bounce" style={{ animationDuration: '4s' }}><Atom size={28} className="text-indigo-600" /></div>
                 <div className="absolute bottom-32 -right-4 bg-white p-3 rounded-xl shadow-xl z-20 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '1s' }}><Figma size={24} className="text-rose-500" /></div>
 
                 <div className="absolute top-1/4 right-0 lg:-right-10 bg-emerald-500 rounded-xl p-4 shadow-xl z-20 overflow-hidden">

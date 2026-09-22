@@ -201,6 +201,15 @@ const CourseCard = ({
 
               <button
                 type="button"
+                onClick={() => navigate(`/instructor/courses/${course._id}/content`)}
+                className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-semibold bg-[var(--lms-surface)] border border-[var(--lms-border)] text-[var(--lms-text-primary)] hover:border-indigo-500 hover:text-indigo-500 transition-colors shadow-sm"
+                title="Manage Content"
+              >
+                <LayoutGrid size={13} /> Content
+              </button>
+
+              <button
+                type="button"
                 onClick={() => (onEdit ? onEdit(course._id) : navigate(`/instructor/courses/${course._id}/edit`))}
                 className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-semibold bg-[var(--lms-surface)] border border-[var(--lms-border)] text-[var(--lms-text-primary)] hover:border-[var(--lms-accent)] hover:text-[var(--lms-accent)] transition-colors shadow-sm"
                 title="Edit Course"

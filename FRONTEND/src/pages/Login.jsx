@@ -86,12 +86,28 @@ const Login = () => {
       return;
     }
 
-  
+    if (user && user.accountStatus === "inactive") {
+      setActionLoading(false);
+      setProviderLoading(false);
+      setErrorMsg("Your account is currently inactive. Please contact support.");
+      return;
+    }
+
     if (user?.role) {
       setActionLoading(false);
       setProviderLoading(false);
 
       navigate(getDashboardPath(user.role), { replace: true });
+      return;
+    }
+    
+    // If auth state loaded but no conditions were met (e.g. backend error), reset spinners
+    if (!user && !lmsProfileMissing && !twoFactorRequired && (actionLoading || providerLoading)) {
+      setActionLoading(false);
+      setProviderLoading(false);
+      if (firebaseUser) {
+        setErrorMsg("Authentication failed. Please check your network connection or contact support.");
+      }
     }
   }, [
     authLoading,
