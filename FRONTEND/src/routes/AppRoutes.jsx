@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 
 import LandingPage from "../pages/LandingPage";
 import Login from "../pages/Login";
@@ -16,6 +16,7 @@ import CourseManagement from "../pages/dashboards/admin/CourseManagement";
 import MyCourses from "../pages/dashboards/instructor/MyCourses";
 import CreateCourse from "../pages/dashboards/instructor/CreateCourse";
 import EditCourse from "../pages/dashboards/instructor/EditCourse";
+import CourseContent from "../pages/dashboards/instructor/CourseContent";
 import ProfileSettings from "../pages/dashboards/ProfileSettings";
 import PremiumCoursesPage from "../pages/PremiumCoursesPage";
 import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
@@ -50,6 +51,7 @@ const ProtectedRoute = ({ roles }) => {
     twoFactorRequired,
     loading,
   } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
@@ -71,8 +73,13 @@ const ProtectedRoute = ({ roles }) => {
   }
 
   
-  if (roles && !roles.includes(user.role)) {
-    return <Navigate to={getDashboardPath(user.role)} replace />;
+  if (roles && !roles.some(r => r.toLowerCase() === user?.role?.toLowerCase()?.trim())) {
+    const targetPath = getDashboardPath(user?.role);
+    // Prevent infinite redirect loops if target path requires a role we don't have
+    if (location.pathname === targetPath) {
+      return <Navigate to="/" replace />;
+    }
+    return <Navigate to={targetPath} replace />;
   }
 
   return <Outlet />;
@@ -90,6 +97,7 @@ const PublicOnlyRoute = () => {
     twoFactorRequired,
     loading,
   } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
@@ -116,8 +124,12 @@ const PublicOnlyRoute = () => {
   
 
 
-  if (user && user.role) {
-    return <Navigate to={getDashboardPath(user.role)} replace />;
+  if (user && user?.role) {
+    const targetPath = getDashboardPath(user?.role);
+    if (location.pathname === targetPath) {
+      return <Navigate to="/" replace />;
+    }
+    return <Navigate to={targetPath} replace />;
   }
 
   return <Outlet />;
@@ -134,6 +146,7 @@ const HomeRoute = () => {
     twoFactorRequired,
     loading,
   } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
@@ -143,15 +156,25 @@ const HomeRoute = () => {
 
 
 
+  if (lmsProfileMissing) {
+    return <Outlet />;
+  }
+
+  
+
+
   if (firebaseUser && twoFactorRequired) {
     return <Navigate to="/verify-2fa" replace />;
   }
 
   
 
-
-  if (user && user.role && !lmsProfileMissing) {
-    return <Navigate to={getDashboardPath(user.role)} replace />;
+  if (user && user?.role) {
+    const targetPath = getDashboardPath(user?.role);
+    if (location.pathname === targetPath) {
+      return <LandingPage />;
+    }
+    return <Navigate to={targetPath} replace />;
   }
 
   return <LandingPage />;
@@ -256,7 +279,15 @@ const AppRoutes = () => {
           path="/instructor/courses/my"
           element={<MyCourses />}
         />
-        
+
+        <Route
+          path="/instructor/profile"
+          element={<ProfileSettings />}
+        />
+      </Route>
+
+      {/* Shared routes for course creation and editing (Instructor & Admin) */}
+      <Route element={<ProtectedRoute roles={["Instructor", "Admin"]} />}>
         <Route
           path="/instructor/courses/create"
           element={<CreateCourse />}
@@ -268,8 +299,8 @@ const AppRoutes = () => {
         />
 
         <Route
-          path="/instructor/profile"
-          element={<ProfileSettings />}
+          path="/instructor/courses/:id/content"
+          element={<CourseContent />}
         />
       </Route>
 
