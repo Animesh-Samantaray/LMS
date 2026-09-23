@@ -19,6 +19,7 @@ const CourseDetails = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [units, setUnits] = useState([]);
   const [expandedUnits, setExpandedUnits] = useState({});
+  const [selectedLesson, setSelectedLesson] = useState(null);
   const [selectedLessonResources, setSelectedLessonResources] = useState([]);
   const [loadingLessonResources, setLoadingLessonResources] = useState(false);
 
