@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, Clock, LayoutGrid, Heart, Bookmark, Eye, Edit2, Trash2, Send, Loader, Globe, Archive, AlertCircle } from 'lucide-react';
+import { Star, Clock, LayoutGrid, Heart, Bookmark, Eye, Edit2, Trash2, Send, Loader, Globe, Archive, AlertCircle, Users } from 'lucide-react';
 
 const CourseCard = ({
   course,
@@ -147,6 +147,12 @@ const CourseCard = ({
               ) : (
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{price}</span>
               )
+            )}
+            {isManagement && (
+              <div className="flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-md border border-indigo-500/20">
+                <Users size={12} />
+                <span>{course.enrolled?.length || 0} Enrolled</span>
+              </div>
             )}
           </div>
 
