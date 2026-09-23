@@ -26,13 +26,51 @@ const resourceSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["PDF", "Document", "Link", "Video", "Code", "Other"],
+      enum: [
+        "PDF",
+        "Document",
+        "Link",
+        "Video",
+        "Image",
+        "Spreadsheet",
+        "Presentation",
+        "Text",
+        "ZIP",
+        "Code",
+        "Other",
+      ],
     },
 
     url: {
       type: String,
       required: true,
       trim: true,
+    },
+
+    publicId: {
+      type: String,
+      default: "",
+    },
+
+    originalName: {
+      type: String,
+      default: "",
+    },
+
+    fileSize: {
+      type: Number,
+      default: 0,
+    },
+
+    mimeType: {
+      type: String,
+      default: "",
+    },
+
+    source: {
+      type: String,
+      enum: ["upload", "external"],
+      default: "external",
     },
 
     order: {

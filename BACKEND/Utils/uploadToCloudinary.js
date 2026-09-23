@@ -33,12 +33,18 @@ const uploadToCloudinary = async (fileBuffer, options = {}) => {
   const folder = options.folder || "lms/uploads";
   const originalName = options.originalName || "file";
   const extension = getExtension(originalName);
-  const safeName = `${normalizeFileName(originalName)}_${Date.now()}`;
+  const safeBase = normalizeFileName(originalName);
+  
+  // For raw files (PDFs, DOCX, ZIP, etc.), including the extension in the public_id ensures
+  // Cloudinary generates a direct download/view URL with the file extension intact
+  const publicIdWithExt = extension
+    ? `${safeBase}_${Date.now()}.${extension}`
+    : `${safeBase}_${Date.now()}`;
 
   const uploadOptions = {
     folder,
     resource_type: resourceType,
-    public_id: safeName,
+    public_id: resourceType === "raw" ? publicIdWithExt : `${safeBase}_${Date.now()}`,
     use_filename: false,
     unique_filename: false,
   };

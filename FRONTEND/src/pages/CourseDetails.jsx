@@ -19,7 +19,44 @@ const CourseDetails = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [units, setUnits] = useState([]);
   const [expandedUnits, setExpandedUnits] = useState({});
-  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [selectedLessonResources, setSelectedLessonResources] = useState([]);
+  const [loadingLessonResources, setLoadingLessonResources] = useState(false);
+
+  const handleSelectLesson = async (lesson) => {
+    setSelectedLesson(lesson);
+    setSelectedLessonResources([]);
+    if (lesson?._id || lesson?.id) {
+      const lessonId = lesson._id || lesson.id;
+      try {
+        setLoadingLessonResources(true);
+        const res = await api.get(`/api/resources/lesson/${lessonId}`);
+        setSelectedLessonResources(res.data.resources || []);
+      } catch (err) {
+        console.error("Failed to load resources for lesson", err);
+      } finally {
+        setLoadingLessonResources(false);
+      }
+    }
+  };
+
+  const getResourceIcon = (resource) => {
+    const mime = resource?.mimeType || '';
+    const type = resource?.type || '';
+
+    if (mime === 'application/pdf' || type === 'PDF') {
+      return <FileText size={16} className="text-rose-500 shrink-0" />;
+    }
+    if (mime.startsWith('video/') || type === 'Video') {
+      return <PlayCircle size={16} className="text-indigo-500 shrink-0" />;
+    }
+    if (mime.startsWith('image/') || type === 'Image') {
+      return <FileText size={16} className="text-purple-500 shrink-0" />;
+    }
+    if (type === 'Link' || resource?.source === 'external') {
+      return <Globe size={16} className="text-emerald-500 shrink-0" />;
+    }
+    return <FileText size={16} className="text-blue-500 shrink-0" />;
+  };
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -232,7 +269,7 @@ const CourseDetails = () => {
                                         </div>
                                         {(isEnrolled || user?.role === 'Admin' || (user?.role === 'Instructor' && (course.createdBy?._id === user?._id || course.createdBy?._id === user?.id || course.createdBy === user?._id || course.createdBy === user?.id))) ? (
                                           <button 
-                                            onClick={() => setSelectedLesson(lesson)}
+                                            onClick={() => handleSelectLesson(lesson)}
                                             className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1.5"
                                           >
                                             {lesson.contentType === 'video' ? <PlayCircle size={12} /> : <FileText size={12} />}
@@ -453,7 +490,56 @@ const CourseDetails = () => {
 
                   {!selectedLesson.videoUrl && !selectedLesson.pdfUrl && !selectedLesson.externalUrl && (
                     <div className="p-6 bg-gray-50 border border-gray-100 rounded-xl text-center">
-                      <p className="text-sm text-gray-500 font-medium">No external resources attached to this lesson.</p>
+                      <p className="text-sm text-gray-500 font-medium">No external links attached to this lesson.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Supplementary Resources Section */}
+                <div className="space-y-3 pt-4 border-t border-[var(--lms-border)]">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--lms-text-muted)]">
+                    Supplementary Resources ({selectedLessonResources.length})
+                  </h4>
+
+                  {loadingLessonResources ? (
+                    <div className="py-4 text-center">
+                      <Loader size={18} className="animate-spin text-blue-500 mx-auto" />
+                    </div>
+                  ) : selectedLessonResources.length > 0 ? (
+                    <div className="space-y-2.5">
+                      {selectedLessonResources.map((res) => (
+                        <a
+                          key={res._id}
+                          href={res.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center justify-between p-3.5 bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface-hover)] border border-[var(--lms-border)] rounded-xl transition-all group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            {getResourceIcon(res)}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-xs text-[var(--lms-text-primary)] group-hover:text-blue-500 truncate">
+                                  {res.title}
+                                </span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--lms-surface)] border border-[var(--lms-border)] text-[var(--lms-text-muted)]">
+                                  {res.type}
+                                </span>
+                              </div>
+                              {res.description && (
+                                <p className="text-[11px] text-[var(--lms-text-muted)] truncate mt-0.5">
+                                  {res.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <Share2 size={14} className="text-[var(--lms-text-muted)] group-hover:text-blue-500 shrink-0 ml-2" />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-[var(--lms-surface-subtle)] border border-dashed border-[var(--lms-border)] rounded-xl text-center">
+                      <p className="text-xs text-[var(--lms-text-muted)]">No supplementary resources attached to this lesson.</p>
                     </div>
                   )}
                 </div>
