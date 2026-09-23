@@ -11,6 +11,7 @@ import adminRoutes from "./Routes/admin.route.js";
 import categoryRoutes from "./Routes/category.route.js";
 import courseRoutes from "./Routes/course.route.js";
 import contentRoutes from "./Routes/content.route.js";
+import resourceRoutes from "./Routes/resource.route.js";
 import "./Configs/firebaseAdmin.js";
 
 const app = express();
@@ -53,7 +54,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api", contentRoutes);
-
+app.use("/api/resources", resourceRoutes);
 
 app.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);
