@@ -13,6 +13,7 @@ import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import CategoryManagement from "../pages/dashboards/admin/CategoryManagement";
 import CourseManagement from "../pages/dashboards/admin/CourseManagement";
+import UserManagement from "../pages/dashboards/admin/UserManagement";
 import MyCourses from "../pages/dashboards/instructor/MyCourses";
 import CreateCourse from "../pages/dashboards/instructor/CreateCourse";
 import EditCourse from "../pages/dashboards/instructor/EditCourse";
@@ -309,6 +310,11 @@ const AppRoutes = () => {
         <Route
           path="/admin/dashboard"
           element={<AdminDashboard />}
+        />
+
+        <Route
+          path="/admin/users"
+          element={<UserManagement />}
         />
 
         <Route

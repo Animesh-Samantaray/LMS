@@ -261,7 +261,7 @@ const ProfileSettings = () => {
     ? [
         { label: 'Overview', path: '/admin/dashboard', icon: Home },
         { category: 'Administration' },
-        { label: 'Manage Users', path: '#', icon: Users },
+        { label: 'Manage Users', path: '/admin/users', icon: Users },
         { category: 'Management' },
         { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
         { label: 'Courses', path: '/admin/courses', icon: BookOpen },

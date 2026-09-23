@@ -66,7 +66,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
       ? [
           { label: 'Overview', path: '/admin/dashboard', icon: Home },
           { category: 'Administration' },
-          { label: 'Manage Users', path: '#', icon: Users },
+          { label: 'Manage Users', path: '/admin/users', icon: Users },
           { category: 'Management' },
           { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },
@@ -381,8 +381,8 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
+        <main className="flex-1 min-w-0 overflow-y-auto p-3 sm:p-5 lg:p-8">
+          <div className="w-full max-w-[1600px] mx-auto space-y-4 sm:space-y-6 animate-fade-in">
             {children}
           </div>
         </main>
