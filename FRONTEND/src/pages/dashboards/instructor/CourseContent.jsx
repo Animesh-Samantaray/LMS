@@ -48,13 +48,13 @@ const CourseContent = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Modals state
+
   const [unitModal, setUnitModal] = useState({ open: false, isEdit: false, data: null });
   const [lessonModal, setLessonModal] = useState({ open: false, isEdit: false, unitId: null, data: null });
   const [resourceModal, setResourceModal] = useState({ open: false, isEdit: false, lessonId: null, data: null });
   const [deleteConfirm, setDeleteConfirm] = useState({ open: false, type: '', id: null, title: '', extraNote: '' });
 
-  // Form states
+
   const [unitForm, setUnitForm] = useState({ title: '', description: '' });
   const [lessonForm, setLessonForm] = useState({
     title: '',
@@ -66,8 +66,8 @@ const CourseContent = () => {
     duration: 0,
   });
 
-  // Resource Form with Upload File (Automatic file type) & External URL support
-  const [resourceSource, setResourceSource] = useState('upload'); // 'upload' | 'external'
+ 
+  const [resourceSource, setResourceSource] = useState('upload'); 
   const [resourceForm, setResourceForm] = useState({
     title: '',
     description: '',
@@ -80,8 +80,8 @@ const CourseContent = () => {
   const [submitting, setSubmitting] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState({});
   const [expandedLessons, setExpandedLessons] = useState({});
-  const [lessonResources, setLessonResources] = useState({}); // { [lessonId]: [] }
-  const [loadingResources, setLoadingResources] = useState({}); // { [lessonId]: boolean }
+  const [lessonResources, setLessonResources] = useState({}); 
+  const [loadingResources, setLoadingResources] = useState({}); 
 
   const sidebarItems = [
     { label: 'Overview', path: '/instructor/dashboard', icon: Home },
@@ -164,7 +164,7 @@ const CourseContent = () => {
     }
   };
 
-  // --- UNIT ACTIONS ---
+
   const handleOpenUnitModal = (unit = null) => {
     setUnitForm(unit ? { title: unit.title, description: unit.description || '' } : { title: '', description: '' });
     setUnitModal({ open: true, isEdit: !!unit, data: unit });
@@ -223,7 +223,7 @@ const CourseContent = () => {
     }
   };
 
-  // --- LESSON ACTIONS ---
+
   const handleOpenLessonModal = (unitId, lesson = null) => {
     setLessonForm(
       lesson
@@ -313,7 +313,7 @@ const CourseContent = () => {
     }
   };
 
-  // --- FILE HANDLING ---
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     setFileError('');
@@ -322,7 +322,7 @@ const CourseContent = () => {
       return;
     }
 
-    // 100 MB Limit validation
+
     const maxSizeBytes = 100 * 1024 * 1024;
     if (file.size > maxSizeBytes) {
       setFileError('File size must not exceed 100 MB.');
@@ -334,7 +334,7 @@ const CourseContent = () => {
     setSelectedFile(file);
   };
 
-  // --- RESOURCE ACTIONS ---
+
   const handleOpenResourceModal = (lessonId, resource = null) => {
     setSelectedFile(null);
     setFileError('');
@@ -450,7 +450,7 @@ const CourseContent = () => {
     }
   };
 
-  // --- CONFIRMED DELETION EXECUTION ---
+
   const handleConfirmDelete = async () => {
     const { type, id, extraId } = deleteConfirm;
     setSubmitting(true);
@@ -552,7 +552,7 @@ const CourseContent = () => {
     <DashboardLayout sidebarItems={sidebarItems} roleTitle="INSTRUCTOR" pageTitle="Course Builder">
       <div className="max-w-5xl mx-auto pb-16 space-y-6">
 
-        {/* Back Link */}
+      
         <div className="flex items-center justify-between">
           <Link
             to="/instructor/courses"
@@ -568,7 +568,7 @@ const CourseContent = () => {
           </Link>
         </div>
 
-        {/* Course Builder Header Card */}
+     
         <div className="lms-glass-card rounded-3xl p-6 sm:p-8 border border-[var(--lms-border)] relative overflow-hidden shadow-lg">
           <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
             <div className="flex flex-col sm:flex-row gap-5 items-start">
@@ -1004,8 +1004,8 @@ const CourseContent = () => {
       {/* MODAL: UNIT CREATE / EDIT                                */}
       {/* ========================================================= */}
       {unitModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[var(--lms-surface)] rounded-3xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
                 {unitModal.isEdit ? 'Edit Unit' : 'Create New Unit'}
@@ -1068,8 +1068,8 @@ const CourseContent = () => {
       {/* MODAL: LESSON CREATE / EDIT                              */}
       {/* ========================================================= */}
       {lessonModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[var(--lms-surface)] rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] shrink-0 flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
                 {lessonModal.isEdit ? 'Edit Lesson' : 'Add Lesson'}
@@ -1220,8 +1220,8 @@ const CourseContent = () => {
       {/* MODAL: RESOURCE CREATE / EDIT (NO MANUAL TYPE REQUIRED)   */}
       {/* ========================================================= */}
       {resourceModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[var(--lms-surface)] rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
@@ -1412,8 +1412,8 @@ const CourseContent = () => {
       {/* MODAL: DELETE CONFIRMATION                                */}
       {/* ========================================================= */}
       {deleteConfirm.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[var(--lms-surface)] rounded-3xl w-full max-w-sm shadow-2xl border border-[var(--lms-border)] p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm shadow-2xl border border-[var(--lms-border)] p-6 space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 flex items-center justify-center mx-auto mb-2 border border-rose-500/20">
               <AlertCircle size={24} />
             </div>
