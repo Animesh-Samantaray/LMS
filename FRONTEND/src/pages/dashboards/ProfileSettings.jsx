@@ -552,7 +552,7 @@ const ProfileSettings = () => {
   const expertiseList = Array.isArray(profileData?.expertise) ? profileData.expertise : [];
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle={roleTitle}>
+    <DashboardLayout roleTitle={roleTitle}>
       <div className="space-y-6">
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

@@ -549,7 +549,7 @@ const CourseContent = () => {
   const categoryName = typeof course?.category === 'object' && course?.category !== null ? course.category.name : course?.category || 'General';
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle="INSTRUCTOR" pageTitle="Course Builder">
+    <DashboardLayout roleTitle="INSTRUCTOR" pageTitle="Course Builder">
       <div className="max-w-5xl mx-auto pb-16 space-y-6">
 
       

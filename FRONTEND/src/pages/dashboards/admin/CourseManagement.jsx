@@ -79,7 +79,7 @@ const CourseManagement = () => {
   };
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle="ADMIN">
+    <DashboardLayout roleTitle="ADMIN">
       <div className="max-w-7xl mx-auto space-y-6">
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

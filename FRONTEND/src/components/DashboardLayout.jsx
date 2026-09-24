@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2 } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
@@ -14,17 +14,22 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeItemLabel, setActiveItemLabel] = useState("");
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true');
   const toggleCollapse = () => { 
     setIsCollapsed(!isCollapsed); 
     localStorage.setItem('sidebarCollapsed', !isCollapsed); 
   };
   const themeDropdownRef = useRef(null);
+  const profileDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target)) {
         setThemeDropdownOpen(false);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(e.target)) {
+        setProfileDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideClick);
@@ -92,16 +97,16 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Learning' },
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
-          { label: 'Mock Test', path: '#', icon: '📄' },
-          { label: 'Practice Arena', path: '#', icon: '🎯' },
-          { label: 'Exams', path: '#', icon: '📝' },
-          { label: 'Weekly Contests', path: '#', icon: '🏆' },
-          { label: 'Certificates', path: '#', icon: '🎖️' },
+          { label: 'Mock Test', path: '#', icon: Target },
+          { label: 'Practice Arena', path: '#', icon: FileText },
+          { label: 'Exams', path: '#', icon: FileText },
+          { label: 'Weekly Contests', path: '#', icon: Award },
+          { label: 'Certificates', path: '#', icon: Award },
           { category: 'Engagement' },
-          { label: 'My Groups', path: '#', icon: '👥' },
-          { label: 'My Reviews', path: '#', icon: '⭐' },
-          { label: 'Messages', path: '#', icon: '💬' },
-          { label: 'Calendar', path: '#', icon: '📅' },
+          { label: 'My Groups', path: '#', icon: Users },
+          { label: 'My Reviews', path: '#', icon: FileText },
+          { label: 'Messages', path: '#', icon: MessageSquare },
+          { label: 'Calendar', path: '#', icon: Calendar },
           { category: 'Account' },
           { label: 'Settings', path: '/student/profile', icon: Settings }
         ];
@@ -282,28 +287,19 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <TwoFactorToggle user={user} setUser={setUser} />
-
-            <span className="lms-badge hidden md:inline-flex">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--lms-accent)]"></span>
-              {user?.role || 'Learner'}
-            </span>
-
             <div className="relative" ref={themeDropdownRef}>
               <button
                 onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm text-xs font-semibold"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
                 aria-label="Select theme"
               >
                 {theme === 'dark' ? (
-                  <Moon size={15} className="text-indigo-400" />
+                  <Moon size={16} className="text-indigo-400" />
                 ) : theme === 'cream' ? (
-                  <Sparkles size={15} className="text-amber-500" />
+                  <Sparkles size={16} className="text-amber-500" />
                 ) : (
-                  <Sun size={15} className="text-amber-500" />
+                  <Sun size={16} className="text-amber-500" />
                 )}
-                <span className="capitalize hidden sm:inline">{theme}</span>
-                <ChevronDown size={13} className="opacity-60" />
               </button>
 
               {themeDropdownOpen && (
@@ -343,41 +339,80 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
             </div>
 
             <button
-              className="relative p-2 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
+              className="relative flex items-center justify-center w-9 h-9 rounded-full border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
               title="Notifications"
             >
               <Bell size={16} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse border-2 border-[var(--lms-bg)]"></span>
             </button>
 
-            <div className="h-6 w-px bg-[var(--lms-border)] mx-0.5"></div>
+            <div className="h-6 w-px bg-[var(--lms-border)] mx-1"></div>
 
-            <Link
-              to={profilePath}
-              className="flex items-center gap-2 group p-1 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors"
-              title="View Profile"
-            >
-              <div className="w-8 h-8 rounded-xl bg-[var(--lms-accent-subtle)] border border-[var(--lms-accent-border)] text-[var(--lms-accent-text)] flex items-center justify-center text-xs font-bold shadow-sm overflow-hidden group-hover:ring-2 group-hover:ring-[var(--lms-accent)] transition-all">
-                {user?.profileImage ? (
-                  <img
-                    src={user.profileImage}
-                    alt={user.name || 'User'}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  getInitials(user?.name)
-                )}
-              </div>
-            </Link>
+            <div className="relative" ref={profileDropdownRef}>
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center gap-1.5 p-1 pr-2 rounded-full border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] transition-all shadow-sm group"
+              >
+                <div className="w-8 h-8 rounded-full bg-[var(--lms-accent-subtle)] border border-[var(--lms-accent-border)] text-[var(--lms-accent-text)] flex items-center justify-center text-xs font-bold overflow-hidden group-hover:ring-2 group-hover:ring-[var(--lms-accent)] transition-all">
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={user.name || 'User'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    getInitials(user?.name)
+                  )}
+                </div>
+                <ChevronDown size={14} className="text-[var(--lms-text-secondary)] group-hover:text-[var(--lms-text-primary)] transition-colors" />
+              </button>
 
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/20 text-xs font-semibold transition-all"
-              title="Log out"
-            >
-              <LogOut size={14} />
-              <span className="hidden sm:inline">Logout</span>
-            </button>
+              {profileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-2 shadow-xl backdrop-blur-2xl z-50 animate-scale-in flex flex-col gap-1">
+                  <div className="px-3 py-2 border-b border-[var(--lms-border)] mb-1">
+                    <p className="font-bold text-sm text-[var(--lms-text-primary)] truncate">{user?.name || 'My Account'}</p>
+                    <p className="text-xs text-[var(--lms-text-muted)] truncate">{user?.email || ''}</p>
+                    <div className="mt-2 inline-block">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] uppercase tracking-wider">
+                        {user?.role || 'Learner'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <Link 
+                    to={profilePath} 
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[var(--lms-surface-subtle)] text-sm font-semibold text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-colors"
+                  >
+                    <User size={16} />
+                    My Profile & Settings
+                  </Link>
+
+                  <div className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-[var(--lms-surface-subtle)] transition-colors">
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-[var(--lms-text-secondary)]">
+                      <Shield size={16} />
+                      2FA Security
+                    </div>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <TwoFactorToggle user={user} setUser={setUser} compact={true} />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-[var(--lms-border)] mt-1 pt-1">
+                    <button 
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        handleLogout();
+                      }} 
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-500/10 text-sm font-semibold text-rose-500 transition-colors"
+                    >
+                      <LogOut size={16} />
+                      Log Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 

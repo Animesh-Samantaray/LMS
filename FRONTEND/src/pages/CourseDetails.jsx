@@ -334,8 +334,11 @@ const CourseDetails = () => {
                 </div>
                 
                 {user?.role === 'Student' && isEnrolled ? (
-                    <button className="w-full lms-btn py-3.5 text-base mb-3 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-bold cursor-default flex items-center justify-center gap-2" disabled>
-                      <Check size={18} /> Enrolled
+                    <button 
+                      onClick={() => navigate(`/student/courses/${id}/learn`)}
+                      className="w-full lms-btn py-3.5 text-base mb-3 bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20" 
+                    >
+                      <PlayCircle size={18} /> Continue Learning
                     </button>
                   ) : user?.role === 'Student' ? (
                     <button

@@ -114,7 +114,7 @@ const UserManagement = () => {
   };
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle="ADMIN" pageTitle="Manage Users">
+    <DashboardLayout roleTitle="ADMIN" pageTitle="Manage Users">
       <div className="w-full max-w-[1600px] mx-auto space-y-4 sm:space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div className="min-w-0">
