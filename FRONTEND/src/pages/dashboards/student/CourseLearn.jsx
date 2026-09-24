@@ -52,7 +52,7 @@ const CourseLearn = () => {
     const upcoming = [];
     for (const unit of units) {
       for (const lesson of unit.lessons || []) {
-        if (!progress.completedLessons.includes(lesson._id)) {
+        if (!progress.completedLessons?.includes(lesson._id)) {
           upcoming.push({ lesson, unit });
         }
       }
@@ -122,7 +122,19 @@ const CourseLearn = () => {
       try {
         const progRes = await api.get(`/api/courses/${id}/progress`);
         if (progRes.data && progRes.data.progress) {
-          setProgress(progRes.data.progress);
+          setProgress({
+            ...progRes.data.progress,
+            completedLessons: progRes.data.progress.completedLessonIds || []
+          });
+          
+          if (progRes.data.units) {
+            setUnits(prevUnits => {
+              return prevUnits.map(u => {
+                const pUnit = progRes.data.units.find(pu => pu._id === u._id);
+                return pUnit ? { ...u, unlocked: pUnit.unlocked, completed: pUnit.completed } : u;
+              });
+            });
+          }
         }
       } catch (err) {
         console.error("Progress fetch error", err);
@@ -135,21 +147,37 @@ const CourseLearn = () => {
     }
   };
 
-  const toggleLessonCompletion = async (lessonId, e) => {
-    e.stopPropagation();
+  const handleCompleteLesson = async (lessonId, e) => {
+    if (e) e.stopPropagation();
+    
+    // Prevent double completion on UI side
+    if (progress.completedLessons?.includes(lessonId)) return;
+    
     try {
-      // Optimistic update
-      const isCompleted = progress.completedLessons.includes(lessonId);
-      const newCompleted = isCompleted 
-        ? progress.completedLessons.filter(idx => idx !== lessonId)
-        : [...progress.completedLessons, lessonId];
-        
-      setProgress(prev => ({ ...prev, completedLessons: newCompleted }));
+      const res = await api.post(`/api/courses/${id}/lessons/${lessonId}/complete`);
       
-      // Actual API call
-      await api.post(`/api/courses/${id}/lessons/${lessonId}/complete`);
+      if (res.data.success) {
+        // Sync full state with backend
+        const progRes = await api.get(`/api/courses/${id}/progress`);
+        if (progRes.data && progRes.data.progress) {
+          setProgress({
+            ...progRes.data.progress,
+            completedLessons: progRes.data.progress.completedLessonIds || []
+          });
+          
+          if (progRes.data.units) {
+            setUnits(prevUnits => {
+              return prevUnits.map(u => {
+                const pUnit = progRes.data.units.find(pu => pu._id === u._id);
+                return pUnit ? { ...u, unlocked: pUnit.unlocked, completed: pUnit.completed } : u;
+              });
+            });
+          }
+        }
+      }
     } catch (err) {
-      console.error("Error toggling completion", err);
+      console.error("Error completing lesson:", err);
+      // Optional: Add toast error here if available in the app.
     }
   };
 
@@ -160,8 +188,10 @@ const CourseLearn = () => {
     }
   };
 
-  const handleLessonAction = (lesson, e) => {
+  const handleLessonAction = (lesson, unit, e) => {
     if (e) e.stopPropagation();
+    if (unit && unit.unlocked === false) return; // Prevent action on locked unit
+    
     if (lesson.contentType === 'Video' && lesson.videoUrl) {
       window.open(lesson.videoUrl, '_blank', 'noopener,noreferrer');
     } else if (lesson.contentType === 'PDF' && lesson.pdfUrl) {
@@ -169,7 +199,7 @@ const CourseLearn = () => {
     } else if (lesson.contentType === 'External Link' && lesson.externalUrl) {
       window.open(lesson.externalUrl, '_blank', 'noopener,noreferrer');
     } else {
-      toggleLessonCompletion(lesson._id, e);
+      handleCompleteLesson(lesson._id, e);
     }
   };
 
@@ -319,7 +349,7 @@ const CourseLearn = () => {
                   const isExpanded = expandedUnits[unit._id];
                   const unitLessons = unit.lessons || [];
                   const unitTotalLessons = unitLessons.length;
-                  const unitCompletedLessons = unitLessons.filter(l => progress.completedLessons.includes(l._id)).length;
+                  const unitCompletedLessons = unitLessons.filter(l => progress.completedLessons?.includes(l._id)).length;
                   const unitProgressPct = unitTotalLessons === 0 ? 0 : Math.round((unitCompletedLessons / unitTotalLessons) * 100);
                   
                   let unitMinutes = 0;
@@ -360,20 +390,21 @@ const CourseLearn = () => {
                       {isExpanded && (
                         <div className="bg-slate-50/50 border-t border-slate-100 p-2 sm:p-4 space-y-1">
                           {unitLessons.map((lesson, lessonIdx) => {
-                            const isCompleted = progress.completedLessons.includes(lesson._id);
+                            const isCompleted = progress.completedLessons?.includes(lesson._id);
                             const resCount = (lessonResources[lesson._id] || []).length;
+                            const isLocked = unit.unlocked === false;
                             
                             return (
                               <div 
                                 key={lesson._id}
-                                className="flex items-center justify-between p-3 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 transition-all group"
+                                className={`flex items-center justify-between p-3 rounded-xl transition-all group border border-transparent ${isLocked ? 'opacity-60' : 'hover:bg-white hover:shadow-sm hover:border-slate-200'}`}
                               >
                                 <div className="flex items-center gap-4">
-                                  <div className="text-rose-500">
+                                  <div className={`${isLocked ? 'text-slate-400' : 'text-rose-500'}`}>
                                     {lesson.contentType === 'Video' ? <PlayCircle size={18} /> : <FileText size={18} />}
                                   </div>
                                   <span className="text-xs font-bold text-slate-400 w-6">{unitIdx + 1}.{lessonIdx + 1}</span>
-                                  <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition-colors">
+                                  <span className={`text-sm font-semibold transition-colors ${isLocked ? 'text-slate-500' : 'text-slate-700 group-hover:text-blue-600'}`}>
                                     {lesson.title}
                                   </span>
                                 </div>
@@ -388,23 +419,29 @@ const CourseLearn = () => {
                                   </div>
                                   
                                   <button
-                                    onClick={(e) => handleLessonAction(lesson, e)}
-                                    className="px-4 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold transition-colors w-28 text-center"
+                                    onClick={(e) => handleLessonAction(lesson, unit, e)}
+                                    disabled={isLocked}
+                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-colors w-28 text-center ${isLocked ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-50 hover:bg-blue-100 text-blue-600'}`}
                                   >
-                                    {isCompleted ? "Watch Again" : lesson.contentType === 'Video' ? "Watch" : "Read"}
+                                    {isLocked ? "Locked" : isCompleted ? "Watch Again" : lesson.contentType === 'Video' ? "Watch" : "Read"}
                                   </button>
 
-                                  <button 
-                                    onClick={(e) => toggleLessonCompletion(lesson._id, e)}
-                                    className="p-1 rounded-full hover:bg-slate-200 transition-colors"
-                                    title={isCompleted ? "Mark as incomplete" : "Mark as completed"}
-                                  >
-                                    {isCompleted ? (
-                                      <CheckCircle2 size={20} className="text-emerald-500 fill-emerald-50" />
-                                    ) : (
-                                      <Circle size={20} className="text-slate-300" />
-                                    )}
-                                  </button>
+                                  {isLocked ? (
+                                    <div className="p-1"><Circle size={20} className="text-slate-200" /></div>
+                                  ) : (
+                                    <button 
+                                      onClick={(e) => handleCompleteLesson(lesson._id, e)}
+                                      disabled={isCompleted}
+                                      className={`p-1 rounded-full transition-colors ${isCompleted ? 'cursor-default' : 'hover:bg-slate-200'}`}
+                                      title={isCompleted ? "Completed" : "Mark as completed"}
+                                    >
+                                      {isCompleted ? (
+                                        <CheckCircle2 size={20} className="text-emerald-500 fill-emerald-50" />
+                                      ) : (
+                                        <Circle size={20} className="text-slate-300" />
+                                      )}
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             );
@@ -634,7 +671,7 @@ const CourseLearn = () => {
 
             <button 
               onClick={() => {
-                if (upNextLessons.length > 0) handleLessonAction(upNextLessons[0].lesson);
+                if (upNextLessons.length > 0) handleLessonAction(upNextLessons[0].lesson, upNextLessons[0].unit);
               }}
               className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
             >
@@ -646,28 +683,35 @@ const CourseLearn = () => {
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 flex flex-col">
               <h3 className="text-sm font-bold text-slate-500 mb-4">Up next</h3>
               <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-2 flex-1">
-                {upNextLessons.map((item, idx) => (
-                  <div 
-                    key={item.lesson._id || idx}
-                    onClick={(e) => handleLessonAction(item.lesson, e)}
-                    className="flex gap-4 items-center group cursor-pointer border border-slate-100 rounded-xl p-2 hover:border-blue-200 hover:bg-blue-50/50 transition-colors"
-                  >
-                    <div className="w-20 h-14 bg-slate-900 rounded-lg overflow-hidden relative shrink-0">
-                      <img src={course.thumbnail} className="w-full h-full object-cover opacity-80" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <PlayCircle size={20} className="text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                {upNextLessons.map((item, idx) => {
+                  const isLocked = item.unit.unlocked === false;
+                  return (
+                    <div 
+                      key={item.lesson._id || idx}
+                      onClick={(e) => handleLessonAction(item.lesson, item.unit, e)}
+                      className={`flex gap-4 items-center group transition-colors p-2 rounded-xl border border-transparent ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-blue-200 hover:bg-blue-50/50'}`}
+                    >
+                      <div className="w-20 h-14 bg-slate-900 rounded-lg overflow-hidden relative shrink-0">
+                        <img src={course.thumbnail} className="w-full h-full object-cover opacity-80" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          {isLocked ? (
+                            <Circle size={20} className="text-white opacity-60" />
+                          ) : (
+                            <PlayCircle size={20} className="text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-bold text-slate-500 mb-0.5 truncate">{item.unit.title || "Unit"}</p>
-                      <h4 className="text-sm font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">{item.lesson.title}</h4>
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 mt-1">
-                        <Clock size={10} /> {item.lesson.duration || 0}:00
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-slate-500 mb-0.5 truncate">{item.unit.title || "Unit"}</p>
+                        <h4 className="text-sm font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">{item.lesson.title}</h4>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 mt-1">
+                          <Clock size={10} /> {item.lesson.duration || 0}:00
+                        </div>
                       </div>
+                      <ChevronRight size={16} className="text-slate-300 shrink-0" />
                     </div>
-                    <ChevronRight size={16} className="text-slate-300 shrink-0" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
