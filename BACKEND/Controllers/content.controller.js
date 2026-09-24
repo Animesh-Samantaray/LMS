@@ -183,7 +183,23 @@ export const createLesson = async (req, res) => {
 
 export const getUnitLessons = async (req, res) => {
   try {
-    const { unitId } = req.params;
+    const { courseId, unitId } = req.params;
+
+    const unit = await Unit.findById(unitId);
+    if (!unit) {
+      return res.status(404).json({
+        success: false,
+        message: "Unit not found",
+      });
+    }
+
+    if (unit.courseId.toString() !== courseId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "This unit does not belong to this course",
+      });
+    }
+
     const lessons = await Lesson.find({ unitId }).sort("order");
     return res.status(200).json({ success: true, lessons });
   } catch (error) {
