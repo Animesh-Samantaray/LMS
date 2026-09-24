@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { Star, Clock, LayoutGrid, Heart, Bookmark, Eye, Edit2, Trash2, Send, Loader, Globe, Archive, AlertCircle, Users } from 'lucide-react';
 
 const CourseCard = ({
@@ -54,9 +55,21 @@ const CourseCard = ({
     }
   };
 
+  const { user } = useAuth();
+  
+  // Check if enrolled
+  const enrolledStatus = isEnrolled || (course.enrolled && user && course.enrolled.some(
+    (e) => (e._id || e.id || e).toString() === (user._id || user.id).toString()
+  ));
+
   const handleCardClick = (e) => {
     if (isManagement) return;
-    navigate(`/courses/${course._id || course.id}`);
+    
+    if (enrolledStatus && user?.role === 'Student') {
+      navigate(`/student/courses/${course._id || course.id}/learn`);
+    } else {
+      navigate(`/courses/${course._id || course.id}`);
+    }
   };
 
   return (

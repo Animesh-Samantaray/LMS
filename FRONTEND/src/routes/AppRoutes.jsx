@@ -23,6 +23,7 @@ import PremiumCoursesPage from "../pages/PremiumCoursesPage";
 import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
 import CourseList from "../pages/CourseList";
 import CourseDetails from "../pages/CourseDetails";
+import CourseLearn from "../pages/dashboards/student/CourseLearn";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -257,6 +258,11 @@ const AppRoutes = () => {
         <Route
           path="/student/courses/my"
           element={<StudentMyCourses />}
+        />
+
+        <Route
+          path="/student/courses/:id/learn"
+          element={<CourseLearn />}
         />
 
         <Route

@@ -12,6 +12,8 @@ import {
   getStudentEnrolledCourses
 } from "../Controllers/course.controller.js";
 
+import { getCourseProgress, toggleLessonCompletion } from "../Controllers/progress.controller.js";
+
 import authMiddleware from "../Middlewares/auth.middleware.js";
 import authorizeRoles from "../Middlewares/role.middleware.js";
 
@@ -31,6 +33,21 @@ router.post(
   authMiddleware,
   authorizeRoles("Student", "Instructor", "Admin"),
   enrollInCourse
+);
+
+// Progress routes
+router.get(
+  "/:id/progress",
+  authMiddleware,
+  authorizeRoles("Student", "Instructor", "Admin"),
+  getCourseProgress
+);
+
+router.post(
+  "/:id/lessons/:lessonId/complete",
+  authMiddleware,
+  authorizeRoles("Student", "Instructor", "Admin"),
+  toggleLessonCompletion
 );
 
 router.post(

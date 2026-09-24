@@ -93,7 +93,7 @@ const EditCourse = () => {
 
   if (fetchingData) {
     return (
-      <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
+      <DashboardLayout roleTitle="MENTOR">
         <div className="flex h-[50vh] items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="w-10 h-10 border-3 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin"></div>
@@ -105,7 +105,7 @@ const EditCourse = () => {
   }
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
+    <DashboardLayout roleTitle="MENTOR">
       <div className="max-w-4xl mx-auto space-y-6">
         
         <div className="flex items-center gap-4 mb-6">

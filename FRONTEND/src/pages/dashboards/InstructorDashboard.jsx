@@ -56,7 +56,7 @@ const InstructorDashboard = () => {
 
   if (loading) {
     return (
-      <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
+      <DashboardLayout roleTitle="MENTOR">
         <div className="flex h-72 items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="w-10 h-10 border-3 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin"></div>
@@ -84,7 +84,7 @@ const InstructorDashboard = () => {
   };
 
   return (
-    <DashboardLayout sidebarItems={sidebarItems} roleTitle="MENTOR">
+    <DashboardLayout roleTitle="MENTOR">
      
       <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 max-w-xl z-10">
