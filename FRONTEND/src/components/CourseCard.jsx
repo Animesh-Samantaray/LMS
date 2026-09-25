@@ -36,19 +36,19 @@ const CourseCard = ({
     switch (status) {
       case 'published':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 backdrop-blur-sm">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 ">
             <Globe size={11} /> Published
           </span>
         );
       case 'archived':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/25 backdrop-blur-sm">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/25 ">
             <Archive size={11} /> Archived
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 backdrop-blur-sm">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 ">
             <Clock size={11} /> Draft
           </span>
         );
@@ -104,7 +104,7 @@ const CourseCard = ({
           {isManagement ? (
             getStatusBadge()
           ) : (
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/25 backdrop-blur-md">
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/25 ">
               {categoryName}
             </span>
           )}
@@ -117,7 +117,7 @@ const CourseCard = ({
               e.stopPropagation();
               setLiked(!liked);
             }}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[var(--lms-surface)]/80 backdrop-blur-md border border-[var(--lms-border)] flex items-center justify-center shadow-sm transition-colors hover:scale-110 z-10"
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[var(--lms-surface)]/80 border border-[var(--lms-border)] flex items-center justify-center shadow-sm transition-colors hover:scale-110 z-10"
             aria-label="Save course"
           >
             <Heart

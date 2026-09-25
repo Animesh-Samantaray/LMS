@@ -875,6 +875,7 @@ const CourseLearn = () => {
       {/* Assignment Detail Modal */}
       <AssignmentDetailModal
         isOpen={Boolean(selectedAssignment)}
+        studentMode={true}
         assignment={selectedAssignment}
         onClose={() => setSelectedAssignment(null)}
       />

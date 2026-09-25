@@ -474,7 +474,7 @@ const CourseDetails = () => {
                   <LayoutGrid size={48} className="text-gray-600" />
                 )}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-colors">
+                  <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center transition-colors">
                     <PlayCircle size={28} className="text-white" fill="white" />
                   </div>
                 </div>
@@ -551,7 +551,7 @@ const CourseDetails = () => {
 
         {/* Content Viewing Modal */}
         {selectedLesson && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 lg:p-8" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
             <div className="bg-[var(--lms-surface)] w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col shadow-2xl max-h-[90vh]">
               <div className="flex items-center justify-between p-5 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)]">
                 <div className="flex items-center gap-3">

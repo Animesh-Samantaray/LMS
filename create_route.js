@@ -1,4 +1,5 @@
-import express from "express";
+const fs = require("fs");
+const content = `import express from "express";
 
 import {
   createAssignment,
@@ -23,7 +24,6 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 const router = express.Router();
 
 router.get("/course/:courseId", authMiddleware, getCourseAssignments);
-
 router.get("/:assignmentId", authMiddleware, getAssignmentById);
 
 router.post(
@@ -86,3 +86,8 @@ router.patch(
 );
 
 export default router;
+`;
+fs.writeFileSync("BACKEND/routes/assignment.route.js", content);
+`
+node create_route.js
+

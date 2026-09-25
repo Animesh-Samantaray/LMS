@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FileText, Calendar, Award, ExternalLink, Edit2, Trash2, Send, Loader, Globe, Clock, AlertCircle } from 'lucide-react';
+import { FileText, Calendar, Award, ExternalLink, Edit2, Trash2, Send, Loader, Globe, Clock, AlertCircle, Users } from 'lucide-react';
 
 const AssignmentCard = ({
   assignment,
   canManage = false,
   onView,
+  onSubmissions,
   onEdit,
   onPublish,
   onDelete,
@@ -137,6 +138,15 @@ const AssignmentCard = ({
 
             {canManage && (
               <>
+                <button
+                  type="button"
+                  onClick={() => onSubmissions && onSubmissions(assignment)}
+                  className="p-2 rounded-xl text-[var(--lms-text-secondary)] hover:text-blue-500 bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] hover:bg-[var(--lms-surface-hover)] transition-colors"
+                  title="View Submissions"
+                >
+                  <Users size={14} />
+                </button>
+
                 <button
                   type="button"
                   onClick={() => onEdit && onEdit(assignment)}

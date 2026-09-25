@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { X, Clock, Globe, User, Calendar, Award, FileText, ExternalLink, Upload, Loader, CheckCircle, AlertCircle, Send } from "lucide-react";
+const fs = require("fs");
+let content = `import React, { useState, useEffect } from "react";
+import { X, Clock, Globe, User, Calendar, Award, FileText, ExternalLink, Upload, Loader, CheckCircle, AlertCircle } from "lucide-react";
 import assignmentService from "../services/assignment.service";
 
 const AssignmentDetailModal = ({
@@ -89,14 +90,14 @@ const AssignmentDetailModal = ({
   const formatFileSize = (bytes) => {
     if (!bytes || bytes === 0) return "";
     const kb = bytes / 1024;
-    if (kb < 1024) return `${kb.toFixed(1)} KB`;
-    return `${(kb / 1024).toFixed(1)} MB`;
+    if (kb < 1024) return \`\${kb.toFixed(1)} KB\`;
+    return \`\${(kb / 1024).toFixed(1)} MB\`;
   };
 
   const creatorName = assignment.createdBy?.name || "Instructor";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 ">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-2xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -163,14 +164,14 @@ const AssignmentDetailModal = ({
             </div>
 
             <div className="p-3.5 bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-2xl flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isPastDeadline ? "bg-rose-500/15 text-rose-500" : "bg-blue-500/15 text-blue-500"}`}>
+              <div className={\`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 \${isPastDeadline ? "bg-rose-500/15 text-rose-500" : "bg-blue-500/15 text-blue-500"}\`}>
                 <Calendar size={20} />
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--lms-text-muted)] block">
                   Deadline
                 </span>
-                <span className={`text-xs sm:text-sm font-bold ${isPastDeadline ? "text-rose-500" : "text-[var(--lms-text-primary)]"}`}>
+                <span className={\`text-xs sm:text-sm font-bold \${isPastDeadline ? "text-rose-500" : "text-[var(--lms-text-primary)]"}\`}>
                   {deadlineDate ? deadlineDate.toLocaleString() : "No deadline"}
                 </span>
               </div>
@@ -370,3 +371,6 @@ const AssignmentDetailModal = ({
 };
 
 export default AssignmentDetailModal;
+`
+fs.writeFileSync("FRONTEND/src/components/AssignmentDetailModal.jsx", content);
+

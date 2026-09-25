@@ -83,7 +83,7 @@ const TwoFactorToggle = ({ user: propUser, setUser: propSetUser, compact = false
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.9 }}
           transition={{ duration: 0.2 }}
-          className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl ${
+          className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border ${
             toast.type === "success"
               ? "bg-slate-900/95 border-emerald-500/40 text-white shadow-emerald-950/40"
               : "bg-slate-900/95 border-rose-500/40 text-white shadow-rose-950/40"

@@ -579,7 +579,7 @@ const LandingPage = () => {
                    </div>
                 </div>
 
-                <div className="absolute bottom-16 left-0 lg:-left-12 bg-white/90 backdrop-blur-md rounded-xl p-4 shadow-2xl z-30 flex items-center gap-4 border border-white/50">
+                <div className="absolute bottom-16 left-0 lg:-left-12 bg-white/90 rounded-xl p-4 shadow-2xl z-30 flex items-center gap-4 border border-white/50">
                   <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30">
                     <Mail size={18} fill="white" className="text-white" />
                   </div>
@@ -714,7 +714,7 @@ const LandingPage = () => {
                   <div key={i} className="min-w-[100%] md:min-w-[calc(50%-16px)] lg:min-w-[calc(33.333%-21px)] shrink-0 snap-start bg-white rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.05)] border border-gray-100 hover:-translate-y-1 transition-transform">
                   <div className="relative h-[220px]">
                     <img src={c.img} alt={c.title} className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold shadow-sm">
+                    <div className="absolute top-4 left-4 bg-white/90 px-2 py-1 rounded text-xs font-bold shadow-sm">
                       Free
                     </div>
                   </div>
