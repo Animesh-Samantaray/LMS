@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { PlayCircle, FileText, Download, CheckCircle2, Circle, ArrowLeft, Star, Clock, Globe, HelpCircle, User, MessageSquare, ChevronDown, ChevronRight, ArrowRight, Award, Calendar } from 'lucide-react';
+import { PlayCircle, FileText, Download, CheckCircle2, Circle, ArrowLeft, Star, Clock, Globe, HelpCircle, User, MessageSquare, ChevronDown, ChevronRight, ArrowRight, Award, Calendar, Loader, AlertCircle } from 'lucide-react';
 import api from '../../../services/api.service';
+import assignmentService from '../../../services/assignment.service';
+import AssignmentCard from '../../../components/AssignmentCard';
+import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
 import { useAuth } from '../../../context/AuthContext';
 import DashboardLayout from '../../../components/DashboardLayout';
 
@@ -33,9 +36,28 @@ const CourseLearn = () => {
   const [questionText, setQuestionText] = useState('');
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
 
+  // Assignment States
+  const [assignments, setAssignments] = useState([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
+
   useEffect(() => {
     fetchCourseData();
+    fetchAssignments();
   }, [id]);
+
+  const fetchAssignments = async () => {
+    if (!id) return;
+    try {
+      setLoadingAssignments(true);
+      const res = await assignmentService.getCourseAssignments(id);
+      setAssignments(res.assignments || []);
+    } catch (err) {
+      console.error("Failed to fetch course assignments:", err);
+    } finally {
+      setLoadingAssignments(false);
+    }
+  };
 
   useEffect(() => {
     // Calculate stats whenever units or progress change
@@ -232,6 +254,7 @@ const CourseLearn = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FileText },
     { id: 'curriculum', label: 'Curriculum', icon: PlayCircle },
+    { id: 'assignments', label: 'Assignments', icon: Award },
     { id: 'resources', label: 'Resources', icon: Download },
     { id: 'qa', label: 'Q&A', icon: HelpCircle },
     { id: 'reviews', label: 'Reviews', icon: Star },
@@ -472,6 +495,46 @@ const CourseLearn = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === 'assignments' && (
+            <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)] mb-1">Course Assignments</h2>
+                  <p className="text-sm font-semibold text-[var(--lms-text-muted)]">
+                    View assignments, instructions, and download question files.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[var(--lms-accent)] bg-[var(--lms-accent-subtle)] px-3 py-1 rounded-full border border-[var(--lms-accent-border)]">
+                  {assignments.length} Available
+                </span>
+              </div>
+
+              {loadingAssignments ? (
+                <div className="py-16 text-center">
+                  <Loader size={32} className="animate-spin text-[var(--lms-accent)] mx-auto mb-2" />
+                  <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading assignments...</p>
+                </div>
+              ) : assignments.length === 0 ? (
+                <div className="text-center py-16 border border-dashed border-[var(--lms-border)] rounded-2xl">
+                  <FileText size={48} className="text-[var(--lms-border)] mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-[var(--lms-text-secondary)] mb-1">No assignments posted</h3>
+                  <p className="text-[var(--lms-text-muted)] text-sm">If this course has assignments, they will appear here.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {assignments.map((assignment) => (
+                    <AssignmentCard
+                      key={assignment._id}
+                      assignment={assignment}
+                      canManage={false}
+                      onView={(asgn) => setSelectedAssignment(asgn)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -808,6 +871,13 @@ const CourseLearn = () => {
           </div>
         </div>
       )}
+
+      {/* Assignment Detail Modal */}
+      <AssignmentDetailModal
+        isOpen={Boolean(selectedAssignment)}
+        assignment={selectedAssignment}
+        onClose={() => setSelectedAssignment(null)}
+      />
     </DashboardLayout>
   );
 };

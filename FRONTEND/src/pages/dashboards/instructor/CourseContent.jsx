@@ -37,6 +37,10 @@ import {
 } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
 import api from '../../../services/api.service';
+import assignmentService from '../../../services/assignment.service';
+import AssignmentCard from '../../../components/AssignmentCard';
+import AssignmentModal from '../../../components/AssignmentModal';
+import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
 
 const CourseContent = () => {
   const { id: courseId } = useParams();
@@ -93,6 +97,25 @@ const CourseContent = () => {
     { label: 'Course Progress', path: '#', icon: BarChart2 },
   ];
 
+  const [assignmentModal, setAssignmentModal] = useState({ open: false, isEdit: false, data: null });
+  const [assignmentDetailModal, setAssignmentDetailModal] = useState({ open: false, data: null });
+  const [assignments, setAssignments] = useState([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
+  const [assignmentActionId, setAssignmentActionId] = useState(null);
+
+  const fetchAssignments = useCallback(async () => {
+    try {
+      setLoadingAssignments(true);
+      const res = await assignmentService.getCourseAssignments(courseId);
+      setAssignments(res.assignments || []);
+    } catch (err) {
+      console.error("Failed to fetch course assignments:", err);
+    } finally {
+      setLoadingAssignments(false);
+    }
+  }, [courseId]);
+
   const showSuccessFeedback = (msg) => {
     setSuccess(msg);
     setTimeout(() => setSuccess(''), 4000);
@@ -132,7 +155,53 @@ const CourseContent = () => {
 
   useEffect(() => {
     fetchCourseAndContent();
-  }, [fetchCourseAndContent]);
+    fetchAssignments();
+  }, [fetchCourseAndContent, fetchAssignments]);
+
+  const handleCreateOrEditAssignment = async (formData) => {
+    try {
+      setAssignmentSubmitting(true);
+      if (assignmentModal.isEdit && assignmentModal.data?._id) {
+        await assignmentService.updateAssignment(assignmentModal.data._id, formData);
+        showSuccessFeedback('Assignment updated successfully');
+      } else {
+        await assignmentService.createAssignment(courseId, formData);
+        showSuccessFeedback('Assignment created successfully');
+      }
+      setAssignmentModal({ open: false, isEdit: false, data: null });
+      fetchAssignments();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to save assignment');
+    } finally {
+      setAssignmentSubmitting(false);
+    }
+  };
+
+  const handlePublishAssignment = async (assignmentId) => {
+    try {
+      setAssignmentActionId(assignmentId);
+      await assignmentService.publishAssignment(assignmentId);
+      showSuccessFeedback('Assignment published successfully');
+      fetchAssignments();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to publish assignment');
+    } finally {
+      setAssignmentActionId(null);
+    }
+  };
+
+  const handleDeleteAssignment = async (assignmentId) => {
+    try {
+      setAssignmentActionId(assignmentId);
+      await assignmentService.deleteAssignment(assignmentId);
+      showSuccessFeedback('Assignment deleted successfully');
+      setAssignments((prev) => prev.filter((a) => a._id !== assignmentId));
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to delete assignment');
+    } finally {
+      setAssignmentActionId(null);
+    }
+  };
 
   const toggleUnit = (unitId) => {
     setExpandedUnits((prev) => ({ ...prev, [unitId]: !prev[unitId] }));
@@ -998,7 +1067,75 @@ const CourseContent = () => {
             })}
           </div>
         )}
+
+        {/* Course Assignments Management Section */}
+        <div className="lms-glass-card rounded-2xl overflow-hidden border border-[var(--lms-border)] shadow-sm p-5 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] border border-[var(--lms-accent-border)] flex items-center justify-center">
+                <FileText size={18} />
+              </div>
+              <div>
+                <h3 className="font-bold text-base text-[var(--lms-text-primary)]">Course Assignments</h3>
+                <p className="text-xs text-[var(--lms-text-muted)]">Manage assignment question files, marks, deadlines, and publishing.</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setAssignmentModal({ open: true, isEdit: false, data: null })}
+              className="lms-btn lms-btn-primary flex items-center gap-1.5 text-xs font-bold py-2 px-4 shadow-sm"
+            >
+              <Plus size={14} /> Create Assignment
+            </button>
+          </div>
+
+          {loadingAssignments ? (
+            <div className="py-12 flex flex-col items-center justify-center">
+              <Loader size={24} className="animate-spin text-[var(--lms-accent)] mb-2" />
+              <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading assignments...</p>
+            </div>
+          ) : assignments.length === 0 ? (
+            <div className="py-8 bg-[var(--lms-surface-subtle)] border border-dashed border-[var(--lms-border)] rounded-xl text-center">
+              <FileText size={32} className="text-[var(--lms-border)] mx-auto mb-2" />
+              <p className="text-xs font-semibold text-[var(--lms-text-primary)]">No assignments created for this course yet</p>
+              <p className="text-[11px] text-[var(--lms-text-muted)] mt-0.5">Click "Create Assignment" to upload a question file and set deadlines.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {assignments.map((asgn) => (
+                <AssignmentCard
+                  key={asgn._id}
+                  assignment={asgn}
+                  canManage={true}
+                  onView={(a) => setAssignmentDetailModal({ open: true, data: a })}
+                  onEdit={(a) => setAssignmentModal({ open: true, isEdit: true, data: a })}
+                  onPublish={handlePublishAssignment}
+                  onDelete={handleDeleteAssignment}
+                  isPublishing={assignmentActionId === asgn._id}
+                  isDeleting={assignmentActionId === asgn._id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Assignment Creation / Edit Modal */}
+      <AssignmentModal
+        isOpen={assignmentModal.open}
+        isEdit={assignmentModal.isEdit}
+        assignment={assignmentModal.data}
+        onClose={() => setAssignmentModal({ open: false, isEdit: false, data: null })}
+        onSubmit={handleCreateOrEditAssignment}
+        loading={assignmentSubmitting}
+      />
+
+      {/* Assignment Detail Modal */}
+      <AssignmentDetailModal
+        isOpen={assignmentDetailModal.open}
+        assignment={assignmentDetailModal.data}
+        onClose={() => setAssignmentDetailModal({ open: false, data: null })}
+      />
 
       {/* ========================================================= */}
       {/* MODAL: UNIT CREATE / EDIT                                */}
