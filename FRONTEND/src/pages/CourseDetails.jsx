@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { PlayCircle, Check, ChevronDown, ChevronUp, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle, User, Edit2, Lock } from 'lucide-react';
+import { PlayCircle, Check, ChevronDown, ChevronUp, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle, User, Edit2, Lock, Plus } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../services/api.service';
+import assignmentService from '../services/assignment.service';
+import AssignmentCard from '../components/AssignmentCard';
+import AssignmentModal from '../components/AssignmentModal';
+import AssignmentDetailModal from '../components/AssignmentDetailModal';
 import { useAuth } from '../context/AuthContext';
 
 const CourseDetails = () => {
@@ -59,6 +63,28 @@ const CourseDetails = () => {
     return <FileText size={16} className="text-blue-500 shrink-0" />;
   };
 
+  const [assignments, setAssignments] = useState([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [assignmentModal, setAssignmentModal] = useState({ open: false, isEdit: false, data: null });
+  const [assignmentDetailModal, setAssignmentDetailModal] = useState({ open: false, data: null });
+  const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
+  const [assignmentActionId, setAssignmentActionId] = useState(null);
+  const [assignmentError, setAssignmentError] = useState('');
+  const [assignmentSuccess, setAssignmentSuccess] = useState('');
+
+  const fetchAssignments = async () => {
+    if (!id) return;
+    try {
+      setLoadingAssignments(true);
+      const res = await assignmentService.getCourseAssignments(id);
+      setAssignments(res.assignments || []);
+    } catch (err) {
+      console.error("Failed to load course assignments", err);
+    } finally {
+      setLoadingAssignments(false);
+    }
+  };
+
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
@@ -93,7 +119,61 @@ const CourseDetails = () => {
       }
     };
     fetchCourseDetails();
+    if (user) {
+      fetchAssignments();
+    }
   }, [id, user]);
+
+  const handleCreateOrEditAssignment = async (formData) => {
+    try {
+      setAssignmentSubmitting(true);
+      setAssignmentError('');
+      if (assignmentModal.isEdit && assignmentModal.data?._id) {
+        await assignmentService.updateAssignment(assignmentModal.data._id, formData);
+        setAssignmentSuccess('Assignment updated successfully');
+      } else {
+        await assignmentService.createAssignment(id, formData);
+        setAssignmentSuccess('Assignment created successfully');
+      }
+      setAssignmentModal({ open: false, isEdit: false, data: null });
+      fetchAssignments();
+      setTimeout(() => setAssignmentSuccess(''), 4000);
+    } catch (err) {
+      setAssignmentError(err.response?.data?.message || err.message || 'Failed to save assignment');
+    } finally {
+      setAssignmentSubmitting(false);
+    }
+  };
+
+  const handlePublishAssignment = async (assignmentId) => {
+    try {
+      setAssignmentActionId(assignmentId);
+      await assignmentService.publishAssignment(assignmentId);
+      setAssignmentSuccess('Assignment published successfully');
+      fetchAssignments();
+      setTimeout(() => setAssignmentSuccess(''), 4000);
+    } catch (err) {
+      setAssignmentError(err.response?.data?.message || err.message || 'Failed to publish assignment');
+      setTimeout(() => setAssignmentError(''), 4000);
+    } finally {
+      setAssignmentActionId(null);
+    }
+  };
+
+  const handleDeleteAssignment = async (assignmentId) => {
+    try {
+      setAssignmentActionId(assignmentId);
+      await assignmentService.deleteAssignment(assignmentId);
+      setAssignmentSuccess('Assignment deleted successfully');
+      setAssignments((prev) => prev.filter((a) => a._id !== assignmentId));
+      setTimeout(() => setAssignmentSuccess(''), 4000);
+    } catch (err) {
+      setAssignmentError(err.response?.data?.message || err.message || 'Failed to delete assignment');
+      setTimeout(() => setAssignmentError(''), 4000);
+    } finally {
+      setAssignmentActionId(null);
+    }
+  };
 
   const handleEnroll = async () => {
     if (!user) {
@@ -104,6 +184,7 @@ const CourseDetails = () => {
       setEnrolling(true);
       await api.post(`/api/courses/${id}/enroll`);
       setIsEnrolled(true);
+      fetchAssignments();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to enroll in course');
     } finally {
@@ -301,6 +382,77 @@ const CourseDetails = () => {
                     </div>
                   )}
               </section>
+
+              {/* Assignments Section */}
+              {(isEnrolled || user?.role === 'Admin' || (user?.role === 'Instructor' && (course.createdBy?._id === user?._id || course.createdBy?._id === user?.id || course.createdBy === user?._id || course.createdBy === user?.id))) && (
+                <section className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText size={20} className="text-[var(--lms-accent)]" />
+                      <h2 className="text-xl font-bold text-[var(--lms-text-primary)]">Course Assignments</h2>
+                      <span className="text-[var(--lms-text-secondary)] text-xs font-medium">({assignments.length})</span>
+                    </div>
+
+                    {(user?.role === 'Admin' || (user?.role === 'Instructor' && (course.createdBy?._id === user?._id || course.createdBy?._id === user?.id || course.createdBy === user?._id || course.createdBy === user?.id))) && (
+                      <button
+                        onClick={() => setAssignmentModal({ open: true, isEdit: false, data: null })}
+                        className="lms-btn lms-btn-primary py-2 px-4 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                      >
+                        <Plus size={14} /> Create Assignment
+                      </button>
+                    )}
+                  </div>
+
+                  {assignmentError && (
+                    <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs sm:text-sm flex items-center gap-2.5">
+                      <AlertCircle size={16} className="shrink-0" />
+                      <span>{assignmentError}</span>
+                    </div>
+                  )}
+
+                  {assignmentSuccess && (
+                    <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs sm:text-sm flex items-center gap-2.5">
+                      <Check size={16} className="shrink-0" />
+                      <span>{assignmentSuccess}</span>
+                    </div>
+                  )}
+
+                  {loadingAssignments ? (
+                    <div className="py-12 bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl flex flex-col items-center justify-center">
+                      <Loader size={28} className="animate-spin text-[var(--lms-accent)] mb-2" />
+                      <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading assignments...</p>
+                    </div>
+                  ) : assignments.length === 0 ? (
+                    <div className="border border-[var(--lms-border)] rounded-2xl overflow-hidden bg-[var(--lms-surface)] shadow-sm p-8 text-center">
+                      <div className="w-12 h-12 bg-[var(--lms-accent-subtle)] text-[var(--lms-accent-text)] rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <FileText size={24} />
+                      </div>
+                      <h3 className="text-base font-bold text-[var(--lms-text-primary)] mb-1">
+                        {user?.role === 'Student' ? 'No assignments posted yet' : 'No assignments have been created for this course yet.'}
+                      </h3>
+                      <p className="text-xs text-[var(--lms-text-secondary)]">
+                        {user?.role === 'Student' ? 'If this course has assignments, they will appear here.' : 'Create assignments with question files, deadlines, and maximum marks.'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {assignments.map((assignment) => (
+                        <AssignmentCard
+                          key={assignment._id}
+                          assignment={assignment}
+                          canManage={user?.role === 'Admin' || (user?.role === 'Instructor' && (course.createdBy?._id === user?._id || course.createdBy?._id === user?.id || course.createdBy === user?._id || course.createdBy === user?.id))}
+                          onView={(asgn) => setAssignmentDetailModal({ open: true, data: asgn })}
+                          onEdit={(asgn) => setAssignmentModal({ open: true, isEdit: true, data: asgn })}
+                          onPublish={handlePublishAssignment}
+                          onDelete={handleDeleteAssignment}
+                          isPublishing={assignmentActionId === assignment._id}
+                          isDeleting={assignmentActionId === assignment._id}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
 
             <section className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl p-6 sm:p-8 shadow-sm">
               <h2 className="text-xl font-bold text-[var(--lms-text-primary)] mb-4">Requirements</h2>
@@ -551,6 +703,24 @@ const CourseDetails = () => {
             </div>
           </div>
         )}
+
+        {/* Assignment Creation / Edit Modal */}
+        <AssignmentModal
+          isOpen={assignmentModal.open}
+          isEdit={assignmentModal.isEdit}
+          assignment={assignmentModal.data}
+          onClose={() => setAssignmentModal({ open: false, isEdit: false, data: null })}
+          onSubmit={handleCreateOrEditAssignment}
+          loading={assignmentSubmitting}
+          error={assignmentError}
+        />
+
+        {/* Assignment Detail Modal */}
+        <AssignmentDetailModal
+          isOpen={assignmentDetailModal.open}
+          assignment={assignmentDetailModal.data}
+          onClose={() => setAssignmentDetailModal({ open: false, data: null })}
+        />
       </div>
     );
   };
