@@ -57,7 +57,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 ">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
 
         
@@ -400,7 +400,6 @@ const Navbar = () => {
               overflow-hidden
               border-t border-white/10
               bg-slate-950/95
-              backdrop-blur-xl
               lg:hidden
             "
           >

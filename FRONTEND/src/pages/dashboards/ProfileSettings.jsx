@@ -654,7 +654,7 @@ const ProfileSettings = () => {
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 z-10 relative">
                 
                 <div className="relative group shrink-0 self-start sm:self-center">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white/20 border-2 border-white/30 backdrop-blur-xl flex items-center justify-center text-3xl font-black text-white shadow-xl overflow-hidden">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white/20 border-2 border-white/30 flex items-center justify-center text-3xl font-black text-white shadow-xl overflow-hidden">
                     {profileImage ? (
                       <img src={profileImage} alt={userData?.name || 'User'} className="w-full h-full object-cover" />
                     ) : (
@@ -685,7 +685,7 @@ const ProfileSettings = () => {
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight truncate">
                       {userData?.name || 'Your Name'}
                     </h2>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/20 border border-white/30 text-xs font-bold uppercase tracking-wider ">
                       {role === 'Admin' ? <Shield size={12} /> : role === 'Instructor' ? <Award size={12} /> : <GraduationCap size={12} />}
                       {role}
                     </span>

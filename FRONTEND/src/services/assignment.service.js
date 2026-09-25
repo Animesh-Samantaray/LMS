@@ -38,6 +38,31 @@ export const deleteAssignment = async (assignmentId) => {
   return response.data;
 };
 
+
+export const submitAssignment = async (assignmentId, formData) => {
+  const response = await api.post(`/api/assignment/${assignmentId}/submit`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const getMySubmission = async (assignmentId) => {
+  const response = await api.get(`/api/assignment/${assignmentId}/my-submission`);
+  return response.data;
+};
+
+export const getAssignmentSubmissions = async (assignmentId) => {
+  const response = await api.get(`/api/assignment/${assignmentId}/submissions`);
+  return response.data;
+};
+
+export const evaluateSubmission = async (submissionId, marks, feedback) => {
+  const response = await api.patch(`/api/assignment/submissions/${submissionId}/evaluate`, { marks, feedback });
+  return response.data;
+};
+
 export default {
   getCourseAssignments,
   getAssignmentById,
@@ -45,4 +70,8 @@ export default {
   updateAssignment,
   publishAssignment,
   deleteAssignment,
+  submitAssignment,
+  getMySubmission,
+  getAssignmentSubmissions,
+  evaluateSubmission,
 };

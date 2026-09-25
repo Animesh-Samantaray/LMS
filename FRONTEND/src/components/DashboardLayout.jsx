@@ -125,7 +125,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
       
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-40 lg:hidden animate-fade-in"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -303,7 +303,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
               </button>
 
               {themeDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-1.5 shadow-xl backdrop-blur-2xl z-50 animate-scale-in">
+                <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-1.5 shadow-xl -2xl z-50 animate-scale-in">
                   <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--lms-text-muted)]">
                     Theme Mode
                   </div>
@@ -368,7 +368,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
               </button>
 
               {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-2 shadow-xl backdrop-blur-2xl z-50 animate-scale-in flex flex-col gap-1">
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] p-2 shadow-xl -2xl z-50 animate-scale-in flex flex-col gap-1">
                   <div className="px-3 py-2 border-b border-[var(--lms-border)] mb-1">
                     <p className="font-bold text-sm text-[var(--lms-text-primary)] truncate">{user?.name || 'My Account'}</p>
                     <p className="text-xs text-[var(--lms-text-muted)] truncate">{user?.email || ''}</p>

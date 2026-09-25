@@ -271,7 +271,7 @@ const UserManagement = () => {
       </div>
 
       {editingUser && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 ">
           <div className="bg-[var(--lms-surface-elevated)] rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[95dvh] overflow-y-auto shadow-2xl border border-[var(--lms-border)]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] flex items-center justify-between">
               <h2 className="text-base font-bold text-[var(--lms-text-primary)]">Edit User</h2>

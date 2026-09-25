@@ -41,6 +41,7 @@ import assignmentService from '../../../services/assignment.service';
 import AssignmentCard from '../../../components/AssignmentCard';
 import AssignmentModal from '../../../components/AssignmentModal';
 import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
+import AssignmentSubmissionsModal from '../../../components/AssignmentSubmissionsModal';
 
 const CourseContent = () => {
   const { id: courseId } = useParams();
@@ -99,6 +100,7 @@ const CourseContent = () => {
 
   const [assignmentModal, setAssignmentModal] = useState({ open: false, isEdit: false, data: null });
   const [assignmentDetailModal, setAssignmentDetailModal] = useState({ open: false, data: null });
+  const [submissionsModal, setSubmissionsModal] = useState({ open: false, data: null });
   const [assignments, setAssignments] = useState([]);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
   const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
@@ -1108,6 +1110,7 @@ const CourseContent = () => {
                   assignment={asgn}
                   canManage={true}
                   onView={(a) => setAssignmentDetailModal({ open: true, data: a })}
+                    onSubmissions={(a) => setSubmissionsModal({ open: true, data: a })}
                   onEdit={(a) => setAssignmentModal({ open: true, isEdit: true, data: a })}
                   onPublish={handlePublishAssignment}
                   onDelete={handleDeleteAssignment}
@@ -1589,6 +1592,12 @@ const CourseContent = () => {
           </div>
         </div>
       )}
+    
+        <AssignmentSubmissionsModal
+          isOpen={submissionsModal.open}
+          assignment={submissionsModal.data}
+          onClose={() => setSubmissionsModal({ open: false, data: null })}
+        />
     </DashboardLayout>
   );
 };

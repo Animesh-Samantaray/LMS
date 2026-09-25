@@ -347,7 +347,7 @@ const PremiumCourseDetailsPage = () => {
               <div className="relative aspect-video bg-gray-900 flex items-center justify-center cursor-pointer group">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
                     <PlayCircle size={32} className="text-white" fill="white" />
                   </div>
                 </div>

@@ -92,7 +92,7 @@ const AdminDashboard = () => {
      
       <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 max-w-xl z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider ">
             <Shield size={13} className="text-amber-300" />
             Admin Command Center
           </div>
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
         </div>
 
         
-        <div className="flex items-center gap-4 sm:gap-6 bg-white/10 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-white/20 z-10">
+        <div className="flex items-center gap-4 sm:gap-6 bg-white/10 p-3 sm:p-4 rounded-2xl border border-white/20 z-10">
           <div className="text-center px-3">
             <div className="text-2xl sm:text-3xl font-black">{stats.totalUsers ?? (Array.isArray(usersList) ? usersList.length : 0)}</div>
             <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Total Users</div>
