@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Target, Clock, AlertCircle, Loader, PlayCircle } from 'lucide-react';
+import { Target, Clock, AlertCircle, Loader, PlayCircle, CheckCircle } from 'lucide-react';
 import quizService from '../../../services/quiz.service';
 import DashboardLayout from '../../../components/DashboardLayout';
 
@@ -78,6 +78,8 @@ const StudentQuizzes = () => {
                   {quizzes.map((quiz) => {
                     const deadline = quiz.deadline ? new Date(quiz.deadline) : null;
                     const isExpired = deadline ? deadline < new Date() : false;
+                    const attemptsRemaining = quiz.attemptsRemaining ?? (Number(quiz.maxAttempts || 1) - Number(quiz.attempts || 0));
+                    const isSubmitted = Number(attemptsRemaining) <= 0;
 
                     return (
                       <tr key={quiz._id} className="hover:bg-[var(--lms-surface-hover)] transition-colors">
@@ -103,7 +105,11 @@ const StudentQuizzes = () => {
                           )}
                         </td>
                         <td className="p-4">
-                          {isExpired ? (
+                          {isSubmitted ? (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
+                              <CheckCircle size={13} /> Quiz Submitted
+                            </span>
+                          ) : isExpired ? (
                             <span className="inline-block px-3 py-1.5 rounded-lg bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
                               Ended
                             </span>
