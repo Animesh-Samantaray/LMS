@@ -206,7 +206,7 @@ const QuizBuilderModal = ({
       setSuccess(`${generatedQuestions.length} questions added as an editable preview. Save when ready.`);
       setDocumentFile(null);
     } catch (requestError) {
-      setError(requestError.response?.data?.message || 'Failed to generate questions.');
+      setError((draftQuizId || quiz?._id ? 'Quiz saved as draft, but AI failed: ' : '') + (requestError.response?.data?.message || 'Failed to generate questions.'));
     } finally {
       setGenerating(false);
     }
