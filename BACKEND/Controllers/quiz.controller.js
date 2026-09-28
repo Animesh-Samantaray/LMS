@@ -163,6 +163,9 @@ export const generateQuizQuestions = async (req, res) => {
     let documentText;
     try {
       documentText = await extractDocumentText(req.file);
+      if (documentText.length > 20000) {
+        documentText = documentText.substring(0, 20000) + "... [TRUNCATED DUE TO SIZE LIMIT]";
+      }
     } catch (documentError) {
       return res.status(400).json({
         success: false,
@@ -189,8 +192,9 @@ ${documentText}`;
         ],
       }, { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` }, timeout: 60000 });
     } catch (providerError) {
-      console.error("Groq question generation failed:", providerError.code || providerError.response?.status || "request_failed");
-      return res.status(502).json({ success: false, message: "The AI question service is currently unavailable" });
+      console.error("Groq question generation failed:", providerError.response?.data || providerError.message);
+      const errorMessage = providerError.response?.data?.error?.message || "The AI question service is currently unavailable";
+      return res.status(502).json({ success: false, message: errorMessage });
     }
 
     const content = providerResponse.data?.choices?.[0]?.message?.content;

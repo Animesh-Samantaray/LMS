@@ -206,7 +206,7 @@ const QuizBuilderModal = ({
       setSuccess(`${generatedQuestions.length} questions added as an editable preview. Save when ready.`);
       setDocumentFile(null);
     } catch (requestError) {
-      setError(requestError.response?.data?.message || 'Failed to generate questions.');
+      setError((draftQuizId || quiz?._id ? 'Quiz saved as draft, but AI failed: ' : '') + (requestError.response?.data?.message || 'Failed to generate questions.'));
     } finally {
       setGenerating(false);
     }
@@ -390,8 +390,8 @@ const QuizBuilderModal = ({
   const statusLabel = isReadOnly ? 'Published' : isEdit ? 'Draft' : 'New quiz';
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-2 sm:p-4">
-      <div className="flex max-h-[96vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] shadow-2xl">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-12 pb-4 px-4">
+      <div className="flex max-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] shadow-2xl">
         <header className="flex shrink-0 items-center justify-between border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] px-4 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--lms-accent-subtle)] text-[var(--lms-accent)]"><ClipboardList size={20} /></div>

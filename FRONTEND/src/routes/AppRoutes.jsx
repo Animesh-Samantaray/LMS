@@ -10,6 +10,8 @@ import VerifyTwoFactor from "../pages/VerifyTwoFactor";
 import StudentDashboard from "../pages/dashboards/StudentDashboard";
 import StudentMyCourses from "../pages/dashboards/student/StudentMyCourses";
 import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
+import InstructorAssignments from '../pages/dashboards/instructor/InstructorAssignments';
+import InstructorQuizzes from '../pages/dashboards/instructor/InstructorQuizzes';
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import CategoryManagement from "../pages/dashboards/admin/CategoryManagement";
 import CourseManagement from "../pages/dashboards/admin/CourseManagement";
@@ -320,6 +322,14 @@ const AppRoutes = () => {
         <Route
           path="/instructor/courses/:id/content"
           element={<CourseContent />}
+        />
+        <Route
+          path="/instructor/assignments"
+          element={<InstructorAssignments />}
+        />
+        <Route
+          path="/instructor/quizzes"
+          element={<InstructorQuizzes />}
         />
       </Route>
 

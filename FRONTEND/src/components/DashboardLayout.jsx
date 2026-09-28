@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
@@ -85,6 +85,8 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Learning' },
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
+          { label: 'Assignments', path: '/instructor/assignments', icon: FileText },
+          { label: 'Quizzes', path: '/instructor/quizzes', icon: HelpCircle },
           { category: 'Manager' },
           { label: 'View Students', path: '#', icon: Users },
           { label: 'Course Progress', path: '#', icon: BarChart2 },
