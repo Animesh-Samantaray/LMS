@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import axios from "axios";
+import mammoth from "mammoth";
+import { PDFParse } from "pdf-parse";
 
 import Quiz from "../Models/Quiz.model.js";
 import Course from "../Models/Course.model.js";
@@ -72,6 +75,142 @@ const handleDuplicateTitle = (res, error) => {
   }
 
   return null;
+};
+
+const AI_MAX_QUESTIONS = 30;
+const AI_MAX_DOCUMENT_CHARS = 120000;
+const AI_DIFFICULTIES = new Set(["Easy", "Medium", "Hard"]);
+const AI_OPTION_KEYS = ["A", "B", "C", "D"];
+
+const extractDocumentText = async (file) => {
+  if (!file?.buffer?.length) throw new Error("A document is required");
+
+  let text;
+  if (file.mimetype === "text/plain") {
+    text = file.buffer.toString("utf8");
+  } else if (file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+    const result = await mammoth.extractRawText({ buffer: file.buffer });
+    text = result.value;
+  } else if (file.mimetype === "application/pdf") {
+    const parser = new PDFParse({ data: file.buffer });
+    try {
+      const result = await parser.getText();
+      text = result.text;
+    } finally {
+      await parser.destroy();
+    }
+  } else {
+    throw new Error("Only PDF, DOCX, and TXT documents are supported");
+  }
+
+  const normalizedText = text?.replace(/\s+/g, " ").trim();
+  if (!normalizedText) throw new Error("The document does not contain readable text");
+  if (normalizedText.length > AI_MAX_DOCUMENT_CHARS) throw new Error("The document contains too much text to process");
+  return normalizedText;
+};
+
+const validateGeneratedQuestions = (payload, expectedCount, expectedMarks) => {
+  if (!payload || !Array.isArray(payload.questions) || payload.questions.length !== expectedCount) {
+    throw new Error(`The AI returned an invalid question count. Expected ${expectedCount} questions.`);
+  }
+
+  return payload.questions.map((item, index) => {
+    if (!item || typeof item.question !== "string" || !item.question.trim()) throw new Error(`Generated question ${index + 1} has no question text`);
+    if (!Array.isArray(item.options) || item.options.length !== 4) throw new Error(`Generated question ${index + 1} must have exactly four options`);
+
+    const optionKeys = item.options.map((option) => option?.key);
+    if (new Set(optionKeys).size !== 4 || !AI_OPTION_KEYS.every((key) => optionKeys.includes(key))) throw new Error(`Generated question ${index + 1} has invalid option keys`);
+    if (item.options.some((option) => typeof option?.text !== "string" || !option.text.trim())) throw new Error(`Generated question ${index + 1} has an empty option`);
+    if (!AI_OPTION_KEYS.includes(item.correctOption)) throw new Error(`Generated question ${index + 1} has an invalid correct option`);
+
+    const marks = Number(item.marks);
+    if (!Number.isFinite(marks) || marks < 1 || marks !== expectedMarks) throw new Error(`Generated question ${index + 1} has invalid marks`);
+    if (Number(item.order) !== index + 1) throw new Error("Generated question order is invalid");
+
+    return {
+      question: item.question.trim(),
+      options: AI_OPTION_KEYS.map((key) => ({ key, text: item.options.find((option) => option.key === key).text.trim() })),
+      correctOption: item.correctOption,
+      marks,
+      order: index + 1,
+    };
+  });
+};
+
+export const generateQuizQuestions = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { numberOfQuestions, difficulty, marksPerQuestion, instructions = "" } = req.body;
+
+    if (!isValidObjectId(quizId)) return res.status(400).json({ success: false, message: "Invalid quiz ID" });
+    if (!req.file) return res.status(400).json({ success: false, message: "A document is required" });
+
+    const questionCount = Number(numberOfQuestions);
+    const marks = Number(marksPerQuestion);
+    if (!Number.isInteger(questionCount) || questionCount < 1 || questionCount > AI_MAX_QUESTIONS) return res.status(400).json({ success: false, message: `Number of questions must be a whole number from 1 to ${AI_MAX_QUESTIONS}` });
+    if (!AI_DIFFICULTIES.has(difficulty)) return res.status(400).json({ success: false, message: "Difficulty must be Easy, Medium, or Hard" });
+    if (!Number.isFinite(marks) || marks < 1 || marks > 100) return res.status(400).json({ success: false, message: "Marks per question must be between 1 and 100" });
+    if (typeof instructions !== "string" || instructions.length > 2000) return res.status(400).json({ success: false, message: "Instructions must be at most 2000 characters" });
+    if (!process.env.GROQ_API_KEY) return res.status(503).json({ success: false, message: "AI question generation is not configured" });
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) return res.status(404).json({ success: false, message: "Quiz not found" });
+    const course = await Course.findById(quiz.courseId);
+    if (!course) return res.status(404).json({ success: false, message: "Course not found" });
+    if (!canManageQuiz(quiz, course, req.user)) return res.status(403).json({ success: false, message: "You are not allowed to generate questions for this quiz" });
+    if (quiz.status !== "draft") return res.status(400).json({ success: false, message: "Questions can only be generated for a draft quiz" });
+
+    let documentText;
+    try {
+      documentText = await extractDocumentText(req.file);
+    } catch (documentError) {
+      return res.status(400).json({
+        success: false,
+        message: documentError.message || "The document could not be read",
+      });
+    }
+    const prompt = `Create exactly ${questionCount} multiple-choice questions from the document content below. Difficulty: ${difficulty}. Marks per question: ${marks}. ${instructions.trim() ? `Additional instructions: ${instructions.trim()}` : ""}
+Use only facts supported by the document. Do not ask unrelated general-knowledge questions. Make every question clear and unambiguous, with exactly four options and one correct answer. Use plausible but incorrect distractors and avoid duplicate or near-duplicate questions. Return only valid JSON, with no Markdown fences or explanatory text, in this exact shape:
+{"questions":[{"question":"Question text","options":[{"key":"A","text":"Option A"},{"key":"B","text":"Option B"},{"key":"C","text":"Option C"},{"key":"D","text":"Option D"}],"correctOption":"A","marks":${marks},"order":1}]}
+
+Document content:
+${documentText}`;
+
+    let providerResponse;
+    try {
+      providerResponse = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+        model: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
+        temperature: 0.2,
+        max_tokens: Math.min(7000, Math.max(1500, questionCount * 350)),
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: "You generate grounded educational multiple-choice questions." },
+          { role: "user", content: prompt },
+        ],
+      }, { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` }, timeout: 60000 });
+    } catch (providerError) {
+      console.error("Groq question generation failed:", providerError.code || providerError.response?.status || "request_failed");
+      return res.status(502).json({ success: false, message: "The AI question service is currently unavailable" });
+    }
+
+    const content = providerResponse.data?.choices?.[0]?.message?.content;
+    if (typeof content !== "string" || !content.trim()) return res.status(502).json({ success: false, message: "The AI returned an empty response" });
+
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(content.replace(/^```(?:json)?\s*|\s*```$/gi, "").trim());
+    } catch {
+      return res.status(502).json({ success: false, message: "The AI returned invalid JSON" });
+    }
+
+    const questions = validateGeneratedQuestions(parsedResponse, questionCount, marks);
+    return res.status(200).json({ success: true, questions });
+  } catch (error) {
+    if (error.message === "A document is required" || error.message.includes("document") || error.message.includes("readable text") || error.message.includes("too much text")) return res.status(400).json({ success: false, message: error.message });
+    if (error.message.startsWith("Generated") || error.message.startsWith("The AI returned") || error.message.includes("Generated question")) return res.status(502).json({ success: false, message: error.message });
+    console.error("Generate quiz questions error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to generate quiz questions" });
+  }
 };
 
 export const createQuiz = async (req, res) => {

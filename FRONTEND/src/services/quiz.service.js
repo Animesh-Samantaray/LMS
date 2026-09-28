@@ -30,6 +30,25 @@ export const deleteQuiz = async (quizId) => {
   return response.data;
 };
 
+export const generateQuizQuestions = async (quizId, generationData) => {
+  if (!generationData?.document) {
+    throw new Error("A document is required");
+  }
+
+  const formData = new FormData();
+  formData.append("document", generationData.document);
+  formData.append("numberOfQuestions", generationData.numberOfQuestions);
+  formData.append("difficulty", generationData.difficulty);
+  formData.append("marksPerQuestion", generationData.marksPerQuestion);
+  formData.append("instructions", generationData.instructions || "");
+  const response = await api.post(`/api/quizzes/${quizId}/ai-generate-questions`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
 export const createQuestion = async (quizId, questionData) => {
   const response = await api.post(`/api/quiz-questions/quiz/${quizId}`, questionData);
   return response.data;
@@ -76,6 +95,7 @@ export default {
   updateQuiz,
   publishQuiz,
   deleteQuiz,
+  generateQuizQuestions,
   createQuestion,
   getQuizQuestions,
   getQuestionById,
