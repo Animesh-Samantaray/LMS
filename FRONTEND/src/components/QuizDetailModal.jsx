@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock, HelpCircle, AlertCircle, Loader, PlayCircle } from 'lucide-react';
+import { X, Clock, HelpCircle, AlertCircle, Loader, PlayCircle, CheckCircle } from 'lucide-react';
 import quizService from '../services/quiz.service';
 
 const QuizDetailModal = ({
@@ -39,6 +39,8 @@ const QuizDetailModal = ({
   const totalMarks = questions.reduce((sum, q) => sum + (Number(q.marks) || 0), 0);
   const deadlineDate = quiz.deadline ? new Date(quiz.deadline) : null;
   const isPastDeadline = deadlineDate ? deadlineDate < new Date() : false;
+  const attemptsRemaining = quiz.attemptsRemaining ?? (Number(quiz.maxAttempts || 1) - Number(quiz.attempts || 0));
+  const isSubmitted = Number(attemptsRemaining) <= 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -111,16 +113,22 @@ const QuizDetailModal = ({
               )}
 
               <div className="flex justify-end pt-4">
-                <button
-                  onClick={() => {
-                    onClose();
-                    window.location.href = `/student/quizzes/${quiz._id}/take`;
-                  }}
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[var(--lms-accent)] text-white hover:bg-[var(--lms-accent-hover)] transition-colors flex items-center gap-2"
-                >
-                  <PlayCircle size={18} />
-                  Start Quiz
-                </button>
+                {isSubmitted ? (
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-500/10 border border-emerald-500/25 text-emerald-600">
+                    <CheckCircle size={18} /> Quiz Submitted
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      window.location.href = `/student/quizzes/${quiz._id}/take`;
+                    }}
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[var(--lms-accent)] text-white hover:bg-[var(--lms-accent-hover)] transition-colors flex items-center gap-2"
+                  >
+                    <PlayCircle size={18} />
+                    Start Quiz
+                  </button>
+                )}
               </div>
             </>
           )}

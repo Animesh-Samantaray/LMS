@@ -234,9 +234,13 @@ export const getQuizQuestions = async (req, res) => {
       });
     }
 
-    const questions = await QuizQuestion.find({ quizId })
-      .select("-correctOption")
-      .sort({ order: 1 });
+    const questionQuery = QuizQuestion.find({ quizId }).sort({ order: 1 });
+
+    if (req.user.role === "Student") {
+      questionQuery.select("-correctOption");
+    }
+
+    const questions = await questionQuery;
 
     return res.status(200).json({
       success: true,

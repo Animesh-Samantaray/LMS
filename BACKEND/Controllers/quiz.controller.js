@@ -4,6 +4,7 @@ import Quiz from "../Models/Quiz.model.js";
 import Course from "../Models/Course.model.js";
 import QuizQuestion from "../Models/QuizQuestion.model.js";
 import QuizSubmission from "../Models/QuizSubmission.model.js";
+import sendMail from "../Utils/sendMail.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -32,7 +33,7 @@ const isEnrolled = (course, userId) => {
   );
 };
 
-const validateQuizData = ({ title, duration, deadline }) => {
+const validateQuizData = ({ title, duration, deadline, maxAttempts = 1 }) => {
   if (typeof title !== "string" || title.trim().length < 2) {
     return "Quiz title must contain at least 2 characters";
   }
@@ -43,6 +44,10 @@ const validateQuizData = ({ title, duration, deadline }) => {
 
   if (!Number.isInteger(Number(duration)) || Number(duration) < 1) {
     return "Duration must be a positive whole number of minutes";
+  }
+
+  if (!Number.isInteger(Number(maxAttempts)) || Number(maxAttempts) < 1) {
+    return "Maximum attempts must be a positive whole number";
   }
 
   const parsedDeadline = new Date(deadline);
@@ -72,7 +77,7 @@ const handleDuplicateTitle = (res, error) => {
 export const createQuiz = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { title, description = "", duration, deadline } = req.body;
+    const { title, description = "", duration, deadline, maxAttempts = 1 } = req.body;
 
     if (!isValidObjectId(courseId)) {
       return res.status(400).json({
@@ -85,6 +90,7 @@ export const createQuiz = async (req, res) => {
       title,
       duration,
       deadline,
+      maxAttempts,
     });
 
     if (validationError) {
@@ -125,6 +131,7 @@ export const createQuiz = async (req, res) => {
       title: title.trim(),
       description: description.trim(),
       duration: Number(duration),
+      maxAttempts: Number(maxAttempts),
       deadline: new Date(deadline),
       status: "draft",
       createdBy: req.user._id,
@@ -208,10 +215,23 @@ export const getCourseQuizzes = async (req, res) => {
           },
         ]);
 
+        const attemptCount = req.user.role === "Student"
+          ? await QuizSubmission.countDocuments({
+              quizId: quiz._id,
+              studentId: req.user._id,
+            })
+          : 0;
+
         return {
           ...quiz,
           questionCount: questionStats[0]?.questionCount || 0,
           totalMarks: questionStats[0]?.totalMarks || 0,
+          ...(req.user.role === "Student"
+            ? {
+                attempts: attemptCount,
+                attemptsRemaining: Math.max(quiz.maxAttempts - attemptCount, 0),
+              }
+            : {}),
         };
       })
     );
@@ -292,12 +312,36 @@ export const getQuizById = async (req, res) => {
       },
     ]);
 
+    let attemptInfo = {};
+    if (req.user.role === "Student") {
+      const attempts = await QuizSubmission.countDocuments({
+        quizId: quiz._id,
+        studentId: req.user._id,
+      });
+
+      attemptInfo = {
+        attempts,
+        maxAttempts: quiz.maxAttempts,
+        attemptsRemaining: Math.max(quiz.maxAttempts - attempts, 0),
+      };
+
+      if (attempts >= quiz.maxAttempts) {
+        return res.status(403).json({
+          success: false,
+          code: "MAX_ATTEMPTS_REACHED",
+          message: "You have submitted this quiz the maximum number of times",
+          ...attemptInfo,
+        });
+      }
+    }
+
     return res.status(200).json({
       success: true,
       quiz: {
         ...quiz,
         questionCount: questionStats[0]?.questionCount || 0,
         totalMarks: questionStats[0]?.totalMarks || 0,
+        ...attemptInfo,
       },
     });
   } catch (error) {
@@ -358,6 +402,7 @@ export const updateQuiz = async (req, res) => {
       title: title === undefined ? quiz.title : title,
       duration: duration === undefined ? quiz.duration : duration,
       deadline: deadline === undefined ? quiz.deadline : deadline,
+      maxAttempts: maxAttempts === undefined ? quiz.maxAttempts : maxAttempts,
     };
 
     const validationError = validateQuizData(updatedData);
@@ -385,6 +430,7 @@ export const updateQuiz = async (req, res) => {
 
     quiz.title = updatedData.title.trim();
     quiz.duration = Number(updatedData.duration);
+    quiz.maxAttempts = Number(updatedData.maxAttempts);
     quiz.deadline = new Date(updatedData.deadline);
 
     await quiz.save();
@@ -551,6 +597,22 @@ export const evaluateQuiz = async (req, res) => {
       return res.status(404).json({ success: false, message: "Published quiz not found" });
     }
 
+    const existingAttempts = await QuizSubmission.countDocuments({
+      quizId,
+      studentId: userId,
+    });
+
+    if (existingAttempts >= quiz.maxAttempts) {
+      return res.status(403).json({
+        success: false,
+        code: "MAX_ATTEMPTS_REACHED",
+        message: "You have submitted this quiz the maximum number of times",
+        attempts: existingAttempts,
+        maxAttempts: quiz.maxAttempts,
+        attemptsRemaining: 0,
+      });
+    }
+
     const questions = await QuizQuestion.find({ quizId });
     
     let totalScore = 0;
@@ -581,10 +643,25 @@ export const evaluateQuiz = async (req, res) => {
       maxScore
     });
 
+    const attempts = existingAttempts + 1;
+    try {
+      await sendMail({
+        to: req.user.email,
+        subject: `Quiz result: ${quiz.title}`,
+        text: `Your score for ${quiz.title} is ${totalScore}/${maxScore}. Attempt ${attempts} of ${quiz.maxAttempts}.`,
+        html: `<p>Your quiz submission has been recorded.</p><p><strong>${quiz.title}</strong></p><p>Score: <strong>${totalScore}/${maxScore}</strong></p><p>Attempt: ${attempts} of ${quiz.maxAttempts}</p>`,
+      });
+    } catch (mailError) {
+      console.error("Quiz result email failed:", mailError.message);
+    }
+
     return res.status(200).json({
       success: true,
       totalScore,
       maxScore,
+      attempts,
+      maxAttempts: quiz.maxAttempts,
+      attemptsRemaining: Math.max(quiz.maxAttempts - attempts, 0),
       results
     });
   } catch (error) {
@@ -625,7 +702,12 @@ export const getMyQuizzes = async (req, res) => {
       return {
         ...quiz.toObject(),
         courseTitle: course ? course.title : "Unknown Course",
-        attempts: attemptsMap[quiz._id] || 0
+        attempts: attemptsMap[quiz._id] || 0,
+        maxAttempts: quiz.maxAttempts,
+        attemptsRemaining: Math.max(
+          quiz.maxAttempts - (attemptsMap[quiz._id] || 0),
+          0
+        ),
       };
     });
 

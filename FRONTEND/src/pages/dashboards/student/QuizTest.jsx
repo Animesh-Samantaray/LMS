@@ -44,7 +44,11 @@ const QuizTest = () => {
         setQuestions(qRes.questions);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load quiz');
+      setError(
+        err.response?.data?.code === 'MAX_ATTEMPTS_REACHED'
+          ? 'Quiz submitted. You have no attempts remaining.'
+          : err.response?.data?.message || 'Failed to load quiz'
+      );
     } finally {
       setLoading(false);
     }
@@ -132,7 +136,7 @@ const QuizTest = () => {
               {isPass ? <CheckCircle size={40} /> : <XCircle size={40} />}
             </div>
             <h1 className="text-3xl font-extrabold text-[var(--lms-text-primary)] mb-2">Quiz Completed!</h1>
-            <p className="text-sm text-[var(--lms-text-secondary)] mb-8">You have successfully submitted the quiz.</p>
+            <p className="text-sm text-[var(--lms-text-secondary)] mb-8">You have successfully submitted the quiz. Your result has been sent to your registered email.</p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="p-6 bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-2xl">
