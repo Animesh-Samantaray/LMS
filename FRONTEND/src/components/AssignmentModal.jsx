@@ -124,9 +124,9 @@ const AssignmentModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 ">
-      <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 pb-4 px-4 ">
+      <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-2xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col ">
+        <div className="px-6 py-3 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
           <div>
             <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
               {isEdit ? 'Edit Assignment' : 'Create Assignment'}
@@ -143,7 +143,7 @@ const AssignmentModal = ({
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-4">
+        <div className="p-4  space-y-3">
           {(validationError || error) && (
             <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-2 text-xs text-rose-500 font-medium">
               <AlertCircle size={14} className="shrink-0" />
@@ -151,7 +151,7 @@ const AssignmentModal = ({
             </div>
           )}
 
-          <form id="assignment-form" onSubmit={handleSubmit} className="space-y-4">
+          <form id="assignment-form" onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-2">
                 Assignment Title <span className="text-rose-500">*</span>
@@ -173,16 +173,16 @@ const AssignmentModal = ({
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                rows="3"
+                rows="1"
                 className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2.5 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)] resize-none"
                 placeholder="Brief instructions or notes for the assignment..."
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-2">
-                  Maximum Marks <span className="text-rose-500">*</span>
+                <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-1">
+                  Marks <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -190,36 +190,36 @@ const AssignmentModal = ({
                   min="1"
                   value={maximumMarks}
                   onChange={(e) => setMaximumMarks(e.target.value)}
-                  className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2.5 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
+                  className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-1">
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2.5 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
+                  className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
                 >
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
                 </select>
               </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-2">
-                Deadline <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="datetime-local"
-                required
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2.5 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
-              />
+              
+              <div>
+                <label className="block text-xs font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider mb-1">
+                  Deadline <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="datetime-local"
+                  required
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                  className="w-full bg-[var(--lms-bg)] border border-[var(--lms-border)] rounded-xl px-4 py-2 text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--lms-accent)]"
+                />
+              </div>
             </div>
 
             <div>
@@ -248,7 +248,7 @@ const AssignmentModal = ({
                 </div>
               )}
 
-              <div className="relative border-2 border-dashed border-[var(--lms-border)] hover:border-[var(--lms-accent)] rounded-2xl p-5 transition-colors text-center bg-[var(--lms-bg)]">
+              <div className="relative border-2 border-dashed border-[var(--lms-border)] hover:border-[var(--lms-accent)] rounded-2xl p-3 transition-colors text-center bg-[var(--lms-bg)]">
                 <input
                   type="file"
                   onChange={handleFileChange}
@@ -273,7 +273,7 @@ const AssignmentModal = ({
           </form>
         </div>
 
-        <div className="px-6 py-4 border-t border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex gap-3 shrink-0">
+        <div className="px-6 py-3 border-t border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}
