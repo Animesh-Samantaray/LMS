@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle,
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   Check,
   CheckCircle2,
   ClipboardList,
@@ -14,7 +16,9 @@ import {
   Plus,
   Save,
   Settings2,
+  Sparkles,
   Trash2,
+  Upload,
   X,
 } from 'lucide-react';
 import quizService from '../services/quiz.service';
@@ -60,11 +64,20 @@ const QuizBuilderModal = ({
   const [maxAttempts, setMaxAttempts] = useState(1);
   const [deadline, setDeadline] = useState('');
   const [questions, setQuestions] = useState([]);
+  const [draftQuizId, setDraftQuizId] = useState(null);
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [documentFile, setDocumentFile] = useState(null);
+  const [generationSettings, setGenerationSettings] = useState({
+    numberOfQuestions: 5,
+    difficulty: 'Medium',
+    marksPerQuestion: 1,
+    instructions: '',
+  });
+  const [generating, setGenerating] = useState(false);
   const questionEditorRef = useRef(null);
 
   const isReadOnly = isEdit && quiz?.status === 'published';
@@ -83,6 +96,7 @@ const QuizBuilderModal = ({
     setError('');
     setSuccess('');
     if (isEdit && quiz) {
+      setDraftQuizId(quiz._id);
       setTitle(quiz.title || '');
       setDescription(quiz.description || '');
       setDuration(quiz.duration || 30);
@@ -127,10 +141,75 @@ const QuizBuilderModal = ({
     setMaxAttempts(1);
     setDeadline('');
     setQuestions([]);
+    setDraftQuizId(null);
     setSelectedQuestionId(null);
     setError('');
     setSuccess('');
     setSubmitting(false);
+    setDocumentFile(null);
+    setGenerating(false);
+  };
+
+  const updateGenerationSetting = (field, value) => {
+    setGenerationSettings((current) => ({ ...current, [field]: value }));
+  };
+
+  const generateQuestions = async () => {
+    if (!documentFile) {
+      setError('Choose a PDF, DOCX, or TXT document first.');
+      return;
+    }
+
+    const count = Number(generationSettings.numberOfQuestions);
+    const marks = Number(generationSettings.marksPerQuestion);
+    if (!Number.isInteger(count) || count < 1 || count > 30) {
+      setError('Number of questions must be a whole number from 1 to 30.');
+      return;
+    }
+    if (!Number.isFinite(marks) || marks < 1) {
+      setError('Marks per question must be positive.');
+      return;
+    }
+
+    try {
+      setGenerating(true);
+      setError('');
+      let currentQuizId = draftQuizId || quiz?._id;
+      if (!currentQuizId) {
+        if (!title.trim() || !description.trim() || !duration || !deadline) {
+          setError('Complete the quiz details before generating questions.');
+          return;
+        }
+        const quizResponse = await quizService.createQuiz(courseId, {
+          title,
+          description,
+          duration: Number(duration),
+          maxAttempts: Number(maxAttempts),
+          deadline,
+        });
+        currentQuizId = quizResponse.quiz?._id;
+        setDraftQuizId(currentQuizId);
+      }
+
+      const response = await quizService.generateQuizQuestions(currentQuizId, {
+        document: documentFile,
+        ...generationSettings,
+      });
+      const generatedQuestions = (response.questions || []).map((question, index) => ({
+        ...question,
+        localId: `ai-${Date.now()}-${index}`,
+        isNew: true,
+        order: questions.length + index + 1,
+      }));
+      setQuestions((currentQuestions) => [...currentQuestions, ...generatedQuestions]);
+      setSelectedQuestionId(generatedQuestions[0]?.localId || selectedQuestionId);
+      setSuccess(`${generatedQuestions.length} questions added as an editable preview. Save when ready.`);
+      setDocumentFile(null);
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || 'Failed to generate questions.');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const addQuestion = () => {
@@ -156,6 +235,15 @@ const QuizBuilderModal = ({
         )),
       };
     }));
+  };
+
+  const moveSelectedQuestion = (direction) => {
+    const currentIndex = questions.findIndex((question) => question.localId === selectedQuestionId);
+    const nextIndex = currentIndex + direction;
+    if (currentIndex < 0 || nextIndex < 0 || nextIndex >= questions.length) return;
+    const reordered = [...questions];
+    [reordered[currentIndex], reordered[nextIndex]] = [reordered[nextIndex], reordered[currentIndex]];
+    setQuestions(reordered.map((question, index) => ({ ...question, order: index + 1 })));
   };
 
   const removeQuestion = async () => {
@@ -217,11 +305,13 @@ const QuizBuilderModal = ({
       return;
     }
 
+    let workingQuestions = questions.map((question) => ({ ...question }));
+    let savedQuestionCount = 0;
     try {
       setSubmitting(true);
       setError('');
       setSuccess('');
-      let currentQuizId = quiz?._id;
+      let currentQuizId = draftQuizId || quiz?._id;
       const quizData = {
         title,
         description,
@@ -230,15 +320,22 @@ const QuizBuilderModal = ({
         deadline,
       };
 
-      if (isEdit && currentQuizId) {
+      if (currentQuizId) {
         await quizService.updateQuiz(currentQuizId, quizData);
       } else {
         const response = await quizService.createQuiz(courseId, quizData);
-        if (response.success && response.quiz) currentQuizId = response.quiz._id;
+        if (response.success && response.quiz) {
+          currentQuizId = response.quiz._id;
+          setDraftQuizId(currentQuizId);
+        }
       }
 
-      for (let index = 0; index < questions.length; index += 1) {
-        const question = questions[index];
+      if (!currentQuizId) {
+        throw new Error('The quiz could not be created. Please try again.');
+      }
+
+      for (let index = 0; index < workingQuestions.length; index += 1) {
+        const question = workingQuestions[index];
         const questionPayload = {
           question: question.question,
           options: question.options,
@@ -247,10 +344,22 @@ const QuizBuilderModal = ({
           order: index + 1,
         };
         if (question.isNew || !question._id) {
-          await quizService.createQuestion(currentQuizId, questionPayload);
+          const response = await quizService.createQuestion(currentQuizId, questionPayload);
+          const savedQuestion = response.question;
+          if (!savedQuestion?._id) throw new Error(`Question ${index + 1} was not saved correctly.`);
+          workingQuestions[index] = {
+            ...question,
+            ...savedQuestion,
+            localId: savedQuestion._id,
+            isNew: false,
+            order: index + 1,
+          };
         } else {
           await quizService.updateQuestion(question._id, questionPayload);
+          workingQuestions[index] = { ...question, ...questionPayload, order: index + 1 };
         }
+        savedQuestionCount += 1;
+        setQuestions([...workingQuestions]);
       }
 
       if (isPublishing) {
@@ -265,7 +374,11 @@ const QuizBuilderModal = ({
         onClose();
       }, 900);
     } catch (requestError) {
-      setError(requestError.response?.data?.message || requestError.message || 'An error occurred while saving.');
+      setQuestions([...workingQuestions]);
+      const detail = requestError.response?.data?.message || requestError.message || 'An error occurred while saving.';
+      setError(savedQuestionCount > 0
+        ? `${savedQuestionCount} question(s) saved. ${detail} Retry to continue with the remaining questions.`
+        : detail);
     } finally {
       setSubmitting(false);
     }
@@ -311,6 +424,34 @@ const QuizBuilderModal = ({
                   <label className="md:col-span-2"><span className="mb-1.5 block text-xs font-bold text-[var(--lms-text-secondary)]">Deadline</span><input type="datetime-local" value={deadline} onChange={(event) => setDeadline(event.target.value)} disabled={isReadOnly} className="lms-input w-full" /><span className="mt-1 block text-[11px] text-[var(--lms-text-muted)]">When the quiz closes</span></label>
                 </div>
               </section>
+
+              {!isReadOnly && (
+                <section className="rounded-2xl border border-[var(--lms-accent-border)] bg-[var(--lms-accent-subtle)] p-4 shadow-sm sm:p-5">
+                  <div className="mb-4 flex items-start gap-3">
+                    <Sparkles size={18} className="mt-0.5 text-[var(--lms-accent)]" />
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[var(--lms-text-primary)]">Generate from a document</h3>
+                      <p className="mt-0.5 text-xs text-[var(--lms-text-muted)]">AI questions are added as an editable preview. Nothing is saved until you confirm below.</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+                    <label className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[var(--lms-accent-border)] bg-[var(--lms-surface-elevated)] px-4 py-5 text-center transition hover:border-[var(--lms-accent)]">
+                      <Upload size={22} className="mb-2 text-[var(--lms-accent)]" />
+                      <span className="text-sm font-bold text-[var(--lms-text-primary)]">{documentFile ? documentFile.name : 'Choose source document'}</span>
+                      <span className="mt-1 text-[11px] text-[var(--lms-text-muted)]">PDF, DOCX, or TXT · max 10 MB</span>
+                      {documentFile && <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); setDocumentFile(null); }} className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-rose-500 hover:underline"><X size={12} /> Remove document</button>}
+                      <input type="file" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" className="hidden" onChange={(event) => setDocumentFile(event.target.files?.[0] || null)} />
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label><span className="mb-1 block text-[11px] font-bold text-[var(--lms-text-secondary)]">Questions</span><input type="number" min="1" max="30" value={generationSettings.numberOfQuestions} onChange={(event) => updateGenerationSetting('numberOfQuestions', event.target.value)} className="lms-input w-full" /></label>
+                      <label><span className="mb-1 block text-[11px] font-bold text-[var(--lms-text-secondary)]">Difficulty</span><select value={generationSettings.difficulty} onChange={(event) => updateGenerationSetting('difficulty', event.target.value)} className="lms-input w-full"><option>Easy</option><option>Medium</option><option>Hard</option></select></label>
+                      <label><span className="mb-1 block text-[11px] font-bold text-[var(--lms-text-secondary)]">Marks each</span><input type="number" min="1" step="0.5" value={generationSettings.marksPerQuestion} onChange={(event) => updateGenerationSetting('marksPerQuestion', event.target.value)} className="lms-input w-full" /></label>
+                      <button type="button" onClick={generateQuestions} disabled={generating || !documentFile} className="mt-auto flex h-10 items-center justify-center gap-2 rounded-xl bg-[var(--lms-accent)] px-3 text-xs font-bold text-white transition hover:bg-[var(--lms-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50">{generating ? <Loader size={15} className="animate-spin" /> : <Sparkles size={15} />} {generating ? 'Generating...' : 'Generate questions'}</button>
+                    </div>
+                  </div>
+                  <label className="mt-3 block"><span className="mb-1 block text-[11px] font-bold text-[var(--lms-text-secondary)]">Optional instructions</span><textarea value={generationSettings.instructions} onChange={(event) => updateGenerationSetting('instructions', event.target.value)} rows="2" placeholder="Focus on key definitions, processes, or examples..." className="lms-input w-full resize-none" /></label>
+                </section>
+              )}
 
               <section className="grid min-h-[470px] grid-cols-1 overflow-hidden rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] shadow-sm lg:grid-cols-[260px_minmax(0,1fr)]">
                 <aside className="flex max-h-[300px] flex-col border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] lg:max-h-none lg:border-b-0 lg:border-r">
