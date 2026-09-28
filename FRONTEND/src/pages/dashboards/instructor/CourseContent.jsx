@@ -7,6 +7,7 @@ import {
   Trash2,
   Video,
   FileText,
+  HelpCircle,
   Link as LinkIcon,
   FileJson,
   ChevronDown,
@@ -38,10 +39,13 @@ import {
 import DashboardLayout from '../../../components/DashboardLayout';
 import api from '../../../services/api.service';
 import assignmentService from '../../../services/assignment.service';
+import quizService from '../../../services/quiz.service';
 import AssignmentCard from '../../../components/AssignmentCard';
+import QuizCard from '../../../components/QuizCard';
 import AssignmentModal from '../../../components/AssignmentModal';
 import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
 import AssignmentSubmissionsModal from '../../../components/AssignmentSubmissionsModal';
+import QuizBuilderModal from '../../../components/QuizBuilderModal';
 
 const CourseContent = () => {
   const { id: courseId } = useParams();
@@ -106,6 +110,23 @@ const CourseContent = () => {
   const [assignmentSubmitting, setAssignmentSubmitting] = useState(false);
   const [assignmentActionId, setAssignmentActionId] = useState(null);
 
+  const [quizBuilderModal, setQuizBuilderModal] = useState({ open: false, isEdit: false, data: null });
+  const [quizzes, setQuizzes] = useState([]);
+  const [loadingQuizzes, setLoadingQuizzes] = useState(false);
+  const [quizActionId, setQuizActionId] = useState(null);
+
+  const fetchQuizzes = useCallback(async () => {
+    try {
+      setLoadingQuizzes(true);
+      const res = await quizService.getCourseQuizzes(courseId);
+      setQuizzes(res.quizzes || []);
+    } catch (err) {
+      console.error("Failed to fetch course quizzes:", err);
+    } finally {
+      setLoadingQuizzes(false);
+    }
+  }, [courseId]);
+
   const fetchAssignments = useCallback(async () => {
     try {
       setLoadingAssignments(true);
@@ -158,7 +179,8 @@ const CourseContent = () => {
   useEffect(() => {
     fetchCourseAndContent();
     fetchAssignments();
-  }, [fetchCourseAndContent, fetchAssignments]);
+    fetchQuizzes();
+  }, [fetchCourseAndContent, fetchAssignments, fetchQuizzes]);
 
   const handleCreateOrEditAssignment = async (formData) => {
     try {
@@ -189,6 +211,19 @@ const CourseContent = () => {
       setError(err.response?.data?.message || err.message || 'Failed to publish assignment');
     } finally {
       setAssignmentActionId(null);
+    }
+  };
+
+  const handleDeleteQuiz = async (quizId) => {
+    try {
+      setQuizActionId(quizId);
+      await quizService.deleteQuiz(quizId);
+      showSuccessFeedback("Quiz deleted successfully");
+      setQuizzes((prev) => prev.filter((q) => q._id !== quizId));
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Failed to delete quiz");
+    } finally {
+      setQuizActionId(null);
     }
   };
 
@@ -1121,6 +1156,54 @@ const CourseContent = () => {
             </div>
           )}
         </div>
+        {/* Course Quizzes Management Section */}
+        <div className="lms-glass-card rounded-2xl overflow-hidden border border-[var(--lms-border)] shadow-sm p-5 sm:p-6 space-y-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-600 border border-purple-500/30 flex items-center justify-center">
+              <HelpCircle size={18} />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-[var(--lms-text-primary)]">Course Quizzes</h3>
+              <p className="text-xs text-[var(--lms-text-muted)]">Manage course quizzes, questions, and publishing.</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setQuizBuilderModal({ open: true, isEdit: false, data: null })}
+            className="lms-btn lms-btn-primary flex items-center gap-1.5 text-xs font-bold py-2 px-4 shadow-sm"
+          >
+            <Plus size={14} /> Create Quiz
+          </button>
+        </div>
+
+        {loadingQuizzes ? (
+          <div className="py-12 flex flex-col items-center justify-center">
+            <Loader size={24} className="animate-spin text-[var(--lms-accent)] mb-2" />
+            <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading quizzes...</p>
+          </div>
+        ) : quizzes.length === 0 ? (
+          <div className="py-8 bg-[var(--lms-surface-subtle)] border border-dashed border-[var(--lms-border)] rounded-xl text-center">
+            <HelpCircle size={32} className="text-[var(--lms-border)] mx-auto mb-2" />
+            <p className="text-xs font-semibold text-[var(--lms-text-primary)]">No quizzes created for this course yet</p>
+            <p className="text-[11px] text-[var(--lms-text-muted)] mt-0.5">Click "Create Quiz" to add one.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quizzes.map((qz) => (
+              <QuizCard
+                key={qz._id}
+                quiz={qz}
+                canManage={true}
+                onView={(q) => setQuizBuilderModal({ open: true, isEdit: true, data: q })}
+                onEdit={(q) => setQuizBuilderModal({ open: true, isEdit: true, data: q })}
+                onDelete={handleDeleteQuiz}
+                isDeleting={quizActionId === qz._id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       </div>
 
       {/* Assignment Creation / Edit Modal */}
@@ -1593,6 +1676,16 @@ const CourseContent = () => {
         </div>
       )}
     
+      {/* Quiz Builder Modal */}
+      <QuizBuilderModal
+        isOpen={quizBuilderModal.open}
+        isEdit={quizBuilderModal.isEdit}
+        quiz={quizBuilderModal.data}
+        courseId={courseId}
+        onClose={() => setQuizBuilderModal({ open: false, isEdit: false, data: null })}
+        onSaveSuccess={fetchQuizzes}
+      />
+
         <AssignmentSubmissionsModal
           isOpen={submissionsModal.open}
           assignment={submissionsModal.data}

@@ -3,8 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { PlayCircle, FileText, Download, CheckCircle2, Circle, ArrowLeft, Star, Clock, Globe, HelpCircle, User, MessageSquare, ChevronDown, ChevronRight, ArrowRight, Award, Calendar, Loader, AlertCircle } from 'lucide-react';
 import api from '../../../services/api.service';
 import assignmentService from '../../../services/assignment.service';
+import quizService from '../../../services/quiz.service';
 import AssignmentCard from '../../../components/AssignmentCard';
 import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
+import QuizCard from '../../../components/QuizCard';
+import QuizDetailModal from '../../../components/QuizDetailModal';
 import { useAuth } from '../../../context/AuthContext';
 import DashboardLayout from '../../../components/DashboardLayout';
 
@@ -22,29 +25,47 @@ const CourseLearn = () => {
   const [expandedUnits, setExpandedUnits] = useState({});
   const [lessonResources, setLessonResources] = useState({});
   
-  // Progress calculations
+  
   const [totalLessons, setTotalLessons] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
-  // Derived dynamic data
+  
   const [upNextLessons, setUpNextLessons] = useState([]);
   const [allResources, setAllResources] = useState([]);
 
-  // Q&A States
+  
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [questionText, setQuestionText] = useState('');
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
 
-  // Assignment States
+  
   const [assignments, setAssignments] = useState([]);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
 
+  const [quizzes, setQuizzes] = useState([]);
+  const [loadingQuizzes, setLoadingQuizzes] = useState(false);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+
   useEffect(() => {
     fetchCourseData();
     fetchAssignments();
+    fetchQuizzes();
   }, [id]);
+
+  const fetchQuizzes = async () => {
+    if (!id) return;
+    try {
+      setLoadingQuizzes(true);
+      const res = await quizService.getCourseQuizzes(id);
+      setQuizzes(res.quizzes || []);
+    } catch (err) {
+      console.error("Failed to fetch course quizzes:", err);
+    } finally {
+      setLoadingQuizzes(false);
+    }
+  };
 
   const fetchAssignments = async () => {
     if (!id) return;
@@ -60,7 +81,7 @@ const CourseLearn = () => {
   };
 
   useEffect(() => {
-    // Calculate stats whenever units or progress change
+    
     let total = 0;
     units.forEach(u => { total += u.lessons?.length || 0; });
     setTotalLessons(total);
@@ -70,7 +91,7 @@ const CourseLearn = () => {
     
     setCompletionPercentage(total === 0 ? 0 : Math.round((completed / total) * 100));
 
-    // Determine "Up Next" lessons
+    
     const upcoming = [];
     for (const unit of units) {
       for (const lesson of unit.lessons || []) {
@@ -80,7 +101,7 @@ const CourseLearn = () => {
       }
     }
     
-    // If all completed, just use the last lesson
+    
     if (upcoming.length === 0 && units.length > 0) {
       const lastUnit = units[units.length - 1];
       if (lastUnit.lessons && lastUnit.lessons.length > 0) {
@@ -94,7 +115,7 @@ const CourseLearn = () => {
   }, [units, progress]);
 
   useEffect(() => {
-    // Flatten resources
+    
     const flattened = [];
     Object.values(lessonResources).forEach(resourcesArr => {
       if (Array.isArray(resourcesArr)) {
@@ -107,15 +128,15 @@ const CourseLearn = () => {
   const fetchCourseData = async () => {
     try {
       setLoading(true);
-      // Fetch Course
+      
       const courseRes = await api.get(`/api/courses/${id}`);
       setCourse(courseRes.data.course || courseRes.data);
       
-      // Fetch Units
+      
       const unitsRes = await api.get(`/api/courses/${id}/units`);
       let unitsData = unitsRes.data.units || (Array.isArray(unitsRes.data) ? unitsRes.data : []);
       
-      // Ensure lessons array exists and sort
+      
       unitsData = unitsData.map(u => ({
         ...u,
         lessons: (u.lessons || []).sort((a, b) => (a.order || 0) - (b.order || 0))
@@ -123,12 +144,12 @@ const CourseLearn = () => {
       
       setUnits(unitsData);
 
-      // Initialize all units as expanded
+      
       const expandMap = {};
       unitsData.forEach(u => { expandMap[u._id] = true; });
       setExpandedUnits(expandMap);
       
-      // Fetch Resources for all lessons
+      
       const resourcesMap = {};
       for (const unit of unitsData) {
         for (const lesson of unit.lessons) {
@@ -140,7 +161,7 @@ const CourseLearn = () => {
       }
       setLessonResources(resourcesMap);
 
-      // Fetch Progress
+      
       try {
         const progRes = await api.get(`/api/courses/${id}/progress`);
         if (progRes.data && progRes.data.progress) {
@@ -172,14 +193,14 @@ const CourseLearn = () => {
   const handleCompleteLesson = async (lessonId, e) => {
     if (e) e.stopPropagation();
     
-    // Prevent double completion on UI side
+    
     if (progress.completedLessons?.includes(lessonId)) return;
     
     try {
       const res = await api.post(`/api/courses/${id}/lessons/${lessonId}/complete`);
       
       if (res.data.success) {
-        // Sync full state with backend
+        
         const progRes = await api.get(`/api/courses/${id}/progress`);
         if (progRes.data && progRes.data.progress) {
           setProgress({
@@ -199,7 +220,7 @@ const CourseLearn = () => {
       }
     } catch (err) {
       console.error("Error completing lesson:", err);
-      // Optional: Add toast error here if available in the app.
+      
     }
   };
 
@@ -212,7 +233,7 @@ const CourseLearn = () => {
 
   const handleLessonAction = (lesson, unit, e) => {
     if (e) e.stopPropagation();
-    if (unit && unit.unlocked === false) return; // Prevent action on locked unit
+    if (unit && unit.unlocked === false) return; 
     
     if (lesson.contentType === 'Video' && lesson.videoUrl) {
       window.open(lesson.videoUrl, '_blank', 'noopener,noreferrer');
@@ -531,6 +552,46 @@ const CourseLearn = () => {
                       assignment={assignment}
                       canManage={false}
                       onView={(asgn) => setSelectedAssignment(asgn)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'quizzes' && (
+            <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)] mb-1">Course Quizzes</h2>
+                  <p className="text-sm font-semibold text-[var(--lms-text-muted)]">
+                    View published quizzes for this course.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[var(--lms-accent)] bg-[var(--lms-accent-subtle)] px-3 py-1 rounded-full border border-[var(--lms-accent-border)]">
+                  {quizzes.length} Available
+                </span>
+              </div>
+
+              {loadingQuizzes ? (
+                <div className="py-16 text-center">
+                  <Loader size={32} className="animate-spin text-[var(--lms-accent)] mx-auto mb-2" />
+                  <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading quizzes...</p>
+                </div>
+              ) : quizzes.length === 0 ? (
+                <div className="text-center py-16 border border-dashed border-[var(--lms-border)] rounded-2xl">
+                  <HelpCircle size={48} className="text-[var(--lms-border)] mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-[var(--lms-text-secondary)] mb-1">No quizzes available</h3>
+                  <p className="text-[var(--lms-text-muted)] text-sm">If this course has published quizzes, they will appear here.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {quizzes.map((quiz) => (
+                    <QuizCard
+                      key={quiz._id}
+                      quiz={quiz}
+                      canManage={false}
+                      onView={(qz) => setSelectedQuiz(qz)}
                     />
                   ))}
                 </div>
@@ -878,6 +939,13 @@ const CourseLearn = () => {
         studentMode={true}
         assignment={selectedAssignment}
         onClose={() => setSelectedAssignment(null)}
+      />
+
+      {/* Quiz Detail Modal */}
+      <QuizDetailModal
+        isOpen={Boolean(selectedQuiz)}
+        quiz={selectedQuiz}
+        onClose={() => setSelectedQuiz(null)}
       />
     </DashboardLayout>
   );

@@ -24,6 +24,8 @@ import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
 import CourseList from "../pages/CourseList";
 import CourseDetails from "../pages/CourseDetails";
 import CourseLearn from "../pages/dashboards/student/CourseLearn";
+import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
+import QuizTest from "../pages/dashboards/student/QuizTest";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -263,6 +265,16 @@ const AppRoutes = () => {
         <Route
           path="/student/courses/:id/learn"
           element={<CourseLearn />}
+        />
+
+        <Route
+          path="/student/quizzes"
+          element={<StudentQuizzes />}
+        />
+
+        <Route
+          path="/student/quizzes/:quizId/take"
+          element={<QuizTest />}
         />
 
         <Route

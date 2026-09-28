@@ -97,7 +97,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Learning' },
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
-          { label: 'Mock Test', path: '#', icon: Target },
+          { label: 'Quizzes', path: '/student/quizzes', icon: Target },
           { label: 'Practice Arena', path: '#', icon: FileText },
           { label: 'Exams', path: '#', icon: FileText },
           { label: 'Weekly Contests', path: '#', icon: Award },

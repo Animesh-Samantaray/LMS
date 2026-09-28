@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Quiz from "../Models/Quiz.model.js";
 import Course from "../Models/Course.model.js";
 import QuizQuestion from "../Models/QuizQuestion.model.js";
+import QuizSubmission from "../Models/QuizSubmission.model.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -312,7 +313,7 @@ export const getQuizById = async (req, res) => {
 export const updateQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
-    const { title, description, duration, deadline } = req.body;
+    const { title, description, duration, deadline, maxAttempts } = req.body;
 
     if (!isValidObjectId(quizId)) {
       return res.status(400).json({
@@ -521,12 +522,7 @@ export const deleteQuiz = async (req, res) => {
       });
     }
 
-    if (quiz.status === "published") {
-      return res.status(400).json({
-        success: false,
-        message: "Published quizzes cannot be deleted",
-      });
-    }
+
 
     await QuizQuestion.deleteMany({ quizId: quiz._id });
     await quiz.deleteOne();
@@ -542,5 +538,103 @@ export const deleteQuiz = async (req, res) => {
       success: false,
       message: "Failed to delete quiz",
     });
+  }
+};
+export const evaluateQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { answers } = req.body;
+    const userId = req.user._id; 
+    
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz || quiz.status !== "published") {
+      return res.status(404).json({ success: false, message: "Published quiz not found" });
+    }
+
+    const questions = await QuizQuestion.find({ quizId });
+    
+    let totalScore = 0;
+    const results = questions.map(q => {
+      const studentAnswer = answers.find(a => a.questionId === q._id.toString());
+      const isCorrect = studentAnswer && studentAnswer.selectedOption === q.correctOption;
+      
+      if (isCorrect) {
+        totalScore += q.marks || 1;
+      }
+      
+      return {
+        questionId: q._id,
+        correctOption: q.correctOption,
+        selectedOption: studentAnswer ? studentAnswer.selectedOption : null,
+        isCorrect,
+        marksAwarded: isCorrect ? (q.marks || 1) : 0,
+        explanation: q.explanation 
+      };
+    });
+
+    const maxScore = questions.reduce((acc, q) => acc + (q.marks || 1), 0);
+
+    await QuizSubmission.create({
+      quizId,
+      studentId: userId,
+      totalScore,
+      maxScore
+    });
+
+    return res.status(200).json({
+      success: true,
+      totalScore,
+      maxScore,
+      results
+    });
+  } catch (error) {
+    console.error("Evaluate quiz error:", error);
+    return res.status(500).json({ success: false, message: "Failed to evaluate quiz" });
+  }
+};
+
+export const getMyQuizzes = async (req, res) => {
+  try {
+    const userId = req.user._id.toString();
+    
+    // Find all courses the student is enrolled in
+    const enrolledCourses = await Course.find({ enrolled: userId }).select("_id title");
+    const courseIds = enrolledCourses.map(c => c._id);
+    
+    // Find all published quizzes for these courses
+    const quizzes = await Quiz.find({ 
+      courseId: { $in: courseIds },
+      status: "published"
+    }).sort({ createdAt: -1 });
+    
+    // Fetch attempts
+    const quizIds = quizzes.map(q => q._id);
+    const submissions = await QuizSubmission.find({
+      studentId: userId,
+      quizId: { $in: quizIds }
+    });
+    
+    const attemptsMap = {};
+    submissions.forEach(sub => {
+      attemptsMap[sub.quizId] = (attemptsMap[sub.quizId] || 0) + 1;
+    });
+    
+    // Attach course title to quizzes
+    const enrichedQuizzes = quizzes.map(quiz => {
+      const course = enrolledCourses.find(c => c._id.toString() === quiz.courseId.toString());
+      return {
+        ...quiz.toObject(),
+        courseTitle: course ? course.title : "Unknown Course",
+        attempts: attemptsMap[quiz._id] || 0
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      quizzes: enrichedQuizzes
+    });
+  } catch (error) {
+    console.error("Get my quizzes error:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch your quizzes" });
   }
 };
