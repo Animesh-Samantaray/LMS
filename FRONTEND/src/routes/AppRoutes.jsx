@@ -28,6 +28,8 @@ import CourseDetails from "../pages/CourseDetails";
 import CourseLearn from "../pages/dashboards/student/CourseLearn";
 import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
 import QuizTest from "../pages/dashboards/student/QuizTest";
+import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
+import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -283,6 +285,11 @@ const AppRoutes = () => {
           path="/student/profile"
           element={<ProfileSettings />}
         />
+
+        <Route
+          path="/student/analytics"
+          element={<StudentAnalytics />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
@@ -307,7 +314,7 @@ const AppRoutes = () => {
         />
       </Route>
 
-      {/* Shared routes for course creation and editing (Instructor & Admin) */}
+      {/* Shared routes for course creation, editing and analytics (Instructor & Admin) */}
       <Route element={<ProtectedRoute roles={["Instructor", "Admin"]} />}>
         <Route
           path="/instructor/courses/create"
@@ -330,6 +337,14 @@ const AppRoutes = () => {
         <Route
           path="/instructor/quizzes"
           element={<InstructorQuizzes />}
+        />
+        <Route
+          path="/instructor/course-analytics/:id"
+          element={<CourseAnalytics />}
+        />
+        <Route
+          path="/instructor/student-analytics/:studentId"
+          element={<StudentAnalytics />}
         />
       </Route>
 
