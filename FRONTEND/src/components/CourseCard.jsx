@@ -211,11 +211,11 @@ const CourseCard = ({
             <>
               <button
                 type="button"
-                onClick={() => navigate(`/courses/${course._id}`)}
-                className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-semibold bg-[var(--lms-surface)] border border-[var(--lms-border)] text-[var(--lms-text-primary)] hover:border-[var(--lms-accent)] hover:text-[var(--lms-accent)] transition-colors shadow-sm"
-                title="View Course Details"
+                onClick={() => navigate(`/instructor/course-analytics/${course._id}`)}
+                className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-semibold bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 transition-colors shadow-sm"
+                title="Course Analytics"
               >
-                <Eye size={13} /> View
+                <Users size={13} /> Analytics
               </button>
 
               <button

@@ -88,8 +88,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Assignments', path: '/instructor/assignments', icon: FileText },
           { label: 'Quizzes', path: '/instructor/quizzes', icon: HelpCircle },
           { category: 'Manager' },
-          { label: 'View Students', path: '#', icon: Users },
-          { label: 'Course Progress', path: '#', icon: BarChart2 },
+          { label: 'Course Analytics', path: '/instructor/courses', icon: BarChart2 },
           { label: 'Certificates', path: '#', icon: Sparkles },
           { category: 'Account' },
           { label: 'Settings', path: '/instructor/profile', icon: UserIcon }
@@ -100,6 +99,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
           { label: 'Quizzes', path: '/student/quizzes', icon: Target },
+          { label: 'My Analytics', path: '/student/analytics', icon: BarChart2 },
           { label: 'Practice Arena', path: '#', icon: FileText },
           { label: 'Exams', path: '#', icon: FileText },
           { label: 'Weekly Contests', path: '#', icon: Award },
