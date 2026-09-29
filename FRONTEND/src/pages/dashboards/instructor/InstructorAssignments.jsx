@@ -165,7 +165,7 @@ export default function InstructorAssignments() {
                 <p className="text-xs text-[var(--lms-text-muted)] mt-1">Create an assignment for this course to get started.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-4">
                 {assignments.map(asgn => (
                   <AssignmentCard
                     key={asgn._id}

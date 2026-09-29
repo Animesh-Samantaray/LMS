@@ -545,7 +545,7 @@ const CourseLearn = () => {
                   <p className="text-[var(--lms-text-muted)] text-sm">If this course has assignments, they will appear here.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   {assignments.map((assignment) => (
                     <AssignmentCard
                       key={assignment._id}
@@ -585,7 +585,7 @@ const CourseLearn = () => {
                   <p className="text-[var(--lms-text-muted)] text-sm">If this course has published quizzes, they will appear here.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   {quizzes.map((quiz) => (
                     <QuizCard
                       key={quiz._id}
@@ -609,7 +609,7 @@ const CourseLearn = () => {
                   <p className="text-[var(--lms-text-muted)] text-sm">The instructor hasn't uploaded any downloadable files.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   {allResources.map((res, i) => (
                     <div 
                       key={res._id || i}
