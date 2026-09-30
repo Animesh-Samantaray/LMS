@@ -72,6 +72,15 @@ export const getAuthErrorMessage = (error, fallback) => {
     "auth/weak-password":
       "Password must be at least 6 characters.",
 
+    "auth/network-request-failed":
+      "Network connection to the authentication provider failed. Please check your internet connection, disable ad-blockers for popups, and try again.",
+
+    "auth/account-exists-with-different-credential":
+      "An account already exists with the same email address but different sign-in credentials. Sign in using the provider associated with this email address.",
+
+    "auth/unauthorized-domain":
+      "This domain is not authorized in Firebase Console for OAuth operations. Please add localhost to Authorized Domains in Firebase Authentication Settings.",
+
     "auth/user-disabled":
       "This account has been disabled.",
 

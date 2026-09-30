@@ -8,6 +8,9 @@ import AssignmentCard from '../../../components/AssignmentCard';
 import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
 import QuizCard from '../../../components/QuizCard';
 import QuizDetailModal from '../../../components/QuizDetailModal';
+import CourseReviews from '../../../components/reviews/CourseReviews';
+import StarRating from '../../../components/reviews/StarRating';
+import reviewService from '../../../services/review.service';
 import { useAuth } from '../../../context/AuthContext';
 import DashboardLayout from '../../../components/DashboardLayout';
 
@@ -47,11 +50,23 @@ const CourseLearn = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loadingQuizzes, setLoadingQuizzes] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [reviewSummary, setReviewSummary] = useState(null);
+
+  const fetchReviewSummary = async () => {
+    if (!id) return;
+    try {
+      const res = await reviewService.getCourseReviewSummary(id);
+      setReviewSummary(res);
+    } catch (err) {
+      console.error("Failed to fetch review summary:", err);
+    }
+  };
 
   useEffect(() => {
     fetchCourseData();
     fetchAssignments();
     fetchQuizzes();
+    fetchReviewSummary();
   }, [id]);
 
   const fetchQuizzes = async () => {
@@ -323,9 +338,18 @@ const CourseLearn = () => {
               
               <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[var(--lms-text-muted)]">
                 <div className="flex items-center gap-1.5 text-amber-500">
-                  <Star size={14} className="fill-current" />
-                  <span className="text-[var(--lms-text-primary)] font-bold">5.0</span>
-                  <span className="font-normal">(1,234 ratings)</span>
+                  {reviewSummary && reviewSummary.totalReviews > 0 ? (
+                    <>
+                      <Star size={14} className="fill-current text-amber-400" />
+                      <span className="text-[var(--lms-text-primary)] font-bold">{reviewSummary.averageRating.toFixed(1)}</span>
+                      <span className="font-normal">({reviewSummary.totalReviews} {reviewSummary.totalReviews === 1 ? 'rating' : 'ratings'})</span>
+                    </>
+                  ) : (
+                    <>
+                      <Star size={14} className="text-[var(--lms-text-muted)]/40" />
+                      <span className="font-normal text-[var(--lms-text-muted)]">No ratings yet</span>
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center overflow-hidden">
@@ -663,58 +687,11 @@ const CourseLearn = () => {
           )}
 
           {activeTab === 'reviews' && (
-            <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-8">
-              <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)] mb-8">Student Reviews</h2>
-              
-              <div className="flex items-center gap-8 mb-10 pb-10 border-b border-[var(--lms-border)]/50">
-                <div className="text-center shrink-0">
-                  <div className="text-5xl font-black text-[var(--lms-text-primary)] mb-2">5.0</div>
-                  <div className="flex text-amber-400 justify-center mb-1">
-                    {[1,2,3,4,5].map(i => <Star key={i} size={16} className="fill-current" />)}
-                  </div>
-                  <div className="text-xs font-bold text-[var(--lms-text-muted)]">Course Rating</div>
-                </div>
-                
-                <div className="flex-1 space-y-2">
-                  {[5,4,3,2,1].map(stars => (
-                    <div key={stars} className="flex items-center gap-3">
-                      <div className="w-12 flex items-center gap-1 text-sm font-bold text-[var(--lms-text-secondary)]">
-                        {stars} <Star size={12} className="text-[var(--lms-text-muted)]/70" />
-                      </div>
-                      <div className="flex-1 h-2 bg-[var(--lms-surface-elevated)] rounded-full overflow-hidden">
-                        <div className="h-full bg-amber-400 rounded-full" style={{ width: stars === 5 ? '95%' : stars === 4 ? '5%' : '0%' }}></div>
-                      </div>
-                      <div className="w-10 text-xs font-bold text-[var(--lms-text-muted)]/70 text-right">
-                        {stars === 5 ? '95%' : stars === 4 ? '5%' : '0%'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                {[
-                  { name: "Alex Johnson", time: "2 weeks ago", text: "This course completely changed my perspective. The hands-on projects were incredible and the instructor explained complex topics perfectly." },
-                  { name: "Samantha Lee", time: "1 month ago", text: "Very clear and concise. I've taken other bootcamps before but this one actually made the concepts click for me." }
-                ].map((review, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center shrink-0 uppercase">
-                      {review.name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-[var(--lms-text-primary)]">{review.name}</h4>
-                        <span className="text-xs font-semibold text-[var(--lms-text-muted)]/70">{review.time}</span>
-                      </div>
-                      <div className="flex text-amber-400 mb-2">
-                        {[1,2,3,4,5].map(j => <Star key={j} size={12} className="fill-current" />)}
-                      </div>
-                      <p className="text-sm font-medium text-[var(--lms-text-secondary)]">{review.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <CourseReviews
+              courseId={id}
+              isEnrolled={true}
+              onSummaryChange={setReviewSummary}
+            />
           )}
 
           {activeTab === 'instructor' && (
