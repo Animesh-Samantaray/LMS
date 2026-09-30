@@ -1,5 +1,8 @@
 import "dotenv/config";
 import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import { setSocketIo } from "./Services/notification.service.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "./Configs/passport.js";
@@ -17,14 +20,23 @@ import quizQuestionRoutes from "./Routes/quizQuestion.route.js";
 import quizRoutes from "./Routes/quiz.route.js";
 import analyticsRoutes from "./Routes/analytics.route.js";
 import courseReviewRoutes from "./Routes/courseReview.route.js";
+import certificateRoutes from "./Routes/certificate.route.js";
+import notificationRoutes from "./Routes/notification.route.js";
 
 import "./Configs/firebaseAdmin.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 
 connectDB();
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
   cors({
@@ -66,6 +78,8 @@ app.use("/api/quiz-questions", quizQuestionRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/reviews", courseReviewRoutes);
+app.use("/api/certificates", certificateRoutes);
+  app.use("/api/notifications", notificationRoutes);
 
 
 app.listen(PORT, () => {
