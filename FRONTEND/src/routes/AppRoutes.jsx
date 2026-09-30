@@ -6,9 +6,12 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ForgotPassword from "../pages/ForgotPassword";
 import VerifyTwoFactor from "../pages/VerifyTwoFactor";
+import VerifyCertificate from "../pages/VerifyCertificate";
 
 import StudentDashboard from "../pages/dashboards/StudentDashboard";
 import StudentMyCourses from "../pages/dashboards/student/StudentMyCourses";
+import StudentCertificates from "../pages/dashboards/student/StudentCertificates";
+import ViewCertificate from "../pages/dashboards/student/ViewCertificate";
 import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
 import InstructorAssignments from '../pages/dashboards/instructor/InstructorAssignments';
 import InstructorQuizzes from '../pages/dashboards/instructor/InstructorQuizzes';
@@ -249,6 +252,8 @@ const AppRoutes = () => {
         />
       </Route>
 
+      <Route path="/verify-certificate/:certificateId?" element={<VerifyCertificate />} />
+
       
       <Route element={<ProtectedRoute roles={["Student"]} />}>
         <Route
@@ -284,6 +289,16 @@ const AppRoutes = () => {
         <Route
           path="/student/profile"
           element={<ProfileSettings />}
+        />
+
+        <Route
+          path="/student/certificates"
+          element={<StudentCertificates />}
+        />
+
+        <Route
+          path="/student/certificates/view/:id"
+          element={<ViewCertificate />}
         />
 
         <Route

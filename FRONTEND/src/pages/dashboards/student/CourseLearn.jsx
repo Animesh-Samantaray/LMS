@@ -8,6 +8,7 @@ import AssignmentCard from '../../../components/AssignmentCard';
 import AssignmentDetailModal from '../../../components/AssignmentDetailModal';
 import QuizCard from '../../../components/QuizCard';
 import QuizDetailModal from '../../../components/QuizDetailModal';
+import CourseCertificateTab from '../../../components/CourseCertificateTab';
 import CourseReviews from '../../../components/reviews/CourseReviews';
 import StarRating from '../../../components/reviews/StarRating';
 import reviewService from '../../../services/review.service';
@@ -62,11 +63,25 @@ const CourseLearn = () => {
     }
   };
 
+  const [certGenerated, setCertGenerated] = useState(false);
+  const [certData, setCertData] = useState(null);
+
   useEffect(() => {
     fetchCourseData();
     fetchAssignments();
     fetchQuizzes();
     fetchReviewSummary();
+
+    if (id) {
+      api.get(`/api/certificates/eligibility/${id}`)
+        .then(res => {
+          if (res.data.certificateGenerated) {
+            setCertGenerated(true);
+            setCertData(res.data.certificate);
+          }
+        })
+        .catch(err => console.error("Failed to fetch cert status"));
+    }
   }, [id]);
 
   const fetchQuizzes = async () => {
@@ -294,12 +309,12 @@ const CourseLearn = () => {
     { id: 'resources', label: 'Resources', icon: Download },
     { id: 'qa', label: 'Q&A', icon: HelpCircle },
     { id: 'reviews', label: 'Reviews', icon: Star },
-    { id: 'instructor', label: 'Instructor', icon: User },
+    { id: 'instructor', label: 'Instructor', icon: User }
   ];
 
   return (
     <DashboardLayout pageTitle="Learning Mode">
-      <div className="bg-transparent px-2 sm:px-6 pb-4 flex items-center -mt-2">
+      <div className="bg-transparent px-2 sm:px-6 pb-1 flex items-center -mt-4 mb-2">
         <button 
           onClick={() => navigate('/student/courses/my')}
           className="flex items-center gap-2 text-sm font-semibold text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] transition-colors"
@@ -311,7 +326,7 @@ const CourseLearn = () => {
 
       <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8">
         
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           <div className="bg-[var(--lms-surface)] rounded-3xl p-6 flex flex-col md:flex-row gap-8 shadow-sm border border-[var(--lms-border)]">
             <div className="w-full md:w-[320px] shrink-0 rounded-2xl overflow-hidden bg-gray-900 aspect-video relative">
               <img 
@@ -373,12 +388,12 @@ const CourseLearn = () => {
             </div>
           </div>
 
-          <div className="bg-[var(--lms-surface)] rounded-2xl shadow-sm border border-[var(--lms-border)] overflow-hidden flex overflow-x-auto no-scrollbar">
+          <div className="bg-[var(--lms-surface)] rounded-2xl shadow-sm border border-[var(--lms-border)] overflow-hidden flex overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === tab.id 
                     ? 'border-blue-600 text-blue-600 bg-blue-50/50' 
                     : 'border-transparent text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-subtle)]'
@@ -583,7 +598,10 @@ const CourseLearn = () => {
             </div>
           )}
 
-          {activeTab === 'quizzes' && (
+          {activeTab === 'certificate' && (
+            <CourseCertificateTab courseId={courseId} />
+          )}
+            {activeTab === 'quizzes' && (
             <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-8">
               <div className="flex items-center justify-between mb-6">
                 <div>
@@ -738,7 +756,7 @@ const CourseLearn = () => {
 
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-6">
             <h3 className="text-lg font-extrabold text-[var(--lms-text-primary)] mb-6">Your Progress</h3>
             
@@ -851,13 +869,13 @@ const CourseLearn = () => {
 
           <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-6">
             <h3 className="text-base font-extrabold text-[var(--lms-text-primary)] mb-4">Certification</h3>
-            <div className="flex gap-4">
+            <div className="flex gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
                 <Award size={24} />
               </div>
               <div className="flex-1">
                 <p className="text-xs font-semibold text-[var(--lms-text-secondary)] mb-3">
-                  Complete all lessons and quizzes to unlock your certificate.
+                  Check your eligibility and generate your certificate in the Certificate tab.
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-2 bg-[var(--lms-surface-elevated)] rounded-full overflow-hidden">
@@ -867,6 +885,40 @@ const CourseLearn = () => {
                 </div>
               </div>
             </div>
+            
+            {certGenerated ? (
+              <button 
+                onClick={() => navigate(`/student/certificates/view/${certData?.certificateId || certData?._id}`)}
+                className="w-full lms-btn lms-btn-primary py-2.5 text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <Award size={16} /> Certificate Generated
+              </button>
+            ) : (
+              <button 
+                onClick={async (e) => {
+                  const btn = e.currentTarget;
+                  const originalText = btn.innerHTML;
+                  try {
+                    btn.innerHTML = 'Generating...';
+                    btn.disabled = true;
+                    const res = await api.post('/api/certificates/generate', { courseId: id });
+                    if (res.data && (res.status === 200 || res.data.alreadyGenerated)) {
+                      alert('Certificate generated successfully!');
+                      window.location.href = '/student/certificates';
+                    }
+                  } catch (err) {
+                    const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'Error generating certificate.';
+                    alert('Generation Failed: ' + errorMsg);
+                  } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                  }
+                }}
+                className="w-full lms-btn lms-btn-primary py-2.5 text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <Award size={16} /> Generate Certificate
+              </button>
+            )}
           </div>
 
         </div>

@@ -4,6 +4,8 @@ import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, U
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
+import { useNotification } from '../context/NotificationContext';
+import NotificationDropdown from './NotificationDropdown';
 
 const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashboard" }) => {
   const { user, setUser, logout } = useAuth();
@@ -16,6 +18,9 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true');
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const { unreadCount } = useNotification();
+
   const toggleCollapse = () => { 
     setIsCollapsed(!isCollapsed); 
     localStorage.setItem('sidebarCollapsed', !isCollapsed); 
@@ -103,7 +108,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Practice Arena', path: '#', icon: FileText },
           { label: 'Exams', path: '#', icon: FileText },
           { label: 'Weekly Contests', path: '#', icon: Award },
-          { label: 'Certificates', path: '#', icon: Award },
+          { label: 'Certificates', path: '/student/certificates', icon: Award },
           { category: 'Engagement' },
           { label: 'My Groups', path: '#', icon: Users },
           { label: 'My Reviews', path: '#', icon: FileText },
@@ -340,13 +345,21 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
               )}
             </div>
 
-            <button
-              className="relative flex items-center justify-center w-9 h-9 rounded-full border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
-              title="Notifications"
-            >
-              <Bell size={16} />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse border-2 border-[var(--lms-bg)]"></span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
+                className="relative flex items-center justify-center w-9 h-9 rounded-full border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
+                title="Notifications"
+              >
+                <Bell size={16} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-rose-500 text-white text-[10px] font-bold border-2 border-[var(--lms-bg)] px-1 shadow-sm">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+              <NotificationDropdown isOpen={notificationDropdownOpen} onClose={() => setNotificationDropdownOpen(false)} />
+            </div>
 
             <div className="h-6 w-px bg-[var(--lms-border)] mx-1"></div>
 
