@@ -26,7 +26,10 @@ const CourseCard = ({
   const instructorName = course.createdBy?.name || course.instructor?.name || course.instructor || 'Instructor';
   const instructorAvatar = course.createdBy?.profileImage || course.instructor?.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${instructorName}`;
 
-  const rating = course.rating || '5.0';
+  const rating = course.averageRating !== undefined && course.averageRating !== null
+    ? (Number(course.averageRating) > 0 ? Number(course.averageRating).toFixed(1) : null)
+    : (course.rating ? String(course.rating) : null);
+  const totalReviews = course.totalReviews !== undefined ? Number(course.totalReviews) : null;
   const duration = course.duration || '10h 00m';
   const lectures = course.lectures || (course.modules?.length ? course.modules.length * 4 : 12);
   const price = course.price ? (typeof course.price === 'number' ? `₹${course.price}` : course.price) : 'Free';
@@ -149,10 +152,17 @@ const CourseCard = ({
         <div>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} size={13} className="text-amber-400 fill-amber-400" />
-              ))}
-              <span className="text-xs font-bold text-[var(--lms-text-primary)] ml-1">{rating}</span>
+              <Star size={13} className={rating ? "text-amber-400 fill-amber-400" : "text-[var(--lms-text-muted)]/40"} />
+              {rating ? (
+                <>
+                  <span className="text-xs font-bold text-[var(--lms-text-primary)] ml-0.5">{rating}</span>
+                  {totalReviews !== null && totalReviews > 0 && (
+                    <span className="text-[10px] text-[var(--lms-text-muted)] font-normal">({totalReviews})</span>
+                  )}
+                </>
+              ) : (
+                <span className="text-[11px] font-medium text-[var(--lms-text-muted)] ml-0.5">New</span>
+              )}
             </div>
             {!isManagement && (
               isEnrolled ? (

@@ -9,6 +9,8 @@ import assignmentService from '../services/assignment.service';
 import AssignmentCard from '../components/AssignmentCard';
 import AssignmentModal from '../components/AssignmentModal';
 import AssignmentDetailModal from '../components/AssignmentDetailModal';
+import CourseReviews from '../components/reviews/CourseReviews';
+import StarRating from '../components/reviews/StarRating';
 import { useAuth } from '../context/AuthContext';
 
 const CourseDetails = () => {
@@ -21,6 +23,7 @@ const CourseDetails = () => {
   const [enrolling, setEnrolling] = useState(false);
   const [error, setError] = useState('');
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [reviewSummary, setReviewSummary] = useState(null);
   const [units, setUnits] = useState([]);
   const [expandedUnits, setExpandedUnits] = useState({});
   const [selectedLesson, setSelectedLesson] = useState(null);
@@ -250,11 +253,18 @@ const CourseDetails = () => {
           
           <div className="flex flex-wrap items-center gap-6 text-xs sm:text-sm">
             <div className="flex items-center gap-1.5">
-              <span className="text-amber-400 font-bold">5.0</span>
-              <div className="flex text-amber-400">
-                {[1,2,3,4,5].map(s => <Star key={s} size={15} className="fill-amber-400" />)}
-              </div>
-              <span className="text-gray-400 underline decoration-gray-500">(1,234 ratings)</span>
+              {reviewSummary && reviewSummary.totalReviews > 0 ? (
+                <>
+                  <span className="text-amber-400 font-bold">{reviewSummary.averageRating.toFixed(1)}</span>
+                  <StarRating rating={reviewSummary.averageRating} size={14} />
+                  <span className="text-gray-400">({reviewSummary.totalReviews} {reviewSummary.totalReviews === 1 ? 'rating' : 'ratings'})</span>
+                </>
+              ) : (
+                <>
+                  <StarRating rating={0} size={14} />
+                  <span className="text-gray-400">No ratings yet</span>
+                </>
+              )}
             </div>
             
             <div className="flex items-center gap-2 text-gray-300">
@@ -461,6 +471,14 @@ const CourseDetails = () => {
                 <li>Willingness to learn and practice consistently.</li>
                 <li>No prior experience required - this course covers everything from scratch.</li>
               </ul>
+            </section>
+
+            <section>
+              <CourseReviews
+                courseId={id}
+                isEnrolled={isEnrolled}
+                onSummaryChange={setReviewSummary}
+              />
             </section>
           </div>
 
