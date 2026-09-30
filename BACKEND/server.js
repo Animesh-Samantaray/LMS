@@ -16,7 +16,7 @@ import assignmentRoutes from "./Routes/assignment.route.js";
 import quizQuestionRoutes from "./Routes/quizQuestion.route.js";
 import quizRoutes from "./Routes/quiz.route.js";
 import analyticsRoutes from "./Routes/analytics.route.js";
-
+import courseReviewRoutes from "./Routes/courseReview.route.js";
 
 import "./Configs/firebaseAdmin.js";
 
@@ -65,6 +65,9 @@ app.use("/api/assignment", assignmentRoutes);
 app.use("/api/quiz-questions", quizQuestionRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/reviews", courseReviewRoutes);
+
+
 app.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);
 });
