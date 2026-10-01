@@ -30,7 +30,7 @@ const checkDiscussionAccess = async (discussionId, user) => {
 export const sendMessage = async (req, res) => {
   try {
     const { discussionId } = req.params;
-    const { content, type = "text", stickerId, fileUrl, fileName, fileSize, fileMimeType } = req.body;
+    const { content, type = "text", stickerId, fileUrl, fileName, fileSize, fileMimeType, parentMessageId } = req.body;
 
     const messageType = ["text", "sticker", "file"].includes(type) ? type : "text";
 
@@ -55,7 +55,7 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    const { allowed } = await checkDiscussionAccess(
+    const { allowed, discussion } = await checkDiscussionAccess(
       discussionId,
       req.user
     );
@@ -65,6 +65,16 @@ export const sendMessage = async (req, res) => {
         success: false,
         message: "You do not have access to this discussion",
       });
+    }
+
+    if (parentMessageId) {
+      const parentMsg = await Message.findById(parentMessageId);
+      if (!parentMsg || parentMsg.discussionId.toString() !== discussionId) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid parent message",
+        });
+      }
     }
 
     const message = await Message.create({
@@ -77,10 +87,13 @@ export const sendMessage = async (req, res) => {
       fileName: fileName || "",
       fileSize: fileSize || 0,
       fileMimeType: fileMimeType || "",
+      parentMessageId: parentMessageId || null,
     });
 
     const populatedMessage = await Message.findById(message._id)
-      .populate("senderId", "name profileImage role");
+      .populate("senderId", "name profileImage role")
+      .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } })
+      .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } });
 
     const io = getSocketIo();
 
@@ -156,10 +169,18 @@ export const getDiscussionMessages = async (req, res) => {
   try {
     const { discussionId } = req.params;
 
-    const { allowed } = await checkDiscussionAccess(
+    const { allowed, discussion } = await checkDiscussionAccess(
       discussionId,
       req.user
     );
+
+    if (discussion) {
+      const uIdStr = (req.user._id || req.user.id).toString();
+      if (discussion.unreadCounts && discussion.unreadCounts.get(uIdStr) > 0) {
+        discussion.unreadCounts.set(uIdStr, 0);
+        await discussion.save();
+      }
+    }
 
     if (!allowed) {
       return res.status(403).json({
@@ -170,6 +191,7 @@ export const getDiscussionMessages = async (req, res) => {
 
     const messages = await Message.find({ discussionId })
       .populate("senderId", "name profileImage role")
+      .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } })
       .sort({ createdAt: 1 });
 
     return res.status(200).json({
@@ -232,4 +254,4 @@ export const clearDiscussionMessages = async (req, res) => {
       message: error.message || "Failed to clear discussion messages",
     });
   }
-};
+};

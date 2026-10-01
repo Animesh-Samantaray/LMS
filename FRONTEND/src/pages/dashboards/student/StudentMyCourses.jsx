@@ -13,24 +13,6 @@ const StudentMyCourses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const sidebarItems = [
-    { label: 'Overview', path: '/student/dashboard', icon: Home },
-    { category: 'Learning' },
-    { label: 'All Courses', path: '/courses', icon: BookOpen },
-    { label: 'My Courses', path: '/student/courses/my', icon: GraduationCap },
-    { label: 'Mock Test', path: '#', icon: '📄' },
-    { label: 'Practice Arena', path: '#', icon: '🎯' },
-    { label: 'Exams', path: '#', icon: '📝' },
-    { label: 'Weekly Contests', path: '#', icon: '🏆' },
-    { label: 'Certificates', path: '#', icon: '🎖️' },
-    { category: 'Engagement' },
-    { label: 'My Groups', path: '#', icon: '👥' },
-    { label: 'My Reviews', path: '#', icon: '⭐' },
-    { label: 'Messages', path: '#', icon: '💬' },
-    { label: 'Calendar', path: '#', icon: '📅' },
-    { category: 'Account' },
-    { label: 'Settings', path: '/student/profile', icon: User }
-  ];
 
   useEffect(() => {
     const fetchEnrolled = async () => {

@@ -90,7 +90,7 @@ const StudentDashboard = () => {
 
   return (
     <DashboardLayout roleTitle="STUDENT" pageTitle="Student Dashboard">
-      <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+      <div className="bg-[var(--lms-accent)] rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-md relative overflow-hidden">
         <div className="space-y-2 max-w-xl z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider">
             <Sparkles size={13} className="text-amber-300" />

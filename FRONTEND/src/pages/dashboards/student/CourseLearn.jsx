@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { PlayCircle, FileText, Download, CheckCircle2, Circle, ArrowLeft, Star, Clock, Globe, HelpCircle, User, MessageSquare, ChevronDown, ChevronRight, ArrowRight, Award, Calendar, Loader, AlertCircle } from 'lucide-react';
 import api from '../../../services/api.service';
 import assignmentService from '../../../services/assignment.service';
@@ -25,7 +25,10 @@ const CourseLearn = () => {
   const [loading, setLoading] = useState(true);
   
   const [progress, setProgress] = useState({ completedLessons: [] });
-  const [activeTab, setActiveTab] = useState('curriculum');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialTab = queryParams.get('tab') || 'curriculum';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [expandedUnits, setExpandedUnits] = useState({});
   const [lessonResources, setLessonResources] = useState({});
   

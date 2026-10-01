@@ -42,6 +42,11 @@ const messageSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    parentMessageId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
+    },
   },
   { timestamps: true }
 );
@@ -51,4 +56,4 @@ messageSchema.index({ discussionId: 1, createdAt: 1 });
 const Message =
   mongoose.models.Message || mongoose.model("Message", messageSchema);
 
-export default Message;
+export default Message;

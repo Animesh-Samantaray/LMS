@@ -33,6 +33,16 @@ const discussionSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+    unreadCounts: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+    lastRead: {
+      type: Map,
+      of: Date,
+      default: {},
+    },
   },
   { timestamps: true }
 );

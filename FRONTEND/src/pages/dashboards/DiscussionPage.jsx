@@ -33,6 +33,7 @@ const DiscussionPage = () => {
 
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [replyingTo, setReplyingTo] = useState(null);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
 
@@ -374,6 +375,7 @@ const DiscussionPage = () => {
               />
 
               <MessageList
+                  onReply={(msg) => setReplyingTo(msg)}
                 messages={messages}
                 currentUserId={currentUserId}
                 loading={loadingMessages}
@@ -381,6 +383,8 @@ const DiscussionPage = () => {
               />
 
               <MessageComposer
+                  replyingTo={replyingTo}
+                  onCancelReply={() => setReplyingTo(null)}
                 onSendMessage={handleSendMessage}
                 onSendSticker={handleSendSticker}
                 onSendFile={handleSendFile}

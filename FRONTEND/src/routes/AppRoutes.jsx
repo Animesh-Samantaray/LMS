@@ -34,6 +34,8 @@ import QuizTest from "../pages/dashboards/student/QuizTest";
 import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
 import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 import DiscussionPage from "../pages/dashboards/DiscussionPage";
+import StudentCalendar from "../pages/dashboards/student/StudentCalendar";
+import StudentReviews from "../pages/dashboards/student/StudentReviews";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -310,6 +312,16 @@ const AppRoutes = () => {
         <Route
           path="/student/discussions"
           element={<DiscussionPage />}
+        />
+
+        <Route
+          path="/student/calendar"
+          element={<StudentCalendar />}
+        />
+
+        <Route
+          path="/student/reviews"
+          element={<StudentReviews />}
         />
       </Route>
 

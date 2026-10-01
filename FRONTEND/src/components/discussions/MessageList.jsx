@@ -58,19 +58,16 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark' }) 
     }
   }, [messages, isNearBottom]);
 
-  const wallpaperUrl =
-    theme === 'dark'
-      ? '/chat-wallpaper-dark.png'
-      : '/chat-wallpaper-light.png';
+  const wallpaperUrl = theme === 'dark' ? '/chat-bg-dark.png' : '/chat-bg-light.png';
 
   return (
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-repeat"
+      className="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-no-repeat bg-center bg-cover"
       style={{
         backgroundImage: `url(${wallpaperUrl})`,
-        backgroundSize: '400px',
+        backgroundSize: 'cover', backgroundPosition: 'center',
       }}
     >
       <div className="min-h-full flex flex-col justify-end">
@@ -124,6 +121,7 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark' }) 
                     message={msg}
                     isOwn={isOwn}
                     showSenderInfo={showSenderInfo}
+                    onReply={() => onReply(msg)}
                   />
                 </React.Fragment>
               );
