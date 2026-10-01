@@ -33,6 +33,7 @@ import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
 import QuizTest from "../pages/dashboards/student/QuizTest";
 import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
 import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
+import DiscussionPage from "../pages/dashboards/DiscussionPage";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -305,6 +306,11 @@ const AppRoutes = () => {
           path="/student/analytics"
           element={<StudentAnalytics />}
         />
+
+        <Route
+          path="/student/discussions"
+          element={<DiscussionPage />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
@@ -321,6 +327,11 @@ const AppRoutes = () => {
         <Route
           path="/instructor/courses/my"
           element={<MyCourses />}
+        />
+
+        <Route
+          path="/instructor/discussions"
+          element={<DiscussionPage />}
         />
 
         <Route
@@ -386,8 +397,21 @@ const AppRoutes = () => {
         />
 
         <Route
+          path="/admin/discussions"
+          element={<DiscussionPage />}
+        />
+
+        <Route
           path="/admin/profile"
           element={<ProfileSettings />}
+        />
+      </Route>
+
+      {/* General discussion route accessible to any logged-in user */}
+      <Route element={<ProtectedRoute roles={["Student", "Instructor", "Admin"]} />}>
+        <Route
+          path="/discussions"
+          element={<DiscussionPage />}
         />
       </Route>
 

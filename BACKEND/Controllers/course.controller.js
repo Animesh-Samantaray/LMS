@@ -1,42 +1,47 @@
-import Course from "../Models/course.model.js";
+import Course from "../Models/Course.model.js";
 import Discussion from "../Models/Discussion.model.js";
 import User from "../Models/User.model.js";
 
 export const createCourse = async (req, res) => {
   try {
-    const { title, description, thumbnail, category } = req.body;
+    const { title, description = "", thumbnail = "", category } = req.body;
 
-    if (!title || !description || !category) {
+    if (!title || !category) {
       return res.status(400).json({
         success: false,
-        message: "Title, description and category are required",
+        message: "Title and category are required",
       });
     }
 
+    const userId = req.user?._id || req.user?.id;
+
     const course = await Course.create({
       title: title.trim(),
-      description: description.trim(),
-      thumbnail: thumbnail?.trim() || "",
+      description: description ? description.trim() : "Course description",
+      thumbnail: thumbnail ? thumbnail.trim() : "",
       category: category.trim(),
-      createdBy: req.user._id,
+      createdBy: userId,
     });
 
-    const discussion = new Discussion({
-      course_id: course._id,
-      creator_id: req.user._id,
-      members: []
-    })
-    const users = await User.find();
+    try {
+      const adminUsers = await User.find({ role: "Admin" });
+      const initialMembers = [userId, ...adminUsers.map((u) => u._id)];
+      const uniqueMembers = [...new Set(initialMembers.filter(Boolean).map((id) => id.toString()))];
 
-
-    for (let user of users) {
-      if (user.role.toString() === "Admin") {
-        discussion.members.push(user._id);
-      }
+      await Discussion.findOneAndUpdate(
+        { courseId: course._id },
+        {
+          $setOnInsert: {
+            courseId: course._id,
+            creatorId: userId,
+            members: uniqueMembers,
+          },
+        },
+        { upsert: true, new: true }
+      );
+    } catch (discErr) {
+      console.warn("Discussion auto-creation warning:", discErr.message);
     }
-
-    discussion.members.push(req.user._id);
-    await discussion.save();
 
     return res.status(201).json({
       success: true,
@@ -48,7 +53,7 @@ export const createCourse = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to create course",
+      message: error.message || "Failed to create course",
     });
   }
 };
@@ -311,13 +316,24 @@ export const enrollInCourse = async (req, res) => {
     course.enrolled.push(userId);
     await course.save();
 
-    const discussion = await Discussion.findOne({
-      course_id: course._id,
+    let discussion = await Discussion.findOne({
+      courseId: course._id,
     });
 
     if (discussion) {
-      discussion.members.push(userId);
-      await discussion.save();
+      if (!discussion.members.some((m) => m.toString() === userId.toString())) {
+        discussion.members.push(userId);
+        await discussion.save();
+      }
+    } else {
+      const adminUsers = await User.find({ role: "Admin" });
+      const initialMembers = [req.user._id, course.createdBy, ...adminUsers.map((u) => u._id)];
+      const uniqueMembers = [...new Set(initialMembers.map((id) => id.toString()))];
+      await Discussion.create({
+        courseId: course._id,
+        creatorId: course.createdBy,
+        members: uniqueMembers,
+      });
     }
     return res.status(200).json({
       success: true,

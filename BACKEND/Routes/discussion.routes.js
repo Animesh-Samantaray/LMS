@@ -2,6 +2,7 @@
 import express from "express";
 
 import {
+  getMyDiscussions,
   getCourseDiscussion,
   deleteDiscussion,
 } from "../Controllers/discussion.controller.js";
@@ -9,6 +10,8 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 import authMiddleware from "../Middlewares/auth.middleware.js";
 
 const router = express.Router();
+
+router.get("/my", authMiddleware, getMyDiscussions);
 
 router.get(
   "/course/:courseId",
@@ -19,7 +22,7 @@ router.get(
 router.delete(
   "/:discussionId",
   authMiddleware,
-  authorizeRoles("Admin","Instructor"),
+  authorizeRoles("Admin", "Instructor"),
   deleteDiscussion
 );
 

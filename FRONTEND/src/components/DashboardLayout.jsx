@@ -80,6 +80,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Management' },
           { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+          { label: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
           { label: 'Certificates', path: '#', icon: Sparkles },
           { category: 'Account' },
           { label: 'Settings', path: '/admin/profile', icon: Settings }
@@ -90,6 +91,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Learning' },
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
+          { label: 'Discussions', path: '/instructor/discussions', icon: MessageSquare },
           { label: 'Assignments', path: '/instructor/assignments', icon: FileText },
           { label: 'Quizzes', path: '/instructor/quizzes', icon: HelpCircle },
           { category: 'Manager' },
@@ -103,6 +105,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Learning' },
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
+          { label: 'Discussions', path: '/student/discussions', icon: MessageSquare },
           { label: 'Quizzes', path: '/student/quizzes', icon: Target },
           { label: 'My Analytics', path: '/student/analytics', icon: BarChart2 },
           { label: 'Practice Arena', path: '#', icon: FileText },
@@ -112,7 +115,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Engagement' },
           { label: 'My Groups', path: '#', icon: Users },
           { label: 'My Reviews', path: '#', icon: FileText },
-          { label: 'Messages', path: '#', icon: MessageSquare },
+          { label: 'Messages', path: '/student/discussions', icon: MessageSquare },
           { label: 'Calendar', path: '#', icon: Calendar },
           { category: 'Account' },
           { label: 'Settings', path: '/student/profile', icon: Settings }
