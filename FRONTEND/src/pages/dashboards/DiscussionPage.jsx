@@ -6,7 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import discussionService from '../../services/discussion.service';
 import { getSocket } from '../../services/socket.service';
-import { showBrowserMessageNotification } from '../../utils/browserNotification';
+import { showBrowserMessageNotification, requestBrowserNotificationPermission } from '../../utils/browserNotification';
 
 import DiscussionSidebar from '../../components/discussions/DiscussionSidebar';
 import DiscussionHeader from '../../components/discussions/DiscussionHeader';
@@ -82,6 +82,9 @@ const DiscussionPage = () => {
 
   useEffect(() => {
     let isMounted = true;
+
+
+    requestBrowserNotificationPermission();
 
     const setupSocket = async () => {
       const socket = await getSocket();
@@ -240,7 +243,9 @@ const DiscussionPage = () => {
       const res = await discussionService.sendMessage(selectedDiscussion._id, {
         content: text,
         type: 'text',
+        parentMessageId: replyingTo?._id || null,
       });
+      setReplyingTo(null);
       if (res?.success && res.data) {
         setMessages((prev) => {
           if (prev.some((m) => m._id === res.data._id)) return prev;
@@ -262,7 +267,9 @@ const DiscussionPage = () => {
         type: 'sticker',
         stickerId: sticker.id,
         content: `${sticker.emoji} ${sticker.label}`,
+        parentMessageId: replyingTo?._id || null,
       });
+      setReplyingTo(null);
       if (res?.success && res.data) {
         setMessages((prev) => {
           if (prev.some((m) => m._id === res.data._id)) return prev;
