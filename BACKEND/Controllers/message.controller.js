@@ -92,8 +92,33 @@ export const sendMessage = async (req, res) => {
 
     const populatedMessage = await Message.findById(message._id)
       .populate("senderId", "name profileImage role")
-      .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } })
       .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } });
+
+  
+    if (discussion) {
+      const uIdStr = (req.user._id || req.user.id).toString();
+      
+      if (!discussion.unreadCounts) {
+        discussion.unreadCounts = new Map();
+      }
+
+      const memberIds = discussion.members || [];
+      const creatorId = discussion.creatorId;
+      
+      const allMembers = new Set([
+        ...memberIds.map(id => id.toString()),
+        creatorId ? creatorId.toString() : null
+      ].filter(Boolean));
+
+      allMembers.forEach((memberIdStr) => {
+        if (memberIdStr !== uIdStr) {
+          const currentCount = discussion.unreadCounts.get(memberIdStr) || 0;
+          discussion.unreadCounts.set(memberIdStr, currentCount + 1);
+        }
+      });
+
+      await discussion.save();
+    }
 
     const io = getSocketIo();
 

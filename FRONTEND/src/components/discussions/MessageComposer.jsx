@@ -7,6 +7,7 @@ import {
   Loader,
   X,
   FileText,
+  Reply,
 } from 'lucide-react';
 import EmojiPicker from './EmojiPicker';
 import StickerPicker from './StickerPicker';
@@ -18,6 +19,8 @@ const MessageComposer = ({
   onSendFile,
   sending,
   uploading,
+  replyingTo,
+  onCancelReply,
 }) => {
   const [text, setText] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -107,6 +110,31 @@ const MessageComposer = ({
 
   return (
     <div className="p-3 sm:p-4 border-t border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] relative z-20">
+      {replyingTo && (
+        <div className="mb-3 p-3 rounded-2xl bg-[var(--lms-surface)] border-l-4 border-cyan-500 shadow-sm flex items-start justify-between gap-3 animate-fade-in relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+          <div className="min-w-0 flex-1 relative z-10">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Reply size={12} className="text-cyan-500" />
+              <span className="text-[10px] font-bold text-cyan-600 uppercase tracking-wider">
+                Replying to {replyingTo.senderId?.name || 'User'}
+              </span>
+            </div>
+            <p className="text-xs text-[var(--lms-text-secondary)] truncate">
+              {replyingTo.type === 'text' && replyingTo.content}
+              {replyingTo.type === 'sticker' && '✨ [Sticker]'}
+              {replyingTo.type === 'file' && `📄 ${replyingTo.fileName || 'Attachment'}`}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancelReply}
+            className="p-1 rounded-lg text-[var(--lms-text-muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-colors shrink-0 relative z-10"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
       {pendingFile && (
         <div className="mb-3 p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-2.5 min-w-0">

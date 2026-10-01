@@ -31,7 +31,7 @@ const formatDateSeparator = (dateStr) => {
   });
 };
 
-const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark' }) => {
+const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', onReply }) => {
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
