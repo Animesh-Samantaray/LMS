@@ -39,11 +39,25 @@ connectDB();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+  "http://localhost:5000",
+].filter(Boolean);
+
 app.use(
   cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-})
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
+    credentials: true,
+  })
 );
 
 app.use(express.json());
@@ -88,16 +102,14 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
     credentials: true,
   },
 });
 
 setSocketIo(io);
-
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-});
 
 server.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);

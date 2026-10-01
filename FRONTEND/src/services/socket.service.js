@@ -31,27 +31,25 @@ export const getSocket = async () => {
   const socketUrl = API_BASE_URL || window.location.origin;
 
   socket = io(socketUrl, {
-    auth: {
-      token,
+    auth: async (cb) => {
+      try {
+        const u = auth.currentUser;
+        if (!u) return cb({});
+        const freshToken = await u.getIdToken();
+        cb({ token: freshToken });
+      } catch (e) {
+        cb({});
+      }
     },
     withCredentials: true,
     transports: ['polling', 'websocket'],
     reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 1500,
+    reconnectionAttempts: 15,
+    reconnectionDelay: 2000,
   });
 
-  socket.on('connect_error', async (err) => {
-    console.warn('[Socket] Connection error:', err.message);
-    if (err.message.includes('token') || err.message.includes('expired') || err.message.includes('Authentication')) {
-      const refreshedUser = auth.currentUser;
-      if (refreshedUser) {
-        const freshToken = await refreshedUser.getIdToken(true);
-        currentToken = freshToken;
-        socket.auth = { token: freshToken };
-        socket.connect();
-      }
-    }
+  socket.on('connect_error', (err) => {
+    console.warn('[Socket] Connection status:', err.message);
   });
 
   return socket;

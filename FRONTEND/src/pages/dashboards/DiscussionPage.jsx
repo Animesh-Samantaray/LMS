@@ -76,6 +76,9 @@ const DiscussionPage = () => {
     fetchDiscussions();
   }, [fetchDiscussions]);
 
+  const userRef = useRef(user);
+  userRef.current = user;
+
   useEffect(() => {
     let isMounted = true;
 
@@ -86,6 +89,12 @@ const DiscussionPage = () => {
 
       socket.off('message:new');
       socket.off('discussion:cleared');
+
+      discussions.forEach((d) => {
+        if (d?._id) {
+          socket.emit('discussion:join', d._id);
+        }
+      });
 
       socket.on('message:new', (newMsg) => {
         if (!newMsg) return;
@@ -125,23 +134,29 @@ const DiscussionPage = () => {
         });
 
         const senderId = (newMsg.senderId?._id || newMsg.senderId)?.toString();
-        const myId = (user?._id || user?.id)?.toString();
+        const currentUser = userRef.current;
+        const myId = (currentUser?._id || currentUser?.id)?.toString();
 
         if (senderId && myId && senderId !== myId) {
-          const courseTitle =
-            activeDisc && activeDiscId === msgDiscId
-              ? activeDisc.courseId?.title
-              : 'Course Discussion';
+          const targetDisc =
+            (activeDisc && activeDiscId === msgDiscId)
+              ? activeDisc
+              : discussions.find((d) => d._id?.toString() === msgDiscId);
+
+          const courseTitle = targetDisc?.courseId?.title || 'Course Discussion';
 
           showBrowserMessageNotification({
             messageId: newMsg._id,
             courseTitle,
-            senderName: newMsg.senderId?.name || 'Someone',
+            senderName: newMsg.senderId?.name || 'Course Member',
             content: newMsg.content,
             type: newMsg.type,
             fileName: newMsg.fileName,
             onClick: () => {
               window.focus();
+              if (targetDisc) {
+                handleSelectDiscussion(targetDisc);
+              }
             },
           });
         }
@@ -174,7 +189,7 @@ const DiscussionPage = () => {
         socketRef.current.off('discussion:cleared');
       }
     };
-  }, [user]);
+  }, [user, discussions.length]);
 
   useEffect(() => {
     if (!selectedDiscussion) return;
