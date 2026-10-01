@@ -1,4 +1,6 @@
 import Course from "../Models/course.model.js";
+import Discussion from "../Models/Discussion.model.js";
+import User from "../Models/User.model.js";
 
 export const createCourse = async (req, res) => {
   try {
@@ -19,6 +21,23 @@ export const createCourse = async (req, res) => {
       createdBy: req.user._id,
     });
 
+    const discussion = new Discussion({
+      course_id: course._id,
+      creator_id: req.user._id,
+      members: []
+    })
+    const users = await User.find();
+
+
+    for (let user of users) {
+      if (user.role.toString() === "Admin") {
+        discussion.members.push(user._id);
+      }
+    }
+
+    discussion.members.push(req.user._id);
+    await discussion.save();
+
     return res.status(201).json({
       success: true,
       message: "Course created successfully",
@@ -37,7 +56,7 @@ export const createCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find({
-        status:"published"
+      status: "published"
     })
       .populate("createdBy", "name email profileImage role")
       .sort({ createdAt: -1 });
@@ -292,11 +311,22 @@ export const enrollInCourse = async (req, res) => {
     course.enrolled.push(userId);
     await course.save();
 
+    const discussion = await Discussion.findOne({
+      course_id: course._id,
+    });
+
+    if (discussion) {
+      discussion.members.push(userId);
+      await discussion.save();
+    }
     return res.status(200).json({
       success: true,
       message: "Enrolled successfully",
       course,
     });
+
+
+
   } catch (error) {
     console.error("Enroll Course Error:", error);
     return res.status(500).json({

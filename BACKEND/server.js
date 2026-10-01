@@ -22,6 +22,7 @@ import analyticsRoutes from "./Routes/analytics.route.js";
 import courseReviewRoutes from "./Routes/courseReview.route.js";
 import certificateRoutes from "./Routes/certificate.route.js";
 import notificationRoutes from "./Routes/notification.route.js";
+import discussionRoutes from "./Routes/discussion.routes.js";
 
 import "./Configs/firebaseAdmin.js";
 import path from 'path';
@@ -79,8 +80,8 @@ app.use("/api/quizzes", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/reviews", courseReviewRoutes);
 app.use("/api/certificates", certificateRoutes);
-  app.use("/api/notifications", notificationRoutes);
-
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/discussions", discussionRoutes);
 
 app.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);
