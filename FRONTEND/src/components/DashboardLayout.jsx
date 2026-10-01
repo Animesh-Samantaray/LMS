@@ -113,10 +113,8 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Weekly Contests', path: '#', icon: Award },
           { label: 'Certificates', path: '/student/certificates', icon: Award },
           { category: 'Engagement' },
-          { label: 'My Groups', path: '#', icon: Users },
-          { label: 'My Reviews', path: '#', icon: FileText },
-          { label: 'Messages', path: '/student/discussions', icon: MessageSquare },
-          { label: 'Calendar', path: '#', icon: Calendar },
+          { label: 'My Reviews', path: '/student/reviews', icon: FileText },
+          { label: 'Calendar', path: '/student/calendar', icon: Calendar },
           { category: 'Account' },
           { label: 'Settings', path: '/student/profile', icon: Settings }
         ];

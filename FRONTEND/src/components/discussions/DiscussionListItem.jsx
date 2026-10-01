@@ -86,6 +86,11 @@ const DiscussionListItem = ({ discussion, isSelected, onSelect }) => {
           <p className="text-xs text-[var(--lms-text-muted)] truncate flex-1">
             {getPreviewText()}
           </p>
+                    {discussion.unreadCount > 0 && (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-cyan-500 text-white shadow-sm shrink-0">
+              {discussion.unreadCount}
+            </span>
+          )}
           {discussion.memberCount > 0 && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--lms-surface-subtle)] text-[var(--lms-text-muted)] border border-[var(--lms-border)] shrink-0">
               {discussion.memberCount} members

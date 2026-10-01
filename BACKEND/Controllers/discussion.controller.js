@@ -97,6 +97,7 @@ export const getMyDiscussions = async (req, res) => {
             },
             creatorId: discussion.creatorId,
             memberCount: discussion.members?.length || 0,
+            unreadCount: discussion.unreadCounts ? (discussion.unreadCounts.get(userId.toString()) || 0) : 0,
             lastMessage: lastMessage
               ? {
                   _id: lastMessage._id,
@@ -198,8 +199,11 @@ export const getCourseDiscussion = async (req, res) => {
       const uIdStr = userId.toString();
       if (!discussion.members.some((m) => m.toString() === uIdStr)) {
         discussion.members.push(userId);
-        await discussion.save();
       }
+      if (discussion.unreadCounts && discussion.unreadCounts.get(uIdStr) > 0) {
+        discussion.unreadCounts.set(uIdStr, 0);
+      }
+      await discussion.save();
     }
 
     return res.status(200).json({
@@ -267,4 +271,4 @@ export const deleteDiscussion = async (req, res) => {
     console.error("Delete discussion error:", error);
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
-};
+};
