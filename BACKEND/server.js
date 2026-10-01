@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { setSocketIo } from "./Services/notification.service.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "./Configs/passport.js";
@@ -23,7 +22,8 @@ import courseReviewRoutes from "./Routes/courseReview.route.js";
 import certificateRoutes from "./Routes/certificate.route.js";
 import notificationRoutes from "./Routes/notification.route.js";
 import discussionRoutes from "./Routes/discussion.routes.js";
-
+import messageRoutes from "./Routes/message.routes.js";
+import { setSocketIo } from "./Configs/socket.js";
 import "./Configs/firebaseAdmin.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -82,7 +82,23 @@ app.use("/api/reviews", courseReviewRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/discussions", discussionRoutes);
+app.use("/api/messages", messageRoutes);
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  },
+});
+
+setSocketIo(io);
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+});
+
+server.listen(PORT, () => {
   console.log(`LMS Server running on port ${PORT}`);
 });
