@@ -280,3 +280,92 @@ export const clearDiscussionMessages = async (req, res) => {
     });
   }
 };
+
+
+export const toggleReaction = async (req, res) => {
+  try {
+    const { discussionId, messageId } = req.params;
+    const { emoji } = req.body;
+    
+    if (!emoji) {
+      return res.status(400).json({ success: false, message: "Emoji is required" });
+    }
+
+    const { allowed, discussion } = await checkDiscussionAccess(discussionId, req.user);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+    }
+
+    const message = await Message.findById(messageId);
+    if (!message || message.discussionId.toString() !== discussionId) {
+      return res.status(404).json({ success: false, message: "Message not found" });
+    }
+
+    const userId = (req.user._id || req.user.id).toString();
+    // Find any existing reaction from this user on this message
+    const existingUserReactionIndex = message.reactions.findIndex(
+      (r) => r.userId.toString() === userId
+    );
+
+    if (existingUserReactionIndex > -1) {
+      // If they clicked the exact same emoji they already had, remove it (toggle off)
+      if (message.reactions[existingUserReactionIndex].emoji === emoji) {
+        message.reactions.splice(existingUserReactionIndex, 1);
+      } else {
+        // If they clicked a different emoji, replace their old reaction
+        message.reactions[existingUserReactionIndex].emoji = emoji;
+      }
+    } else {
+      // No previous reaction, add the new one
+      message.reactions.push({ userId, emoji });
+    }
+
+    await message.save();
+
+    const populatedMessage = await Message.findById(message._id)
+      .populate("senderId", "name profileImage role")
+      .populate({ path: "parentMessageId", select: "content type fileName stickerId senderId", populate: { path: "senderId", select: "name" } });
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`discussion:${discussionId}`).emit("message:reaction", populatedMessage);
+    }
+
+    return res.status(200).json({ success: true, message: "Reaction toggled", data: populatedMessage });
+  } catch (error) {
+    console.error("Toggle reaction error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { discussionId, messageId } = req.params;
+    const { allowed, discussion } = await checkDiscussionAccess(discussionId, req.user);
+    if (!allowed) {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+    }
+
+    const message = await Message.findById(messageId);
+    if (!message || message.discussionId.toString() !== discussionId) {
+      return res.status(404).json({ success: false, message: "Message not found" });
+    }
+
+    const userId = (req.user._id || req.user.id).toString();
+    if (message.senderId.toString() !== userId && req.user.role !== "Admin") {
+      return res.status(403).json({ success: false, message: "You can only delete your own messages" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`discussion:${discussionId}`).emit("message:deleted", { messageId });
+    }
+
+    return res.status(200).json({ success: true, message: "Message deleted" });
+  } catch (error) {
+    console.error("Delete message error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -6,6 +6,8 @@ import {
   getDiscussionMessages,
   uploadDiscussionFile,
   clearDiscussionMessages,
+  toggleReaction,
+  deleteMessage,
 } from "../Controllers/message.controller.js";
 
 import authMiddleware from "../Middlewares/auth.middleware.js";
@@ -55,3 +57,6 @@ router.delete(
 router.get("/discussion/:discussionId", authMiddleware, getDiscussionMessages);
 
 export default router;
+router.post('/discussion/:discussionId/message/:messageId/react', authMiddleware, toggleReaction);
+
+router.delete('/discussion/:discussionId/message/:messageId', authMiddleware, deleteMessage);

@@ -1,7 +1,8 @@
 import React from 'react';
 import { findStickerById } from '../../utils/stickers';
 import FileMessage from './FileMessage';
-import { Reply } from 'lucide-react';
+import { Reply, MoreVertical, CornerUpLeft, CheckSquare, Trash2, SmilePlus } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 const formatTime = (dateStr) => {
   if (!dateStr) return '';
@@ -9,7 +10,26 @@ const formatTime = (dateStr) => {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-const MessageBubble = ({ message, isOwn, showSenderInfo, onReply }) => {
+const MessageBubble = ({ message, isOwn, showSenderInfo, onReply, onReact, onDelete, onSelect, selectionMode = false, selected = false }) => {
+  const [showMenu, setShowMenu] = useState(false);
+  const [showExpandedEmojis, setShowExpandedEmojis] = useState(false);
+  const menuRef = useRef(null);
+  const emojiGridRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+      if (emojiGridRef.current && !emojiGridRef.current.contains(e.target)) {
+        setShowExpandedEmojis(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   const sender = message.senderId || {};
   const isSticker = message.type === 'sticker';
   const isFile = message.type === 'file';
@@ -92,10 +112,12 @@ const MessageBubble = ({ message, isOwn, showSenderInfo, onReply }) => {
   return (
     <div
       id={`msg-${message._id}`}
-      className={`flex items-end gap-2 group mb-2.5 ${
+      onClick={selectionMode ? () => onSelect?.(message._id) : undefined}
+      className={`flex items-end gap-2 group mb-2.5 ${selectionMode ? 'cursor-pointer' : ''} ${
         isOwn ? 'justify-end' : 'justify-start'
       }`}
     >
+      {selectionMode && <input type="checkbox" checked={selected} onChange={() => onSelect?.(message._id)} onClick={(event) => event.stopPropagation()} aria-label="Select message" className="mb-2 accent-cyan-600" />}
       {!isOwn && (
         <div className="w-8 h-8 rounded-full bg-cyan-600/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden mb-1">
           {sender.profileImage ? (
@@ -128,15 +150,7 @@ const MessageBubble = ({ message, isOwn, showSenderInfo, onReply }) => {
           </div>
         )}
 
-      <div className={`opacity-0 group-hover:opacity-100 transition-opacity flex items-center mb-1 ${isOwn ? 'mr-2 order-first' : 'ml-2 order-last'}`}>
-        <button 
-          onClick={onReply}
-          className="p-1.5 rounded-full hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-muted)] hover:text-cyan-600 transition-colors"
-          title="Reply"
-        >
-          <Reply size={14} />
-        </button>
-      </div>
+
         <div
           className={`relative p-3 rounded-2xl shadow-sm transition-all ${
             isOwn
@@ -148,9 +162,69 @@ const MessageBubble = ({ message, isOwn, showSenderInfo, onReply }) => {
               : 'bg-[var(--lms-surface-elevated)] text-[var(--lms-text-primary)] rounded-bl-xs border border-[var(--lms-border)]'
           }`}
         >
+          <div className={`${selectionMode ? 'hidden' : 'opacity-0 group-hover:opacity-100'} transition-opacity absolute -top-4 ${isOwn ? 'right-0' : 'left-0'} z-50 flex items-center`}>
+            <div className="flex items-center bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-full px-2 py-1 shadow-md gap-1 relative">
+              <button onClick={() => { onReact && onReact('👍'); setShowMenu(false); }} className="p-1 hover:bg-[var(--lms-surface-subtle)] rounded-full transition-colors text-base leading-none">👍</button>
+              <button onClick={() => { onReact && onReact('❤️'); setShowMenu(false); }} className="p-1 hover:bg-[var(--lms-surface-subtle)] rounded-full transition-colors text-base leading-none">❤️</button>
+              <button onClick={() => { onReact && onReact('😂'); setShowMenu(false); }} className="p-1 hover:bg-[var(--lms-surface-subtle)] rounded-full transition-colors text-base leading-none">😂</button>
+              <button onClick={() => setShowExpandedEmojis(!showExpandedEmojis)} className="p-1 hover:bg-[var(--lms-surface-subtle)] rounded-full transition-colors text-[var(--lms-text-muted)] hover:text-cyan-600"><SmilePlus size={16} /></button>
+              
+              {showExpandedEmojis && (
+                <div ref={emojiGridRef} className={`absolute top-full mt-2 ${isOwn ? 'right-0' : 'left-0'} p-2 bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl shadow-xl z-50 grid grid-cols-5 gap-1 w-max`}>
+                  {['👍','❤️','😂','😮','😢','🎉','🔥','👏','🙌','💯','🙏','🤩','🚀','🤔','😎'].map(emoji => (
+                    <button
+                      key={emoji}
+                      onClick={() => { onReact && onReact(emoji); setShowExpandedEmojis(false); }}
+                      className="p-1.5 hover:bg-[var(--lms-surface-subtle)] rounded-lg transition-colors text-xl leading-none"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="w-px h-4 bg-[var(--lms-border)] mx-1"></div>
+              <button 
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-1 rounded-full hover:bg-[var(--lms-surface-subtle)] text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] transition-colors"
+              >
+                <MoreVertical size={16} />
+              </button>
+            </div>
+            
+            {showMenu && (
+              <div 
+                ref={menuRef}
+                onMouseDown={(event) => event.stopPropagation()}
+                className={`absolute top-full mt-2 ${isOwn ? 'right-0' : 'left-0'} w-48 bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl shadow-xl py-2 z-50`}
+              >
+                <button 
+                  onClick={() => { setShowMenu(false); onReply && onReply(); }}
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--lms-text-secondary)] hover:bg-[var(--lms-surface-subtle)] hover:text-[var(--lms-text-primary)] flex items-center gap-3 transition-colors"
+                >
+                  <CornerUpLeft size={16} /> Quote in reply
+                </button>
+                <button 
+                  onClick={() => { setShowMenu(false); onSelect?.(message._id, true); }}
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--lms-text-secondary)] hover:bg-[var(--lms-surface-subtle)] hover:text-[var(--lms-text-primary)] flex items-center gap-3 transition-colors"
+                >
+                  <CheckSquare size={16} /> Select multiple
+                </button>
+                {isOwn && (
+                  <button 
+                    onClick={() => { setShowMenu(false); onDelete && onDelete(); }}
+                    className="w-full text-left px-4 py-2 text-sm text-rose-500 hover:bg-rose-500/10 flex items-center gap-3 transition-colors"
+                  >
+                    <Trash2 size={16} /> Delete
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
                     {message.parentMessageId && (
             <div 
-              onClick={() => scrollToMessage(message.parentMessageId._id)}
+              onClick={() => scrollToMessage(message.parentMessageId._id || message.parentMessageId)}
               className={`mb-2 p-2 rounded-lg border-l-4 cursor-pointer hover:opacity-90 transition-opacity ${
                 isOwn ? 'bg-black/10 border-white/50 text-white/90' : 'bg-black/5 dark:bg-white/5 border-cyan-500 text-[var(--lms-text-secondary)]'
               }`}
@@ -165,6 +239,23 @@ const MessageBubble = ({ message, isOwn, showSenderInfo, onReply }) => {
           )}
 
           {renderContent()}
+
+          {message.reactions && message.reactions.length > 0 && (
+            <div className={`flex flex-wrap gap-1 mt-2 -mb-5 relative z-10 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+              {Array.from(new Set(message.reactions.map(r => r.emoji))).map(emoji => (
+                <button
+                  key={emoji}
+                  onClick={() => onReact && onReact(emoji)}
+                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs border bg-[var(--lms-surface)] text-[var(--lms-text-primary)] border-[var(--lms-border)] shadow-sm hover:bg-[var(--lms-surface-subtle)] transition-colors`}
+                >
+                  <span>{emoji}</span>
+                  <span className="text-[10px] opacity-70">
+                    {message.reactions.filter(r => r.emoji === emoji).length}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
 
           <div
             className={`flex items-center justify-end gap-1 mt-1 text-[10px] select-none ${
