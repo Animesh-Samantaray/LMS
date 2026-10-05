@@ -31,11 +31,35 @@ const formatDateSeparator = (dateStr) => {
   });
 };
 
-const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', onReply }) => {
+const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', onReply, onReact, onDelete }) => {
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
   const [isNearBottom, setIsNearBottom] = useState(true);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedMessageIds, setSelectedMessageIds] = useState([]);
+
+  const toggleMessageSelection = (messageId, begin = false) => {
+    if (begin) setSelectionMode(true);
+    setSelectedMessageIds((ids) => ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId]);
+  };
+
+  const deleteSelectedMessages = async () => {
+    const deletableIds = selectedMessageIds.filter((id) => {
+      const message = messages.find((item) => item._id === id);
+      const senderId = message?.senderId?._id || message?.senderId;
+      return senderId?.toString() === currentUserId?.toString();
+    });
+    if (!deletableIds.length || !window.confirm(`Delete ${deletableIds.length} selected message${deletableIds.length === 1 ? '' : 's'}?`)) return;
+
+    const results = await Promise.all(deletableIds.map((id) => onDelete?.(id)));
+    if (results.every(Boolean)) {
+      setSelectionMode(false);
+      setSelectedMessageIds([]);
+    } else {
+      setSelectedMessageIds((ids) => ids.filter((id) => !deletableIds.includes(id)));
+    }
+  };
 
   const scrollToBottom = (smooth = true) => {
     messagesEndRef.current?.scrollIntoView({
@@ -70,6 +94,15 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', on
         backgroundSize: 'cover', backgroundPosition: 'center',
       }}
     >
+      {selectionMode && (
+        <div className="sticky top-0 z-40 mb-3 flex items-center justify-between gap-3 rounded-xl border border-cyan-500/30 bg-[var(--lms-surface)]/95 px-3 py-2 shadow-md backdrop-blur">
+          <span className="text-sm font-semibold text-[var(--lms-text-primary)]">{selectedMessageIds.length} selected</span>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={deleteSelectedMessages} disabled={!selectedMessageIds.some((id) => { const message = messages.find((item) => item._id === id); return ((message?.senderId?._id || message?.senderId)?.toString() === currentUserId?.toString()); })} className="rounded-lg px-3 py-1 text-sm font-semibold text-rose-600 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed">Delete selected</button>
+            <button type="button" onClick={() => { setSelectionMode(false); setSelectedMessageIds([]); }} className="rounded-lg px-3 py-1 text-sm font-semibold text-cyan-700 hover:bg-cyan-500/10 dark:text-cyan-300">Done</button>
+          </div>
+        </div>
+      )}
       <div className="min-h-full flex flex-col justify-end">
         {loading ? (
           <div className="flex-1 flex items-center justify-center py-20">
@@ -118,11 +151,16 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', on
                   )}
 
                   <MessageBubble
-                    message={msg}
-                    isOwn={isOwn}
-                    showSenderInfo={showSenderInfo}
-                    onReply={() => onReply(msg)}
-                  />
+                      message={msg}
+                      isOwn={isOwn}
+                      showSenderInfo={showSenderInfo}
+                      onReply={() => onReply(msg)}
+                      onReact={(emoji) => onReact && onReact(msg._id, emoji)}
+                      onDelete={() => onDelete && onDelete(msg._id)}
+                      onSelect={toggleMessageSelection}
+                      selectionMode={selectionMode}
+                      selected={selectedMessageIds.includes(msg._id)}
+                    />
                 </React.Fragment>
               );
             })}

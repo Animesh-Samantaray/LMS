@@ -236,6 +236,30 @@ const DiscussionPage = () => {
     }
   };
 
+  const handleDelete = async (messageId) => {
+    if (!selectedDiscussion) return;
+    try {
+      await discussionService.deleteMessage(selectedDiscussion._id, messageId);
+      setMessages((prev) => prev.filter(m => m._id !== messageId));
+      return true;
+    } catch (err) {
+      console.error('Failed to delete message:', err);
+      return false;
+    }
+  };
+
+  const handleReact = async (messageId, emoji) => {
+    if (!selectedDiscussion) return;
+    try {
+      const res = await discussionService.toggleReaction(selectedDiscussion._id, messageId, emoji);
+      if (res?.success && res.data) {
+        setMessages((prev) => prev.map((message) => message._id === messageId ? res.data : message));
+      }
+    } catch (err) {
+      console.error('Failed to react:', err);
+    }
+  };
+
   const handleSendMessage = async (text) => {
     if (!selectedDiscussion || !text.trim() || sending) return;
     try {
@@ -383,7 +407,9 @@ const DiscussionPage = () => {
 
               <MessageList
                   onReply={(msg) => setReplyingTo(msg)}
-                messages={messages}
+                  onReact={handleReact}
+                  onDelete={handleDelete}
+                  messages={messages}
                 currentUserId={currentUserId}
                 loading={loadingMessages}
                 theme={theme}
