@@ -4,6 +4,7 @@ import {
   getInstructorDashboardAnalytics,
   getCourseDetailedAnalytics,
   getStudentDetailedAnalytics,
+  getAdminDashboardAnalytics,
 } from "../Controllers/analytics.controller.js";
 
 import authMiddleware from "../Middlewares/auth.middleware.js";
@@ -40,3 +41,11 @@ router.get(
 );
 
 export default router;
+
+
+router.get(
+  "/admin",
+  authMiddleware,
+  authorizeRoles("Admin"),
+  getAdminDashboardAnalytics
+);

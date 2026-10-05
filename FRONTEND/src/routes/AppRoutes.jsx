@@ -34,6 +34,8 @@ import QuizTest from "../pages/dashboards/student/QuizTest";
 import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
 import MyReports from "../pages/dashboards/reports/MyReports";
 import AdminReports from "../pages/dashboards/reports/AdminReports";
+import AdminAnalytics from "../pages/dashboards/admin/AdminAnalytics";
+
 import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 import DiscussionPage from "../pages/dashboards/DiscussionPage";
 import StudentCalendar from "../pages/dashboards/student/StudentCalendar";
@@ -431,6 +433,11 @@ const AppRoutes = () => {
           path="/admin/reports"
           element={<AdminReports />}
         />
+        <Route
+          path="/admin/analytics"
+          element={<AdminAnalytics />}
+        />
+
       </Route>
 
       {/* General discussion route accessible to any logged-in user */}
