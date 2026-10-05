@@ -3,11 +3,13 @@ import { Home, Users, BookOpen, FolderOpen, UserCheck, DollarSign, Settings, Act
 import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/DashboardLayout';
 import adminService from '../../services/admin.service';
+import api from '../../services/api.service';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [usersList, setUsersList] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,14 +22,16 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [profileRes, usersRes] = await Promise.all([
+        const [profileRes, usersRes, analyticsRes] = await Promise.all([
           adminService.getAdminProfile().catch(() => null),
           adminService.getAllUsers().catch(() => []),
+          api.get('/api/analytics/admin?range=all').catch(() => null)
         ]);
 
         if (isMounted) {
           setProfileData(profileRes?.profile || profileRes?.data || profileRes || {});
           setUsersList(usersRes?.data?.users || usersRes?.users || []);
+          setAnalyticsData(analyticsRes?.data?.data || null);
           setError(null);
         }
       } catch (err) {
@@ -112,8 +116,8 @@ const AdminDashboard = () => {
           </div>
           <div className="w-px h-8 bg-white/20"></div>
           <div className="text-center px-3">
-            <div className="text-2xl sm:text-3xl font-black text-emerald-300">{stats.uptime ?? '99.9'}%</div>
-            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Uptime</div>
+            <div className="text-2xl sm:text-3xl font-black text-emerald-300">{analyticsData?.overview?.totalCourses - analyticsData?.overview?.publishedCourses || 0}</div>
+            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Draft Courses</div>
           </div>
         </div>
       </div>
@@ -145,12 +149,12 @@ const AdminDashboard = () => {
         <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
-              Monthly Revenue
+              Total Enrollments
             </span>
             <div className="text-2xl font-extrabold text-emerald-500">
-              {stats.revenue ?? '$12,450'}
+              {analyticsData?.overview?.totalEnrollments ?? 0}
             </div>
-            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Platform subscriptions</p>
+            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Course participations</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-500 flex items-center justify-center shrink-0">
             <DollarSign size={22} />
@@ -160,10 +164,10 @@ const AdminDashboard = () => {
         <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
-              Active Courses
+              Published Courses
             </span>
             <div className="text-2xl font-extrabold text-blue-500">
-              {stats.courses ?? 24}
+              {analyticsData?.overview?.publishedCourses ?? 0}
             </div>
             <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Published tracks</p>
           </div>
@@ -175,12 +179,12 @@ const AdminDashboard = () => {
         <div className="lms-glass-card lms-glass-card-hover p-5 flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-[var(--lms-text-muted)] uppercase tracking-wider">
-              Completion Rate
+              Average Rating
             </span>
             <div className="text-2xl font-extrabold text-[var(--lms-text-primary)]">
-              {stats.completionRate ?? '88%'}
+              {analyticsData?.overview?.averageRating ?? 0} / 5
             </div>
-            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Global cohort average</p>
+            <p className="text-[11px] text-[var(--lms-text-secondary)] font-medium">Across all courses</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/25 text-amber-500 flex items-center justify-center shrink-0">
             <Activity size={22} />
@@ -253,41 +257,30 @@ const AdminDashboard = () => {
        
         <div className="lms-glass-card p-6 space-y-5">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">System Health</h4>
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              Operational
+            <h4 className="text-sm font-bold text-[var(--lms-text-primary)]">User Demographics</h4>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
+              Real-time
             </span>
           </div>
 
           <div className="space-y-4">
             <div className="p-3.5 rounded-xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--lms-text-secondary)] font-medium">API Availability</span>
-                <span className="font-bold text-emerald-500">99.98%</span>
+                <span className="text-[var(--lms-text-secondary)] font-medium">Students</span>
+                <span className="font-bold text-indigo-500">{analyticsData?.overview?.totalStudents ?? 0}</span>
               </div>
               <div className="w-full h-1.5 bg-[var(--lms-surface)] rounded-full overflow-hidden border border-[var(--lms-border)]">
-                <div className="h-full bg-emerald-500 rounded-full w-[99%]" />
+                <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.max(1, ((analyticsData?.overview?.totalStudents || 0) / (analyticsData?.overview?.totalUsers || 1)) * 100)}%` }} />
               </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--lms-text-secondary)] font-medium">Average Latency</span>
-                <span className="font-bold text-blue-500">24ms</span>
+                <span className="text-[var(--lms-text-secondary)] font-medium">Instructors</span>
+                <span className="font-bold text-amber-500">{analyticsData?.overview?.totalInstructors ?? 0}</span>
               </div>
               <div className="w-full h-1.5 bg-[var(--lms-surface)] rounded-full overflow-hidden border border-[var(--lms-border)]">
-                <div className="h-full bg-blue-500 rounded-full w-[25%]" />
-              </div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--lms-text-secondary)] font-medium">Database Load</span>
-                <span className="font-bold text-[var(--lms-text-primary)]">14%</span>
-              </div>
-              <div className="w-full h-1.5 bg-[var(--lms-surface)] rounded-full overflow-hidden border border-[var(--lms-border)]">
-                <div className="h-full bg-purple-500 rounded-full w-[14%]" />
+                <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.max(1, ((analyticsData?.overview?.totalInstructors || 0) / (analyticsData?.overview?.totalUsers || 1)) * 100)}%` }} />
               </div>
             </div>
           </div>

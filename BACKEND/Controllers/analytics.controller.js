@@ -7,7 +7,12 @@ import Quiz from "../Models/Quiz.model.js";
 import QuizSubmission from "../Models/QuizSubmission.model.js";
 import Assignment from "../Models/Assignment.model.js";
 import AssignmentSubmission from "../Models/AssignmentSubmission.model.js";
+
 import User from "../Models/User.model.js";
+import CourseReview from "../Models/CourseReview.model.js";
+import Certificate from "../Models/Certificate.model.js";
+import Report from "../Models/Report.model.js";
+
 
 const parseDateRange = (rangeQuery) => {
   const now = new Date();
@@ -1286,5 +1291,147 @@ export const getStudentDetailedAnalytics = async (req, res) => {
       message: "Failed to fetch student detailed analytics",
       error: error.message,
     });
+  }
+};
+
+
+
+export const getAdminDashboardAnalytics = async (req, res) => {
+  try {
+    const rangeQuery = req.query.range || "30d";
+    let days = 30;
+    if (rangeQuery === "7d") days = 7;
+    else if (rangeQuery === "90d") days = 90;
+    else if (rangeQuery === "year") days = 365;
+
+    const now = new Date();
+    const startDate = new Date();
+    if (rangeQuery !== "all") {
+      startDate.setDate(now.getDate() - days);
+      startDate.setHours(0, 0, 0, 0);
+    } else {
+      startDate.setFullYear(2000);
+    }
+
+    const previousStartDate = new Date(startDate);
+    const previousEndDate = new Date(startDate);
+    if (rangeQuery !== "all") {
+      previousStartDate.setDate(previousStartDate.getDate() - days);
+    } else {
+      previousStartDate.setFullYear(1990);
+    }
+
+    const dateFilter = { createdAt: { $gte: startDate } };
+    const prevDateFilter = { createdAt: { $gte: previousStartDate, $lt: startDate } };
+
+    // Overviews
+    const totalUsers = await User.countDocuments();
+    const currentUsers = await User.countDocuments(dateFilter);
+    const prevUsers = await User.countDocuments(prevDateFilter);
+    const usersGrowth = prevUsers === 0 ? 0 : Math.round(((currentUsers - prevUsers) / prevUsers) * 100);
+
+    const totalStudents = await User.countDocuments({ role: "Student" });
+    const totalInstructors = await User.countDocuments({ role: "Instructor" });
+
+    const totalCourses = await Course.countDocuments();
+    const publishedCourses = await Course.countDocuments({ status: "Published" });
+    const draftCourses = await Course.countDocuments({ status: "Draft" });
+
+    const allCourses = await Course.find({}, 'enrolled').lean();
+    let totalEnrollments = 0;
+    allCourses.forEach(c => { if (c.enrolled) totalEnrollments += c.enrolled.length; });
+
+    // We don't have simple enrollment dates, so enrollment growth is skipped or estimated.
+    const totalCertificates = await Certificate.countDocuments();
+    const totalReports = await Report.countDocuments();
+    const openReports = await Report.countDocuments({ status: "Open" });
+
+    const reviews = await CourseReview.find({}, 'rating').lean();
+    let avgRating = 0;
+    if (reviews.length > 0) {
+      avgRating = (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1);
+    }
+
+    // Role Distribution
+    const roleDistribution = [
+      { name: "Student", value: totalStudents },
+      { name: "Instructor", value: totalInstructors },
+      { name: "Admin", value: totalUsers - totalStudents - totalInstructors }
+    ];
+
+    // Status Distribution
+    const activeUsers = await User.countDocuments({ accountStatus: "Active" });
+    const inactiveUsers = await User.countDocuments({ accountStatus: "Inactive" });
+    const suspendedUsers = await User.countDocuments({ accountStatus: "Suspended" });
+    const statusDistribution = [
+      { name: "Active", value: activeUsers },
+      { name: "Inactive", value: inactiveUsers },
+      { name: "Suspended", value: suspendedUsers }
+    ];
+
+    // Course Distribution
+    const courseStatusDistribution = [
+      { name: "Published", value: publishedCourses },
+      { name: "Draft", value: draftCourses },
+      { name: "Archived", value: totalCourses - publishedCourses - draftCourses }
+    ];
+
+    // Reports Distribution
+    const inReviewReports = await Report.countDocuments({ status: "In Review" });
+    const resolvedReports = await Report.countDocuments({ status: "Resolved" });
+    const rejectedReports = await Report.countDocuments({ status: "Rejected" });
+    const reportStatusDistribution = [
+      { name: "Open", value: openReports },
+      { name: "In Review", value: inReviewReports },
+      { name: "Resolved", value: resolvedReports },
+      { name: "Rejected", value: rejectedReports }
+    ];
+
+    // Top Courses
+    const topCoursesRaw = await Course.find({ status: "Published" })
+      .populate("createdBy", "name")
+      .lean();
+    
+    let topCoursesData = topCoursesRaw.map(c => ({
+      _id: c._id,
+      title: c.title,
+      instructor: c.createdBy?.name || "Unknown",
+      enrollments: c.enrolled ? c.enrolled.length : 0,
+      rating: c.averageRating || 0,
+      reviews: c.ratingCount || 0
+    }));
+
+    topCoursesData.sort((a, b) => b.enrollments - a.enrollments);
+    const topCoursesByEnrollment = topCoursesData.slice(0, 5);
+
+    // Activity trend
+    const recentUsers = await User.find(dateFilter, 'createdAt').lean();
+    let growthMap = {};
+    recentUsers.forEach(u => {
+      const d = new Date(u.createdAt).toISOString().slice(0, 10);
+      growthMap[d] = (growthMap[d] || 0) + 1;
+    });
+    
+    let userGrowthTrend = Object.keys(growthMap).sort().map(k => ({
+      date: k,
+      users: growthMap[k]
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        overview: {
+          totalUsers, usersGrowth, totalStudents, totalInstructors,
+          totalCourses, publishedCourses, totalEnrollments,
+          totalCertificates, averageRating: avgRating, totalReports, openReports
+        },
+        users: { roleDistribution, statusDistribution, growthTrend: userGrowthTrend },
+        courses: { statusDistribution: courseStatusDistribution, topCourses: topCoursesByEnrollment },
+        reports: { statusDistribution: reportStatusDistribution }
+      }
+    });
+  } catch (error) {
+    console.error("Admin Analytics Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
