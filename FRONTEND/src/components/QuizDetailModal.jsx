@@ -43,7 +43,7 @@ const QuizDetailModal = ({
   const isSubmitted = Number(attemptsRemaining) <= 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
       <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-2xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-6 py-5 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between">
           <div className="flex items-center gap-3">

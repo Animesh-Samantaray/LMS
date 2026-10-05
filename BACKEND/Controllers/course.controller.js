@@ -37,7 +37,7 @@ export const createCourse = async (req, res) => {
             members: uniqueMembers,
           },
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: "after" }
       );
     } catch (discErr) {
       console.warn("Discussion auto-creation warning:", discErr.message);

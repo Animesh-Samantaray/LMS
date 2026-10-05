@@ -1128,7 +1128,7 @@ const CourseContent = () => {
       {/* MODAL: UNIT CREATE / EDIT                                */}
       {/* ========================================================= */}
       {unitModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
           <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
@@ -1192,7 +1192,7 @@ const CourseContent = () => {
       {/* MODAL: LESSON CREATE / EDIT                              */}
       {/* ========================================================= */}
       {lessonModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
           <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] shrink-0 flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
@@ -1344,7 +1344,7 @@ const CourseContent = () => {
       {/* MODAL: RESOURCE CREATE / EDIT (NO MANUAL TYPE REQUIRED)   */}
       {/* ========================================================= */}
       {resourceModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
           <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
               <div>
@@ -1536,7 +1536,7 @@ const CourseContent = () => {
       {/* MODAL: DELETE CONFIRMATION                                */}
       {/* ========================================================= */}
       {deleteConfirm.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
           <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm shadow-2xl border border-[var(--lms-border)] p-6 space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 flex items-center justify-center mx-auto mb-2 border border-rose-500/20">
               <AlertCircle size={24} />

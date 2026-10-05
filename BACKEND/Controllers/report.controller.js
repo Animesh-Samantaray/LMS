@@ -171,7 +171,7 @@ export const updateReportStatus = async (req, res) => {
     const report = await Report.findOneAndUpdate(
       { reportId },
       { status },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!report) {
@@ -211,7 +211,7 @@ export const replyToReport = async (req, res) => {
     const report = await Report.findOneAndUpdate(
       { reportId },
       { reply: reply.trim() },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!report) {

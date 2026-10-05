@@ -237,7 +237,7 @@ export const updateReview = async (req, res) => {
         comment: comment.trim(),
       },
       {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       }
     ).populate("userId", "name profilePicture");

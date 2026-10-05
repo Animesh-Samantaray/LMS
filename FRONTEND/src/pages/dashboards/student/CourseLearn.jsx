@@ -970,9 +970,9 @@ const CourseLearn = () => {
       </div>
 
       {showQuestionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-transparent" onClick={() => setShowQuestionModal(false)}></div>
-          <div className="relative bg-[var(--lms-surface)] rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+          <div className="absolute inset-0" onClick={() => setShowQuestionModal(false)}></div>
+          <div className="relative bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-2xl">
             <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)] mb-2">Ask a Question</h2>
             <p className="text-sm font-semibold text-[var(--lms-text-muted)] mb-6">Your question will be sent directly to the instructor.</p>
             
