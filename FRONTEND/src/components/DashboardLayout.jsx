@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle, Flag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
@@ -82,6 +82,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },
           { label: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
           { label: 'Certificates', path: '#', icon: Sparkles },
+            { label: 'Reports', path: '/admin/reports', icon: Flag },
           { category: 'Account' },
           { label: 'Settings', path: '/admin/profile', icon: Settings }
         ]
@@ -96,8 +97,9 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Quizzes', path: '/instructor/quizzes', icon: HelpCircle },
           { category: 'Manager' },
           { label: 'Course Analytics', path: '/instructor/courses', icon: BarChart2 },
+            { label: 'My Reports', path: '/instructor/reports', icon: Flag },
           { label: 'Certificates', path: '#', icon: Sparkles },
-          { category: 'Account' },
+            { category: 'Account' },
           { label: 'Settings', path: '/instructor/profile', icon: UserIcon }
         ]
       : [
@@ -108,6 +110,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Discussions', path: '/student/discussions', icon: MessageSquare },
           { label: 'Quizzes', path: '/student/quizzes', icon: Target },
           { label: 'My Analytics', path: '/student/analytics', icon: BarChart2 },
+          { label: 'My Reports', path: '/student/reports', icon: Flag },
           { label: 'Practice Arena', path: '#', icon: FileText },
           { label: 'Exams', path: '#', icon: FileText },
           { label: 'Weekly Contests', path: '#', icon: Award },
