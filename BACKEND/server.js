@@ -23,6 +23,7 @@ import certificateRoutes from "./Routes/certificate.route.js";
 import notificationRoutes from "./Routes/notification.route.js";
 import discussionRoutes from "./Routes/discussion.routes.js";
 import messageRoutes from "./Routes/message.routes.js";
+import reportRoutes from "./Routes/report.routes.js";
 import { setSocketIo } from "./Configs/socket.js";
 import "./Configs/firebaseAdmin.js";
 import path from 'path';
@@ -97,6 +98,7 @@ app.use("/api/certificates", certificateRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/reports", reportRoutes);
 
 const server = http.createServer(app);
 
