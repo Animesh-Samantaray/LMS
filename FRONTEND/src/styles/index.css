@@ -145,6 +145,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+.lms-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 7, 15, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1rem;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

@@ -27,6 +27,7 @@ const MyReports = () => {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [isSuccessSubmitted, setIsSuccessSubmitted] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -92,10 +93,14 @@ const MyReports = () => {
 
       await reportService.createReport(data);
       showNotification('success', 'Report submitted successfully');
-      setIsModalOpen(false);
+      setIsSuccessSubmitted(true);
       setFormData({ type: 'Course', name: '', description: '', courseId: '' });
       setFile(null);
       fetchReports();
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSuccessSubmitted(false);
+      }, 1800);
     } catch (err) {
       showNotification('error', err.message || 'Failed to submit report');
     } finally {
@@ -293,8 +298,8 @@ const MyReports = () => {
 
       {/* Raise Issue Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/10 p-4 animate-fade-in">
-          <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-3xl w-full max-w-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scale-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-fade-in">
+          <div className="bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] rounded-3xl w-full max-w-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scale-in">
             <div className="flex items-center justify-between p-5 border-b border-[var(--lms-border)] bg-[var(--lms-surface-elevated)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-600 border border-cyan-500/20">
@@ -311,7 +316,23 @@ const MyReports = () => {
             </div>
             
             <div className="flex-1 overflow-y-auto p-5 sm:p-6">
-              <form id="report-form" onSubmit={handleSubmit} className="space-y-5">
+              {isSuccessSubmitted ? (
+                <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 animate-scale-in">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <CheckCircle size={36} />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-[var(--lms-text-primary)]">Issue Submitted</h3>
+                    <p className="text-xs text-[var(--lms-text-secondary)] max-w-xs mx-auto">
+                      Your report has been successfully recorded. The moderation team will review it shortly.
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-bold uppercase tracking-wider">
+                    Status: Open
+                  </div>
+                </div>
+              ) : (
+                <form id="report-form" onSubmit={handleSubmit} className="space-y-5">
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
@@ -433,6 +454,7 @@ const MyReports = () => {
                   </button>
                 </div>
               </form>
+              )}
             </div>
           </div>
         </div>

@@ -1,42 +1,43 @@
 
 :root,
 html.dark {
-  --lms-bg: #090d16;
-  --lms-bg-gradient: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.18) 0%, rgba(139, 92, 246, 0.08) 35%, transparent 70%),
-                     radial-gradient(circle at 90% 60%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
-                     #090d16;
+  --lms-bg: #0b0f19;
+  --lms-bg-gradient: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.22) 0%, rgba(139, 92, 246, 0.12) 35%, transparent 70%),
+                     radial-gradient(circle at 100% 60%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                     radial-gradient(circle at 0% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                     #0b0f19;
   
-  --lms-surface: rgba(17, 24, 39, 0.75);
-  --lms-surface-hover: rgba(30, 41, 59, 0.85);
-  --lms-surface-elevated: rgba(22, 30, 49, 0.95);
-  --lms-surface-subtle: rgba(255, 255, 255, 0.03);
+  --lms-surface: rgba(18, 26, 43, 0.85);
+  --lms-surface-hover: rgba(28, 39, 64, 0.92);
+  --lms-surface-elevated: #151d30;
+  --lms-surface-subtle: rgba(255, 255, 255, 0.04);
 
-  --lms-sidebar-bg: rgba(11, 16, 28, 0.88);
-  --lms-header-bg: rgba(11, 16, 28, 0.82);
+  --lms-sidebar-bg: rgba(13, 19, 33, 0.92);
+  --lms-header-bg: rgba(13, 19, 33, 0.88);
 
-  --lms-border: rgba(255, 255, 255, 0.08);
-  --lms-border-hover: rgba(99, 102, 241, 0.35);
-  --lms-border-subtle: rgba(255, 255, 255, 0.05);
+  --lms-border: rgba(255, 255, 255, 0.1);
+  --lms-border-hover: rgba(99, 102, 241, 0.45);
+  --lms-border-subtle: rgba(255, 255, 255, 0.06);
 
   --lms-text-primary: #f8fafc;
-  --lms-text-secondary: #94a3b8;
-  --lms-text-muted: #64748b;
+  --lms-text-secondary: #a0aec0;
+  --lms-text-muted: #6b7c96;
 
   --lms-accent: #6366f1;
   --lms-accent-hover: #4f46e5;
-  --lms-accent-subtle: rgba(99, 102, 241, 0.15);
-  --lms-accent-text: #a5b4fc;
-  --lms-accent-border: rgba(99, 102, 241, 0.3);
+  --lms-accent-subtle: rgba(99, 102, 241, 0.18);
+  --lms-accent-text: #c7d2fe;
+  --lms-accent-border: rgba(99, 102, 241, 0.35);
 
-  --lms-hero-gradient: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #8b5cf6 100%);
-  --lms-hero-surface: rgba(255, 255, 255, 0.12);
+  --lms-hero-gradient: linear-gradient(135deg, #3730a3 0%, #4f46e5 50%, #7c3aed 100%);
+  --lms-hero-surface: rgba(255, 255, 255, 0.14);
 
-  --lms-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --lms-shadow-sm: 0 4px 16px 0 rgba(0, 0, 0, 0.25);
-  --lms-shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+  --lms-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+  --lms-shadow-sm: 0 4px 16px 0 rgba(0, 0, 0, 0.35);
+  --lms-shadow-glow: 0 0 30px rgba(99, 102, 241, 0.28);
 
-  --lms-input-bg: rgba(15, 23, 42, 0.6);
-  --lms-input-border: rgba(255, 255, 255, 0.12);
+  --lms-input-bg: rgba(15, 23, 42, 0.75);
+  --lms-input-border: rgba(255, 255, 255, 0.14);
   --lms-input-focus: rgba(99, 102, 241, 0.5);
 
   --lms-kpi-blue: #3b82f6;

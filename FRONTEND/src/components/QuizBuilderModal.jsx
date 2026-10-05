@@ -390,7 +390,7 @@ const QuizBuilderModal = ({
   const statusLabel = isReadOnly ? 'Published' : isEdit ? 'Draft' : 'New quiz';
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-12 pb-4 px-4">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-12 pb-4 px-4 bg-black/60 backdrop-blur-md animate-fade-in">
       <div className="flex max-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] shadow-2xl">
         <header className="flex shrink-0 items-center justify-between border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] px-4 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">

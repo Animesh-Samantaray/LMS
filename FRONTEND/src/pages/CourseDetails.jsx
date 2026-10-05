@@ -569,8 +569,8 @@ const CourseDetails = () => {
 
         {/* Content Viewing Modal */}
         {selectedLesson && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
-            <div className="bg-[var(--lms-surface)] w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col shadow-2xl max-h-[90vh]">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8 bg-black/60 backdrop-blur-md animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
+            <div className="bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col shadow-2xl max-h-[90vh]">
               <div className="flex items-center justify-between p-5 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
