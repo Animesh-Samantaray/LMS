@@ -32,6 +32,8 @@ import CourseLearn from "../pages/dashboards/student/CourseLearn";
 import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
 import QuizTest from "../pages/dashboards/student/QuizTest";
 import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
+import MyReports from "../pages/dashboards/reports/MyReports";
+import AdminReports from "../pages/dashboards/reports/AdminReports";
 import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 import DiscussionPage from "../pages/dashboards/DiscussionPage";
 import StudentCalendar from "../pages/dashboards/student/StudentCalendar";
@@ -323,6 +325,10 @@ const AppRoutes = () => {
           path="/student/reviews"
           element={<StudentReviews />}
         />
+        <Route
+          path="/student/reports"
+          element={<MyReports />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
@@ -349,6 +355,10 @@ const AppRoutes = () => {
         <Route
           path="/instructor/profile"
           element={<ProfileSettings />}
+        />
+        <Route
+          path="/instructor/reports"
+          element={<MyReports />}
         />
       </Route>
 
@@ -416,6 +426,10 @@ const AppRoutes = () => {
         <Route
           path="/admin/profile"
           element={<ProfileSettings />}
+        />
+        <Route
+          path="/admin/reports"
+          element={<AdminReports />}
         />
       </Route>
 
