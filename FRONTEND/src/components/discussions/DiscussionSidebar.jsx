@@ -17,9 +17,14 @@ const DiscussionSidebar = ({
   setFilterType,
   user,
 }) => {
+  const query = searchQuery.toLowerCase().trim();
+
   const filteredDiscussions = discussions.filter((disc) => {
-    const title = disc.courseId?.title || '';
-    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase().trim());
+    const courseTitle = (disc.courseId?.title || '').toLowerCase();
+    const creatorName = (disc.courseId?.createdBy?.name || '').toLowerCase();
+    const senderName = (disc.lastMessage?.sender?.name || '').toLowerCase();
+
+    const matchesSearch = !query || courseTitle.includes(query) || creatorName.includes(query) || senderName.includes(query);
 
     if (!matchesSearch) return false;
 

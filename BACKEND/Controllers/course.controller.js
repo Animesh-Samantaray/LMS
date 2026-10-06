@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Course from "../Models/Course.model.js";
 import Discussion from "../Models/Discussion.model.js";
 import User from "../Models/User.model.js";
@@ -6,7 +7,7 @@ export const createCourse = async (req, res) => {
   try {
     const { title, description = "", thumbnail = "", category } = req.body;
 
-    if (!title || !category) {
+    if (!title || !title.trim() || !category || !category.trim()) {
       return res.status(400).json({
         success: false,
         message: "Title and category are required",
@@ -60,11 +61,39 @@ export const createCourse = async (req, res) => {
 
 export const getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find({
-      status: "published"
-    })
+    const { search, category, status, sort } = req.query;
+    const filter = {};
+
+    if (status && ["draft", "published", "archived"].includes(status)) {
+      filter.status = status;
+    } else {
+      filter.status = "published";
+    }
+
+    if (category && category !== "All" && category.trim()) {
+      filter.category = category.trim();
+    }
+
+    if (search && search.trim()) {
+      const safeSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { title: { $regex: safeSearch, $options: "i" } },
+        { description: { $regex: safeSearch, $options: "i" } },
+      ];
+    }
+
+    let sortOption = { createdAt: -1 };
+    if (sort === "oldest") {
+      sortOption = { createdAt: 1 };
+    } else if (sort === "title-asc") {
+      sortOption = { title: 1 };
+    } else if (sort === "title-desc") {
+      sortOption = { title: -1 };
+    }
+
+    const courses = await Course.find(filter)
       .populate("createdBy", "name email profileImage role")
-      .sort({ createdAt: -1 });
+      .sort(sortOption);
 
     return res.status(200).json({
       success: true,
@@ -83,6 +112,13 @@ export const getAllCourses = async (req, res) => {
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
+      });
+    }
 
     const course = await Course.findById(id).populate(
       "createdBy",
@@ -112,9 +148,26 @@ export const getCourseById = async (req, res) => {
 
 export const getMyCourses = async (req, res) => {
   try {
-    const courses = await Course.find({
-      createdBy: req.user._id,
-    }).sort({ createdAt: -1 });
+    const { search, category, status } = req.query;
+    const filter = { createdBy: req.user._id };
+
+    if (status && ["draft", "published", "archived"].includes(status)) {
+      filter.status = status;
+    }
+
+    if (category && category !== "All" && category.trim()) {
+      filter.category = category.trim();
+    }
+
+    if (search && search.trim()) {
+      const safeSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { title: { $regex: safeSearch, $options: "i" } },
+        { description: { $regex: safeSearch, $options: "i" } },
+      ];
+    }
+
+    const courses = await Course.find(filter).sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
@@ -134,6 +187,13 @@ export const updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, thumbnail, category, status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
+      });
+    }
 
     const course = await Course.findById(id);
 
@@ -155,7 +215,15 @@ export const updateCourse = async (req, res) => {
       });
     }
 
-    if (title !== undefined) course.title = title.trim();
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Course title cannot be empty",
+        });
+      }
+      course.title = title.trim();
+    }
     if (description !== undefined) {
       course.description = description.trim();
     }
@@ -163,6 +231,12 @@ export const updateCourse = async (req, res) => {
       course.thumbnail = thumbnail.trim();
     }
     if (category !== undefined) {
+      if (!category.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Category cannot be empty",
+        });
+      }
       course.category = category.trim();
     }
 
@@ -197,6 +271,13 @@ export const updateCourse = async (req, res) => {
 export const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
+      });
+    }
 
     const course = await Course.findById(id);
 
@@ -237,6 +318,13 @@ export const deleteCourse = async (req, res) => {
 export const publishCourse = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
+      });
+    }
 
     const course = await Course.findById(id);
 
@@ -285,6 +373,14 @@ export const publishCourse = async (req, res) => {
 export const enrollInCourse = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
+      });
+    }
+
     const course = await Course.findById(id);
 
     if (!course) {
@@ -340,9 +436,6 @@ export const enrollInCourse = async (req, res) => {
       message: "Enrolled successfully",
       course,
     });
-
-
-
   } catch (error) {
     console.error("Enroll Course Error:", error);
     return res.status(500).json({

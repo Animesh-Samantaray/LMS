@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import Assignment from "../Models/Assignment.model.js";
-import Course from "../Models/course.model.js";
+import Course from "../Models/Course.model.js";
 import uploadToCloudinary from "../Utils/uploadToCloudinary.js";
-
 
 export const createAssignment = async (req, res) => {
   try {
@@ -15,7 +14,6 @@ export const createAssignment = async (req, res) => {
       status,
     } = req.body;
 
-    
     if (!mongoose.Types.ObjectId.isValid(courseId)) {
       return res.status(400).json({
         success: false,
@@ -23,7 +21,6 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-    
     if (!title || !title.trim()) {
       return res.status(400).json({
         success: false,
@@ -61,7 +58,6 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-    
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -69,7 +65,6 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-  
     const course = await Course.findById(courseId);
 
     if (!course) {
@@ -79,7 +74,6 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-    
     if (
       req.user.role === "Instructor" &&
       course.createdBy.toString() !== req.user._id.toString()
@@ -90,7 +84,6 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-   
     const existingAssignment = await Assignment.findOne({
       courseId,
       title: title.trim(),
@@ -103,11 +96,13 @@ export const createAssignment = async (req, res) => {
       });
     }
 
-    
     const uploadedFile = await uploadToCloudinary(
       req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype
+      {
+        folder: "lms/assignments",
+        mimeType: req.file.mimetype,
+        originalName: req.file.originalname,
+      }
     );
 
     const assignment = await Assignment.create({
@@ -135,7 +130,6 @@ export const createAssignment = async (req, res) => {
   } catch (error) {
     console.error("Create assignment error:", error);
 
-    
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -149,7 +143,6 @@ export const createAssignment = async (req, res) => {
     });
   }
 };
-
 
 export const getCourseAssignments = async (req, res) => {
   try {
@@ -173,7 +166,6 @@ export const getCourseAssignments = async (req, res) => {
 
     const userId = req.user._id.toString();
 
-    
     if (req.user.role === "Student") {
       const isEnrolled = course.enrolled.some(
         (studentId) => studentId.toString() === userId
@@ -187,7 +179,6 @@ export const getCourseAssignments = async (req, res) => {
       }
     }
 
-    
     if (
       req.user.role === "Instructor" &&
       course.createdBy.toString() !== userId
@@ -200,18 +191,14 @@ export const getCourseAssignments = async (req, res) => {
 
     const filter = { courseId };
 
-  
     if (req.user.role === "Student") {
       filter.status = "published";
     }
 
-    const assignments = await Assignment.find(filter)
-      .populate("createdBy", "name email profileImage role")
-      .sort({ createdAt: 1 });
+    const assignments = await Assignment.find(filter).sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
-      count: assignments.length,
       assignments,
     });
   } catch (error) {
@@ -219,11 +206,10 @@ export const getCourseAssignments = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch course assignments",
+      message: "Failed to fetch assignments",
     });
   }
 };
-
 
 export const getAssignmentById = async (req, res) => {
   try {
@@ -236,8 +222,7 @@ export const getAssignmentById = async (req, res) => {
       });
     }
 
-    const assignment = await Assignment.findById(assignmentId)
-      .populate("createdBy", "name email profileImage role");
+    const assignment = await Assignment.findById(assignmentId);
 
     if (!assignment) {
       return res.status(404).json({
@@ -257,7 +242,6 @@ export const getAssignmentById = async (req, res) => {
 
     const userId = req.user._id.toString();
 
-   
     if (req.user.role === "Student") {
       const isEnrolled = course.enrolled.some(
         (studentId) => studentId.toString() === userId
@@ -270,7 +254,6 @@ export const getAssignmentById = async (req, res) => {
         });
       }
 
-   
       if (assignment.status !== "published") {
         return res.status(404).json({
           success: false,
@@ -279,7 +262,6 @@ export const getAssignmentById = async (req, res) => {
       }
     }
 
-  
     if (
       req.user.role === "Instructor" &&
       course.createdBy.toString() !== userId
@@ -304,10 +286,7 @@ export const getAssignmentById = async (req, res) => {
   }
 };
 
-
-
 export const updateAssignment = async (req, res) => {
-
   try {
     const { assignmentId } = req.params;
     const {
@@ -343,7 +322,6 @@ export const updateAssignment = async (req, res) => {
       });
     }
 
-   
     if (
       req.user.role === "Instructor" &&
       course.createdBy.toString() !== req.user._id.toString()
@@ -354,7 +332,6 @@ export const updateAssignment = async (req, res) => {
       });
     }
 
-   
     if (title !== undefined) {
       if (!title.trim()) {
         return res.status(400).json({
@@ -427,12 +404,14 @@ export const updateAssignment = async (req, res) => {
       assignment.status = status;
     }
 
-   
     if (req.file) {
       const uploadedFile = await uploadToCloudinary(
         req.file.buffer,
-        req.file.originalname,
-        req.file.mimetype
+        {
+          folder: "lms/assignments",
+          mimeType: req.file.mimetype,
+          originalName: req.file.originalname,
+        }
       );
 
       assignment.questionFile = {
@@ -468,8 +447,6 @@ export const updateAssignment = async (req, res) => {
     });
   }
 };
-
-
 
 export const publishAssignment = async (req, res) => {
   try {
@@ -542,7 +519,6 @@ export const publishAssignment = async (req, res) => {
     });
   }
 };
-
 
 export const deleteAssignment = async (req, res) => {
   try {
