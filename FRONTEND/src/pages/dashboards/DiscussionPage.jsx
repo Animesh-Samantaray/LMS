@@ -10,6 +10,7 @@ import { showBrowserMessageNotification, requestBrowserNotificationPermission } 
 
 import DiscussionSidebar from '../../components/discussions/DiscussionSidebar';
 import DiscussionHeader from '../../components/discussions/DiscussionHeader';
+import SharedMediaPanel from '../../components/discussions/SharedMediaPanel';
 import MessageList from '../../components/discussions/MessageList';
 import MessageComposer from '../../components/discussions/MessageComposer';
 import ClearDiscussionDialog from '../../components/discussions/ClearDiscussionDialog';
@@ -36,6 +37,7 @@ const DiscussionPage = () => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [showMediaPanel, setShowMediaPanel] = useState(false);
 
   const socketRef = useRef(null);
   const selectedDiscussionRef = useRef(null);
@@ -400,12 +402,15 @@ const DiscussionPage = () => {
                 discussion={selectedDiscussion}
                 onBack={() => setSelectedDiscussion(null)}
                 canManage={canManageSelected}
+                  onToggleMedia={() => setShowMediaPanel(!showMediaPanel)}
                 onClearMessages={() => setClearDialogOpen(true)}
                 showBackButton={Boolean(selectedDiscussion)}
                 isClearing={clearing}
               />
 
-              <MessageList
+              <div className="flex-1 flex min-h-0 relative">
+  <div className="flex-1 flex flex-col min-w-0">
+    <MessageList
                   onReply={(msg) => setReplyingTo(msg)}
                   onReact={handleReact}
                   onDelete={handleDelete}
@@ -424,6 +429,9 @@ const DiscussionPage = () => {
                 sending={sending}
                 uploading={uploading}
               />
+  </div>
+  <SharedMediaPanel isOpen={showMediaPanel} onClose={() => setShowMediaPanel(false)} messages={messages} />
+</div>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-repeat"

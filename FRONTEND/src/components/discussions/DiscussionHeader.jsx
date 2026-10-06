@@ -8,12 +8,14 @@ import {
   Sparkles,
   Info,
   CheckCircle,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 const DiscussionHeader = ({
   discussion,
   onBack,
   canManage,
+  onToggleMedia,
   onClearMessages,
   showBackButton,
   isClearing,
@@ -84,6 +86,15 @@ const DiscussionHeader = ({
       </div>
 
       <div className="flex items-center gap-2 shrink-0 relative" ref={menuRef}>
+        
+        <button
+          onClick={onToggleMedia}
+          className="p-2 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-colors"
+          title="Shared Media & Files"
+        >
+          <ImageIcon size={17} />
+        </button>
+
         {canManage && (
           <div className="relative">
             <button
