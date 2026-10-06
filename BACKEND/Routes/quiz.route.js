@@ -39,6 +39,12 @@ router.get(
 );
 
 router.get(
+  "/student/my-quizzes",
+  authMiddleware,
+  getMyQuizzes
+);
+
+router.get(
   "/:quizId",
   authMiddleware,
   getQuizById
@@ -80,18 +86,11 @@ router.delete(
   deleteQuiz
 );
 
-
 router.post(
   "/:quizId/evaluate",
   authMiddleware,
+  authorizeRoles("Student"),
   evaluateQuiz
-);
-
-
-router.get(
-  "/student/my-quizzes",
-  authMiddleware,
-  getMyQuizzes
 );
 
 export default router;

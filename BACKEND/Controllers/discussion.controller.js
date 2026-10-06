@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 import Discussion from "../Models/Discussion.model.js";
 import Course from "../Models/Course.model.js";
@@ -12,28 +11,38 @@ export const getMyDiscussions = async (req, res) => {
       return res.status(401).json({ success: false, message: "User not identified" });
     }
 
+    const { search } = req.query;
     const isAdmin = req.user.role === "Admin";
     const isInstructor = req.user.role === "Instructor";
 
-    let courses = [];
+    let courseFilter = {};
 
     if (isAdmin) {
-      courses = await Course.find()
-        .populate("createdBy", "name email profileImage role")
-        .sort({ updatedAt: -1 });
+      courseFilter = {};
     } else if (isInstructor) {
-      courses = await Course.find({
+      courseFilter = {
         $or: [{ createdBy: userId }, { enrolled: userId }],
-      })
-        .populate("createdBy", "name email profileImage role")
-        .sort({ updatedAt: -1 });
+      };
     } else {
-      courses = await Course.find({
+      courseFilter = {
         enrolled: userId,
-      })
-        .populate("createdBy", "name email profileImage role")
-        .sort({ updatedAt: -1 });
+      };
     }
+
+    if (search && search.trim()) {
+      const safeSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      courseFilter.$and = courseFilter.$and || [];
+      courseFilter.$and.push({
+        $or: [
+          { title: { $regex: safeSearch, $options: "i" } },
+          { category: { $regex: safeSearch, $options: "i" } },
+        ],
+      });
+    }
+
+    const courses = await Course.find(courseFilter)
+      .populate("createdBy", "name email profileImage role")
+      .sort({ updatedAt: -1 });
 
     const discussionList = await Promise.all(
       courses.map(async (course) => {

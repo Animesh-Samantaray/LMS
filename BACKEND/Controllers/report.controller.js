@@ -1,13 +1,48 @@
+import mongoose from "mongoose";
 import Report from "../Models/Report.model.js";
 import uploadToCloudinary from "../Utils/uploadToCloudinary.js";
+
+const VALID_REPORT_TYPES = [
+  "Course",
+  "Content",
+  "Message",
+  "Discussion",
+  "User",
+  "Quiz",
+  "Assignment",
+  "Technical",
+  "Other",
+];
+
+const VALID_REPORT_STATUSES = [
+  "Open",
+  "In Review",
+  "Resolved",
+  "Rejected",
+];
+
 export const createReport = async (req, res) => {
   try {
     const { type, name, description, courseId } = req.body;
 
-    if (!type || !name || !description) {
+    if (!type || !type.trim() || !name || !name.trim() || !description || !description.trim()) {
       return res.status(400).json({
         success: false,
         message: "Type, name and description are required",
+      });
+    }
+
+    if (!VALID_REPORT_TYPES.includes(type.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report type",
+      });
+    }
+
+    if (courseId && !mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
       });
     }
 
@@ -21,6 +56,13 @@ export const createReport = async (req, res) => {
     };
 
     if (req.file) {
+      if (req.file.size > 25 * 1024 * 1024) {
+        return res.status(413).json({
+          success: false,
+          message: "File size exceeds the allowed limit (25 MB)",
+        });
+      }
+
       const uploadedFile = await uploadToCloudinary(
         req.file.buffer,
         {
@@ -34,7 +76,7 @@ export const createReport = async (req, res) => {
         url: uploadedFile.url,
         publicId: uploadedFile.publicId,
         resourceType: uploadedFile.resourceType,
-        name: uploadedFile.originalName,
+        name: uploadedFile.originalName || req.file.originalname,
         size: req.file.size,
         mimeType: req.file.mimetype,
       };
@@ -43,9 +85,9 @@ export const createReport = async (req, res) => {
     const report = await Report.create({
       reportId: `REP-${Date.now()}`,
       reportedBy: req.user._id,
-      type,
-      name,
-      description,
+      type: type.trim(),
+      name: name.trim(),
+      description: description.trim(),
       attachment,
       courseId: courseId || null,
     });
@@ -67,9 +109,27 @@ export const createReport = async (req, res) => {
 
 export const getMyReports = async (req, res) => {
   try {
-    const reports = await Report.find({
-      reportedBy: req.user._id,
-    })
+    const { status, type, search } = req.query;
+    const filter = { reportedBy: req.user._id };
+
+    if (status && status !== "All" && VALID_REPORT_STATUSES.includes(status)) {
+      filter.status = status;
+    }
+
+    if (type && type !== "All" && VALID_REPORT_TYPES.includes(type)) {
+      filter.type = type;
+    }
+
+    if (search && search.trim()) {
+      const safeSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { name: { $regex: safeSearch, $options: "i" } },
+        { description: { $regex: safeSearch, $options: "i" } },
+        { reportId: { $regex: safeSearch, $options: "i" } },
+      ];
+    }
+
+    const reports = await Report.find(filter)
       .populate("courseId", "title thumbnail")
       .sort({ createdAt: -1 });
 
@@ -91,7 +151,17 @@ export const getReportById = async (req, res) => {
   try {
     const { reportId } = req.params;
 
-    const report = await Report.findOne({ reportId })
+    if (!reportId || !reportId.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Report ID is required",
+      });
+    }
+
+    const isMongoId = mongoose.Types.ObjectId.isValid(reportId);
+    const query = isMongoId ? { $or: [{ reportId }, { _id: reportId }] } : { reportId };
+
+    const report = await Report.findOne(query)
       .populate("reportedBy", "name email profileImage")
       .populate("courseId", "title thumbnail");
 
@@ -103,7 +173,7 @@ export const getReportById = async (req, res) => {
     }
 
     const isAdmin = req.user.role === "Admin";
-    const isOwner = report.reportedBy._id.toString() === req.user._id.toString();
+    const isOwner = report.reportedBy && (report.reportedBy._id || report.reportedBy).toString() === req.user._id.toString();
 
     if (!isAdmin && !isOwner) {
       return res.status(403).json({
@@ -126,11 +196,29 @@ export const getReportById = async (req, res) => {
   }
 };
 
-
-
 export const getAllReports = async (req, res) => {
   try {
-    const reports = await Report.find()
+    const { status, type, search } = req.query;
+    const filter = {};
+
+    if (status && status !== "All" && VALID_REPORT_STATUSES.includes(status)) {
+      filter.status = status;
+    }
+
+    if (type && type !== "All" && VALID_REPORT_TYPES.includes(type)) {
+      filter.type = type;
+    }
+
+    if (search && search.trim()) {
+      const safeSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { name: { $regex: safeSearch, $options: "i" } },
+        { description: { $regex: safeSearch, $options: "i" } },
+        { reportId: { $regex: safeSearch, $options: "i" } },
+      ];
+    }
+
+    const reports = await Report.find(filter)
       .populate("reportedBy", "name email profileImage")
       .populate("courseId", "title thumbnail")
       .sort({ createdAt: -1 });
@@ -154,22 +242,18 @@ export const updateReportStatus = async (req, res) => {
     const { reportId } = req.params;
     const { status } = req.body;
 
-    const allowedStatuses = [
-      "Open",
-      "In Review",
-      "Resolved",
-      "Rejected",
-    ];
-
-    if (!allowedStatuses.includes(status)) {
+    if (!VALID_REPORT_STATUSES.includes(status)) {
       return res.status(400).json({
         success: false,
         message: "Invalid report status",
       });
     }
 
+    const isMongoId = mongoose.Types.ObjectId.isValid(reportId);
+    const query = isMongoId ? { $or: [{ reportId }, { _id: reportId }] } : { reportId };
+
     const report = await Report.findOneAndUpdate(
-      { reportId },
+      query,
       { status },
       { returnDocument: "after" }
     );
@@ -208,8 +292,11 @@ export const replyToReport = async (req, res) => {
       });
     }
 
+    const isMongoId = mongoose.Types.ObjectId.isValid(reportId);
+    const query = isMongoId ? { $or: [{ reportId }, { _id: reportId }] } : { reportId };
+
     const report = await Report.findOneAndUpdate(
-      { reportId },
+      query,
       { reply: reply.trim() },
       { returnDocument: "after" }
     );

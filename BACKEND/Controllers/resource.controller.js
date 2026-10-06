@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Resource from "../Models/Resource.model.js";
 import Lesson from "../Models/Lesson.model.js";
 import Unit from "../Models/Unit.model.js";
-import Course from "../Models/course.model.js";
+import Course from "../Models/Course.model.js";
 import uploadToCloudinary from "../Utils/uploadToCloudinary.js";
 
 const isValidObjectId = (id) => {
