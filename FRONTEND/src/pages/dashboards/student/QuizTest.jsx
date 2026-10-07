@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Clock, AlertCircle, CheckCircle, XCircle, ArrowRight, ArrowLeft, Loader, LayoutGrid } from 'lucide-react';
 import quizService from '../../../services/quiz.service';
+import QuizCameraPreview from '../../../components/QuizCameraPreview';
 
 const QuizTest = () => {
   const { quizId } = useParams();
@@ -327,6 +328,8 @@ const QuizTest = () => {
 
         
         <div className="md:w-72 shrink-0">
+          <QuizCameraPreview active={!result && !loading && !!quiz} />
+
           <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-3xl p-6 shadow-sm sticky top-24">
             <div className="flex items-center gap-2 mb-4">
               <LayoutGrid size={18} className="text-[var(--lms-text-secondary)]" />

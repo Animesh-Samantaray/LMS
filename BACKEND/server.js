@@ -25,6 +25,7 @@ import discussionRoutes from "./Routes/discussion.routes.js";
 import messageRoutes from "./Routes/message.routes.js";
 import reportRoutes from "./Routes/report.routes.js";
 import practiceRoutes from "./Routes/practice.route.js";
+import chatbotRoutes from "./Routes/chatbot.route.js";
 import { setSocketIo } from "./Configs/socket.js";
 import "./Configs/firebaseAdmin.js";
 import path from 'path';
@@ -101,6 +102,7 @@ app.use("/api/discussions", discussionRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/practice", practiceRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 const server = http.createServer(app);
 
