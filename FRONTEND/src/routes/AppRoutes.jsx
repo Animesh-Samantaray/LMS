@@ -107,6 +107,10 @@ const ProtectedRoute = ({ roles }) => {
 
 
 
+import AddPracticeChallenge from '../pages/dashboards/instructor/AddPracticeChallenge';
+import InstructorPracticeList from '../pages/dashboards/instructor/InstructorPracticeList';
+import PracticeZone from '../pages/dashboards/student/PracticeZone';
+
 const PublicOnlyRoute = () => {
   const {
     user,
@@ -331,6 +335,10 @@ const AppRoutes = () => {
           path="/student/reports"
           element={<MyReports />}
         />
+        <Route
+          path="/student/practice"
+          element={<PracticeZone />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
@@ -361,6 +369,29 @@ const AppRoutes = () => {
         <Route
           path="/instructor/reports"
           element={<MyReports />}
+        />
+        <Route
+
+          path="/instructor/practice"
+
+          element={<InstructorPracticeList />}
+
+        />
+
+        <Route
+
+          path="/instructor/practice/create"
+
+          element={<AddPracticeChallenge />}
+
+        />
+
+        <Route
+
+          path="/instructor/practice/edit/:id"
+
+          element={<AddPracticeChallenge />}
+
         />
       </Route>
 

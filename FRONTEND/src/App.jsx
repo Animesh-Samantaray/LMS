@@ -4,6 +4,7 @@ import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { Toaster } from 'react-hot-toast';
 import './styles/index.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <NotificationProvider>
             <div className="min-h-screen bg-lms-bg text-lms-text transition-colors duration-300">
               <AppRoutes />
+              <Toaster position="top-right" toastOptions={{ style: { fontSize: '14px', fontWeight: 'bold' } }} />
             </div>
           </NotificationProvider>
         </AuthProvider>
