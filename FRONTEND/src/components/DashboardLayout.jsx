@@ -82,7 +82,6 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },
           { label: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
-          { label: 'Certificates', path: '#', icon: Sparkles },
             { label: 'Reports', path: '/admin/reports', icon: Flag },
           { category: 'Account' },
           { label: 'Settings', path: '/admin/profile', icon: Settings }
@@ -100,7 +99,6 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Manager' },
           { label: 'Course Analytics', path: '/instructor/courses', icon: BarChart2 },
             { label: 'My Reports', path: '/instructor/reports', icon: Flag },
-          { label: 'Certificates', path: '#', icon: Sparkles },
             { category: 'Account' },
           { label: 'Settings', path: '/instructor/profile', icon: UserIcon }
         ]
