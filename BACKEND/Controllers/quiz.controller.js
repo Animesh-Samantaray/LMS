@@ -140,10 +140,10 @@ const validateGeneratedQuestions = (payload, expectedCount, expectedMarks) => {
 export const generateQuizQuestions = async (req, res) => {
   try {
     const { quizId } = req.params;
-    const { numberOfQuestions, difficulty, marksPerQuestion, instructions = "" } = req.body;
+    const { topic, numberOfQuestions, difficulty, marksPerQuestion, instructions = "" } = req.body;
 
     if (!isValidObjectId(quizId)) return res.status(400).json({ success: false, message: "Invalid quiz ID" });
-    if (!req.file) return res.status(400).json({ success: false, message: "A document is required" });
+    if (!req.file && !topic) return res.status(400).json({ success: false, message: "A document or a topic is required" });
 
     const questionCount = Number(numberOfQuestions);
     const marks = Number(marksPerQuestion);
@@ -210,7 +210,7 @@ ${documentText}`;
     const questions = validateGeneratedQuestions(parsedResponse, questionCount, marks);
     return res.status(200).json({ success: true, questions });
   } catch (error) {
-    if (error.message === "A document is required" || error.message.includes("document") || error.message.includes("readable text") || error.message.includes("too much text")) return res.status(400).json({ success: false, message: error.message });
+    if (error.message === "A document or a topic is required" || error.message.includes("document") || error.message.includes("readable text") || error.message.includes("too much text")) return res.status(400).json({ success: false, message: error.message });
     if (error.message.startsWith("Generated") || error.message.startsWith("The AI returned") || error.message.includes("Generated question")) return res.status(502).json({ success: false, message: error.message });
     console.error("Generate quiz questions error:", error.message);
     return res.status(500).json({ success: false, message: "Failed to generate quiz questions" });

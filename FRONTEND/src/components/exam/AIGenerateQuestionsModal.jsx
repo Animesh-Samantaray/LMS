@@ -36,7 +36,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
       formData.append('marksPerQuestion', marksPerQuestion);
       if (instructions.trim()) formData.append('instructions', instructions);
 
-      const res = await examService.generateQuestionsWithAI(formData);
+      const res = await examService.generateQuestionsWithAI(examId, formData);
       
       setPreviewQuestions(res.questions);
 
@@ -80,7 +80,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2.5 bg-purple-600/10 rounded-xl text-purple-400">
+          <div className="p-2.5 bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl text-[var(--lms-kpi-purple)]">
             <BrainCircuit size={22} />
           </div>
           <div>
@@ -111,7 +111,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                   placeholder="E.g., Advanced JavaScript Closures"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3.5 py-2.5 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3.5 py-2.5 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-[var(--lms-kpi-purple)]"
                 />
               </div>
 
@@ -130,11 +130,11 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                   htmlFor="sourceFile"
                   className={`flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all h-[68px] ${
                     file
-                      ? 'border-purple-500 bg-purple-500/5'
-                      : 'border-[var(--lms-border)] hover:border-purple-400/50 hover:bg-[var(--lms-surface-hover)]'
+                      ? 'border-[var(--lms-kpi-purple)] bg-[var(--lms-kpi-purple)]/5'
+                      : 'border-[var(--lms-border)] hover:border-[var(--lms-kpi-purple)] hover:bg-[var(--lms-surface-hover)]'
                   }`}
                 >
-                  <div className={`mb-1 ${file ? 'text-purple-400' : 'text-[var(--lms-text-muted)]'}`}>
+                  <div className={`mb-1 ${file ? 'text-[var(--lms-kpi-purple)]' : 'text-[var(--lms-text-muted)]'}`}>
                     <Upload size={16} />
                   </div>
                   <span className="font-bold text-[var(--lms-text-primary)] text-[11px] truncate w-full text-center">
@@ -155,7 +155,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                   max="30"
                   value={numberOfQuestions}
                   onChange={(e) => setNumberOfQuestions(e.target.value)}
-                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-[var(--lms-kpi-purple)]"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-[var(--lms-kpi-purple)]"
                 >
                   <option value="Easy">Easy</option>
                   <option value="Medium">Medium</option>
@@ -184,7 +184,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                   max="100"
                   value={marksPerQuestion}
                   onChange={(e) => setMarksPerQuestion(e.target.value)}
-                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-2 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-[var(--lms-kpi-purple)]"
                 />
               </div>
             </div>
@@ -198,7 +198,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
                 placeholder="E.g., Focus on chapter 3 core algorithms and time complexities..."
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
-                className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl p-3 text-[var(--lms-text-primary)] focus:outline-none focus:border-purple-500 placeholder-[var(--lms-text-muted)]"
+                className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl p-3 text-[var(--lms-text-primary)] focus:outline-none focus:border-[var(--lms-kpi-purple)] placeholder-[var(--lms-text-muted)]"
               />
             </div>
 
@@ -213,7 +213,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
               <button
                 type="submit"
                 disabled={loading}
-                className="py-2.5 px-5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition-all shadow-md flex items-center gap-2"
+                className="py-2.5 px-5 rounded-xl bg-[var(--lms-kpi-purple)] hover:brightness-110 text-white font-bold transition-all shadow-md flex items-center gap-2"
               >
                 {loading ? (
                   <>
@@ -231,13 +231,13 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between bg-purple-500/10 border border-purple-500/25 p-3 rounded-xl text-xs text-purple-300">
+            <div className="flex items-center justify-between bg-[var(--lms-surface-subtle)] border border-[var(--lms-kpi-purple)]/30 p-3 rounded-xl text-xs text-[var(--lms-kpi-purple)]">
               <span className="font-bold">
                 {previewQuestions.length} Questions Generated Successfully
               </span>
               <button
                 onClick={() => setPreviewQuestions(null)}
-                className="underline hover:text-purple-200"
+                className="underline hover:brightness-75"
               >
                 Re-generate
               </button>
