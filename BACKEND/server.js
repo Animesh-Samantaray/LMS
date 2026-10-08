@@ -13,6 +13,7 @@ import adminRoutes from "./Routes/admin.route.js";
 import categoryRoutes from "./Routes/category.route.js";
 import courseRoutes from "./Routes/course.route.js";
 import contentRoutes from "./Routes/content.route.js";
+import examQuestionRoutes from "./Routes/examQuestion.route.js";
 import resourceRoutes from "./Routes/resource.route.js";
 import assignmentRoutes from "./Routes/assignment.route.js";
 import quizQuestionRoutes from "./Routes/quizQuestion.route.js";
@@ -26,6 +27,7 @@ import messageRoutes from "./Routes/message.routes.js";
 import reportRoutes from "./Routes/report.routes.js";
 import practiceRoutes from "./Routes/practice.route.js";
 import chatbotRoutes from "./Routes/chatbot.route.js";
+import examRoutes from "./Routes/exam.routes.js";
 import { setSocketIo } from "./Configs/socket.js";
 import "./Configs/firebaseAdmin.js";
 import path from 'path';
@@ -103,7 +105,8 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/practice", practiceRoutes);
 app.use("/api/chatbot", chatbotRoutes);
-
+app.use("/api/exams", examRoutes);
+app.use("/api/exam-questions", examQuestionRoutes);
 const server = http.createServer(app);
 
 const io = new Server(server, {
