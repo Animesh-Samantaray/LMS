@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar, Clock, AlertCircle, Save, X } from 'lucide-react';
 import examService from '../../../services/exam.service';
 
@@ -73,9 +74,9 @@ export const ExamBuilderModal = ({ isOpen, onClose, courseId, exam = null, onSav
     ? new Date(new Date(formData.startTime).getTime() + (Number(formData.duration) || 0) * 60 * 1000).toLocaleString()
     : null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
-      <div className="lms-glass-card w-full max-w-xl p-6 rounded-2xl border border-[var(--lms-border)] shadow-2xl relative my-8">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-[var(--lms-surface)] w-full max-w-xl p-6 rounded-2xl border border-[var(--lms-border)] shadow-2xl relative my-8">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-xl text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-hover)] transition-colors"
@@ -184,7 +185,7 @@ export const ExamBuilderModal = ({ isOpen, onClose, courseId, exam = null, onSav
               className="py-2 px-5 rounded-xl bg-[var(--lms-accent)] hover:bg-[var(--lms-accent-hover)] text-white font-bold transition-all shadow-md flex items-center gap-1.5"
             >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-[var(--lms-border)] border-t-[var(--lms-accent)] rounded-full animate-spin" />
               ) : (
                 <>
                   <Save size={14} /> Save Exam
@@ -194,6 +195,7 @@ export const ExamBuilderModal = ({ isOpen, onClose, courseId, exam = null, onSav
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

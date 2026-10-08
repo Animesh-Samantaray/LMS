@@ -1,52 +1,47 @@
 import React, { useState } from 'react';
-import { Sparkles, Upload, FileText, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { BrainCircuit, Upload, Sparkles, X, AlertCircle, CheckCircle2 } from 'lucide-react';
 import examService from '../../services/exam.service';
 
 export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsGenerated }) => {
+  const [topic, setTopic] = useState('');
   const [file, setFile] = useState(null);
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const [difficulty, setDifficulty] = useState('Medium');
   const [marksPerQuestion, setMarksPerQuestion] = useState(1);
   const [instructions, setInstructions] = useState('');
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [previewQuestions, setPreviewQuestions] = useState(null);
+  const [previewQuestions, setPreviewQuestions] = useState(null); // the generated array of questions
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
-    if (selected) {
-      setFile(selected);
-      setError('');
-    }
-  };
-
   const handleGenerate = async (e) => {
     e.preventDefault();
-    if (!file) {
-      setError('Please select a PDF, DOCX, or TXT document');
+    if (!topic.trim() && !file) {
+      setError('Please provide a topic or upload a source document.');
       return;
     }
 
     try {
       setLoading(true);
       setError('');
-      const res = await examService.generateExamQuestions(examId, {
-        document: file,
-        numberOfQuestions: Number(numberOfQuestions),
-        difficulty,
-        marksPerQuestion: Number(marksPerQuestion),
-        instructions,
-      });
 
-      if (res.success && res.questions) {
-        setPreviewQuestions(res.questions);
-      } else {
-        setError(res.message || 'Failed to generate questions');
-      }
+      const formData = new FormData();
+      if (topic.trim()) formData.append('topic', topic);
+      if (file) formData.append('document', file);
+      formData.append('numberOfQuestions', numberOfQuestions);
+      formData.append('difficulty', difficulty);
+      formData.append('marksPerQuestion', marksPerQuestion);
+      if (instructions.trim()) formData.append('instructions', instructions);
+
+      const res = await examService.generateQuestionsWithAI(formData);
+      
+      setPreviewQuestions(res.questions);
+
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'AI generation failed');
+      setError(err.response?.data?.message || err.message || 'Failed to generate questions. AI Service might be unavailable.');
     } finally {
       setLoading(false);
     }
@@ -54,35 +49,29 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
 
   const handleSaveAllQuestions = async () => {
     if (!previewQuestions || previewQuestions.length === 0) return;
-
     try {
       setLoading(true);
       setError('');
+      
+      const payload = {
+        examId,
+        questions: previewQuestions,
+      };
 
-      for (const q of previewQuestions) {
-        await examService.createQuestion(examId, {
-          question: q.question,
-          options: q.options,
-          correctOption: q.correctOption,
-          marks: q.marks,
-          order: q.order,
-        });
-      }
-
-      if (onQuestionsGenerated) {
-        onQuestionsGenerated();
-      }
+      await examService.saveAIGeneratedQuestions(payload);
+      
+      if (onQuestionsGenerated) onQuestionsGenerated();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save generated questions to exam');
+      setError(err.response?.data?.message || err.message || 'Failed to save generated questions.');
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
-      <div className="lms-glass-card w-full max-w-2xl p-6 rounded-2xl border border-[var(--lms-border)] shadow-2xl relative my-8">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-[var(--lms-surface)] w-full max-w-2xl p-6 rounded-2xl border border-[var(--lms-border)] shadow-2xl relative my-8">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-xl text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] hover:bg-[var(--lms-surface-hover)] transition-colors"
@@ -90,52 +79,66 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
           <X size={18} />
         </button>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400">
-            <Sparkles size={22} />
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 bg-purple-600/10 rounded-xl text-purple-400">
+            <BrainCircuit size={22} />
           </div>
           <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
-              AI Powered Assistant
-            </span>
-            <h2 className="text-xl font-bold text-[var(--lms-text-primary)]">
-              Generate Questions from Document
+            <h2 className="text-lg font-bold text-[var(--lms-text-primary)]">
+              AI Question Generator
             </h2>
+            <p className="text-xs text-[var(--lms-text-secondary)] font-medium">
+              Automatically generate multiple-choice questions from a topic or document.
+            </p>
           </div>
         </div>
 
         {error && (
-          <div className="p-3.5 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2 mb-4">
-            <AlertCircle size={16} className="shrink-0" /> {error}
+          <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2 mb-4">
+            <AlertCircle size={15} /> {error}
           </div>
         )}
 
         {!previewQuestions ? (
-          <form onSubmit={handleGenerate} className="space-y-4 text-xs">
-            <div>
-              <label className="block font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider text-[10px] mb-1.5">
-                Upload Source Document (PDF, DOCX, TXT)
-              </label>
-              <div className="border-2 border-dashed border-[var(--lms-border)] hover:border-purple-500/50 rounded-xl p-6 text-center transition-colors bg-[var(--lms-surface-subtle)]">
+          <form onSubmit={handleGenerate} className="space-y-5 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider text-[10px] mb-1">
+                  Topic / Subject Matter
+                </label>
+                <input
+                  type="text"
+                  placeholder="E.g., Advanced JavaScript Closures"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  className="w-full bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3.5 py-2.5 text-[var(--lms-text-primary)] font-semibold focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[var(--lms-text-secondary)] uppercase tracking-wider text-[10px] mb-1">
+                  Or Upload Source Material
+                </label>
                 <input
                   type="file"
-                  id="examDocUpload"
-                  accept=".pdf,.docx,.txt"
-                  onChange={handleFileChange}
+                  id="sourceFile"
                   className="hidden"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={(e) => setFile(e.target.files[0])}
                 />
                 <label
-                  htmlFor="examDocUpload"
-                  className="cursor-pointer flex flex-col items-center justify-center gap-2"
+                  htmlFor="sourceFile"
+                  className={`flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all h-[68px] ${
+                    file
+                      ? 'border-purple-500 bg-purple-500/5'
+                      : 'border-[var(--lms-border)] hover:border-purple-400/50 hover:bg-[var(--lms-surface-hover)]'
+                  }`}
                 >
-                  <div className="p-3 rounded-full bg-[var(--lms-surface)] border border-[var(--lms-border)] text-purple-400 shadow-sm">
-                    <Upload size={20} />
+                  <div className={`mb-1 ${file ? 'text-purple-400' : 'text-[var(--lms-text-muted)]'}`}>
+                    <Upload size={16} />
                   </div>
-                  <span className="font-bold text-[var(--lms-text-primary)]">
-                    {file ? file.name : 'Click to select document'}
-                  </span>
-                  <span className="text-[11px] text-[var(--lms-text-muted)]">
-                    Supported: PDF, DOCX, TXT (up to 10MB)
+                  <span className="font-bold text-[var(--lms-text-primary)] text-[11px] truncate w-full text-center">
+                    {file ? file.name : 'Select document (PDF, DOCX)'}
                   </span>
                 </label>
               </div>
@@ -299,6 +302,7 @@ export const AIGenerateQuestionsModal = ({ isOpen, onClose, examId, onQuestionsG
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
