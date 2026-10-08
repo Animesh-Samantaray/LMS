@@ -18,7 +18,26 @@ import DashboardLayout from '../components/DashboardLayout';
 import { ExamStatusBadge, getExamStatusInfo } from '../components/exam/ExamStatusBadge';
 import { ExamStartModal } from '../components/exam/ExamStartModal';
 
+
+const getRemainingTime = (targetDate) => {
+  if (!targetDate) return '';
+  const diff = targetDate.getTime() - new Date().getTime();
+  if (diff <= 0) return 'Starting soon...';
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+
+  let res = [];
+  if (days > 0) res.push(`${days}d`);
+  if (hours > 0) res.push(`${hours}h`);
+  if (minutes > 0) res.push(`${minutes}m`);
+  
+  return res.length > 0 ? `Starts in ${res.join(' ')}` : 'Starting in less than a minute...';
+};
+
 const ExamDetailsPage = () => {
+
   const { examId } = useParams();
   const navigate = useNavigate();
 
@@ -70,7 +89,8 @@ const ExamDetailsPage = () => {
   };
 
   if (loading) {
-    return (
+    
+  return (
       <DashboardLayout pageTitle="Exam Details">
         <div className="max-w-4xl mx-auto space-y-6 animate-pulse py-12">
           <div className="h-48 bg-[var(--lms-surface-subtle)] rounded-3xl border border-[var(--lms-border)]" />
@@ -253,9 +273,16 @@ const ExamDetailsPage = () => {
             ) : (
               <button
                 disabled
-                className="w-full sm:w-auto py-3 px-6 rounded-xl bg-[var(--lms-surface-subtle)] text-[var(--lms-text-muted)] border border-[var(--lms-border)] text-xs font-bold cursor-not-allowed"
+                className="group relative w-full sm:w-auto py-3 px-6 rounded-xl bg-[var(--lms-surface-subtle)] text-[var(--lms-text-muted)] border border-[var(--lms-border)] text-xs font-bold cursor-not-allowed"
               >
-                Exam Not Started
+                <span>Exam Not Started</span>
+                
+                {/* Hover Tooltip */}
+                <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-[var(--lms-text-primary)] text-[var(--lms-surface)] text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-xl border border-[var(--lms-border)] z-50 flex items-center gap-1.5">
+                  <Clock size={12} className="text-[var(--lms-surface)]/80" />
+                  {getRemainingTime(startTime)}
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[var(--lms-text-primary)]"></div>
+                </div>
               </button>
             )}
           </div>
