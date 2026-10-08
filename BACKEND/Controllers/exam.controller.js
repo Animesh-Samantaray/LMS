@@ -879,6 +879,7 @@ export const generateExamQuestions = async (
     const { examId } = req.params;
 
     const {
+      topic,
       numberOfQuestions,
       difficulty,
       marksPerQuestion,
@@ -892,10 +893,10 @@ export const generateExamQuestions = async (
       });
     }
 
-    if (!req.file) {
+    if (!req.file && !topic) {
       return res.status(400).json({
         success: false,
-        message: "A document is required",
+        message: "A document or a topic is required",
       });
     }
 
@@ -990,24 +991,24 @@ export const generateExamQuestions = async (
       });
     }
 
-    let documentText;
+    let documentText = "";
 
     try {
-      documentText = await extractDocumentText(
-        req.file
-      );
+      if (req.file) {
+        documentText = await extractDocumentText(req.file);
 
-      if (documentText.length > 20000) {
-        documentText =
-          documentText.substring(0, 20000) +
-          "... [TRUNCATED DUE TO SIZE LIMIT]";
+        if (documentText.length > 20000) {
+          documentText =
+            documentText.substring(0, 20000) +
+            "... [TRUNCATED DUE TO SIZE LIMIT]";
+        }
+      } else if (topic) {
+        documentText = "Topic: " + topic;
       }
     } catch (documentError) {
       return res.status(400).json({
         success: false,
-        message:
-          documentError.message ||
-          "The document could not be read",
+        message: documentError.message || "The document could not be read",
       });
     }
 

@@ -146,7 +146,7 @@ const InstructorExamQuestions = () => {
               <>
                 <button
                   onClick={() => setAiModalOpen(true)}
-                  className="py-2.5 px-4 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all flex items-center gap-2"
+                  className="py-2.5 px-4 rounded-xl bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface-hover)] border border-[var(--lms-kpi-purple)] text-[var(--lms-kpi-purple)] text-xs font-bold transition-all flex items-center gap-2"
                 >
                   <Sparkles size={15} /> AI Generate
                 </button>

@@ -35,18 +35,7 @@ export const deleteExam = async (examId) => {
   return response.data;
 };
 
-export const generateExamQuestions = async (examId, generationData) => {
-  if (!generationData?.document) {
-    throw new Error("A document is required");
-  }
-
-  const formData = new FormData();
-  formData.append("document", generationData.document);
-  formData.append("numberOfQuestions", generationData.numberOfQuestions);
-  formData.append("difficulty", generationData.difficulty);
-  formData.append("marksPerQuestion", generationData.marksPerQuestion);
-  formData.append("instructions", generationData.instructions || "");
-
+export const generateQuestionsWithAI = async (examId, formData) => {
   const response = await api.post(
     `/api/exams/${examId}/ai-generate-questions`,
     formData,
@@ -57,6 +46,14 @@ export const generateExamQuestions = async (examId, generationData) => {
     }
   );
   return response.data;
+};
+
+export const saveAIGeneratedQuestions = async (payload) => {
+  const { examId, questions } = payload;
+  const results = await Promise.all(
+    questions.map((q) => createQuestion(examId, q))
+  );
+  return results;
 };
 
 export const getExamQuestions = async (examId) => {
@@ -132,7 +129,8 @@ export default {
   updateExam,
   publishExam,
   deleteExam,
-  generateExamQuestions,
+  generateQuestionsWithAI,
+  saveAIGeneratedQuestions,
   getExamQuestions,
   getQuestionById,
   createQuestion,
