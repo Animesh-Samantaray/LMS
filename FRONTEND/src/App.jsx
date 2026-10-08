@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { Toaster } from 'react-hot-toast';
 import FloatingChatbot from './components/Chatbot/FloatingChatbot';
+import { SessionTimeoutModal } from './components/SessionTimeoutModal';
 import './styles/index.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <div className="min-h-screen bg-lms-bg text-lms-text transition-colors duration-300">
               <AppRoutes />
               <FloatingChatbot />
+              <SessionTimeoutModal />
               <Toaster position="top-right" toastOptions={{ style: { fontSize: '14px', fontWeight: 'bold' } }} />
             </div>
           </NotificationProvider>

@@ -31,6 +31,13 @@ import CourseDetails from "../pages/CourseDetails";
 import CourseLearn from "../pages/dashboards/student/CourseLearn";
 import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
 import QuizTest from "../pages/dashboards/student/QuizTest";
+import StudentExams from "../pages/dashboards/student/StudentExams";
+import ExamDetailsPage from "../pages/ExamDetailsPage";
+import ActiveExamPage from "../pages/ActiveExamPage";
+import ExamResultPage from "../pages/ExamResultPage";
+import ExamLeaderboardPage from "../pages/ExamLeaderboardPage";
+import InstructorExams from "../pages/dashboards/instructor/InstructorExams";
+import InstructorExamQuestions from "../pages/dashboards/instructor/InstructorExamQuestions";
 import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
 import MyReports from "../pages/dashboards/reports/MyReports";
 import AdminReports from "../pages/dashboards/reports/AdminReports";
@@ -339,6 +346,22 @@ const AppRoutes = () => {
           path="/student/practice"
           element={<PracticeZone />}
         />
+        <Route
+          path="/exams"
+          element={<StudentExams />}
+        />
+        <Route
+          path="/exams/:examId"
+          element={<ExamDetailsPage />}
+        />
+        <Route
+          path="/exams/:examId/attempt"
+          element={<ActiveExamPage />}
+        />
+        <Route
+          path="/exams/:examId/result/:attemptId"
+          element={<ExamResultPage />}
+        />
       </Route>
 
       <Route element={<ProtectedRoute roles={["Instructor"]} />}>
@@ -420,6 +443,14 @@ const AppRoutes = () => {
           element={<InstructorQuizzes />}
         />
         <Route
+          path="/instructor/exams"
+          element={<InstructorExams />}
+        />
+        <Route
+          path="/instructor/exams/:examId/questions"
+          element={<InstructorExamQuestions />}
+        />
+        <Route
           path="/instructor/course-analytics/:id"
           element={<CourseAnalytics />}
         />
@@ -471,11 +502,15 @@ const AppRoutes = () => {
 
       </Route>
 
-      {/* General discussion route accessible to any logged-in user */}
+      {/* General discussion & leaderboard route accessible to logged-in users */}
       <Route element={<ProtectedRoute roles={["Student", "Instructor", "Admin"]} />}>
         <Route
           path="/discussions"
           element={<DiscussionPage />}
+        />
+        <Route
+          path="/exams/:examId/leaderboard"
+          element={<ExamLeaderboardPage />}
         />
       </Route>
 

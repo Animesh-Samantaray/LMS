@@ -149,7 +149,7 @@ export const getCourseById = async (req, res) => {
 export const getMyCourses = async (req, res) => {
   try {
     const { search, category, status } = req.query;
-    const filter = { createdBy: req.user._id };
+    const filter = req.user?.role === "Admin" ? {} : { createdBy: req.user._id };
 
     if (status && ["draft", "published", "archived"].includes(status)) {
       filter.status = status;

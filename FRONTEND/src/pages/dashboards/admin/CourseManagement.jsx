@@ -21,6 +21,7 @@ const CourseManagement = () => {
     { category: 'Management' },
     { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
     { label: 'Courses', path: '/admin/courses', icon: BookOpen },
+    { label: 'Examinations', path: '/instructor/exams', icon: Award },
     { label: 'Certificates', path: '#', icon: Sparkles },
     { category: 'Account' },
     { label: 'Settings', path: '/admin/profile', icon: Settings }

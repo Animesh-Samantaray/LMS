@@ -97,6 +97,7 @@ const CourseContent = () => {
     { category: 'Learning' },
     { label: 'All Courses', path: '/courses', icon: BookOpen },
     { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
+    { label: 'Examinations', path: '/instructor/exams', icon: Award },
     { category: 'Manager' },
     { label: 'View Students', path: '#', icon: Users },
     { label: 'Course Progress', path: '#', icon: BarChart2 },
