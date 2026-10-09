@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, BookOpen, Loader, CheckCircle, Home, Users, FolderOpen, Sparkles, Settings } from 'lucide-react';
+import { AlertCircle, BookOpen, Loader, CheckCircle, Home, Users, FolderOpen, Sparkles, Settings, Award } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
 import CourseCard from '../../../components/CourseCard';
 import api from '../../../services/api.service';
