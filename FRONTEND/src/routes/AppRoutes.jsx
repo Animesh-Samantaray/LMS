@@ -42,6 +42,7 @@ import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
 import MyReports from "../pages/dashboards/reports/MyReports";
 import AdminReports from "../pages/dashboards/reports/AdminReports";
 import AdminAnalytics from "../pages/dashboards/admin/AdminAnalytics";
+import AdminExportCenter from "../pages/dashboards/admin/AdminExportCenter";
 
 import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 import DiscussionPage from "../pages/dashboards/DiscussionPage";
@@ -498,6 +499,10 @@ const AppRoutes = () => {
         <Route
           path="/admin/analytics"
           element={<AdminAnalytics />}
+        />
+        <Route
+          path="/admin/exports"
+          element={<AdminExportCenter />}
         />
 
       </Route>
