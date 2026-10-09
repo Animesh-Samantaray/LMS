@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
+
 import {
   Download,
   Database,
@@ -367,8 +369,8 @@ const AdminExportCenter = () => {
       </div>
 
     
-      {previewOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md animate-fade-in">
+      {previewOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-[var(--lms-surface-elevated)] rounded-2xl w-full max-w-5xl h-[85vh] shadow-2xl border border-[var(--lms-border)] flex flex-col overflow-hidden animate-scale-in">
           
             <div className="px-6 py-4 border-b border-[var(--lms-border)] flex items-center justify-between bg-[var(--lms-surface-subtle)]">
@@ -485,7 +487,8 @@ const AdminExportCenter = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </DashboardLayout>
   );
