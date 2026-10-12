@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Send, AlertCircle, X, Sparkles } from 'lucide-react';
 import courseQueryService from '../../services/courseQuery.service';
 
@@ -39,8 +40,11 @@ const CreateQueryModal = ({ isOpen, onClose, courseId, courseTitle, onCreated })
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+    >
       <div
         className="w-full max-w-xl rounded-3xl bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
@@ -132,7 +136,8 @@ const CreateQueryModal = ({ isOpen, onClose, courseId, courseTitle, onCreated })
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
