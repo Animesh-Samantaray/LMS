@@ -78,12 +78,13 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Administration' },
           { label: 'Manage Users', path: '/admin/users', icon: Users },
           { label: 'Analytics', path: '/admin/analytics', icon: BarChart2 },
+          { label: 'Course Queries', path: '/admin/queries', icon: HelpCircle },
           { category: 'Management' },
           { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },
           { label: 'Examinations', path: '/instructor/exams', icon: Award },
           { label: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
-            { label: 'Reports', path: '/admin/reports', icon: Flag },
+          { label: 'Reports', path: '/admin/reports', icon: Flag },
           { category: 'Account' },
           { label: 'Settings', path: '/admin/profile', icon: Settings }
         ]
@@ -94,14 +95,15 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/instructor/courses', icon: BookOpen },
           { label: 'Discussions', path: '/instructor/discussions', icon: MessageSquare },
+          { label: 'Course Queries', path: '/instructor/queries', icon: HelpCircle },
           { label: 'Assignments', path: '/instructor/assignments', icon: FileText },
           { label: 'Quizzes', path: '/instructor/quizzes', icon: HelpCircle },
           { label: 'Examinations', path: '/instructor/exams', icon: Award },
           { label: 'Practice Arena', path: '/instructor/practice', icon: FileText },
           { category: 'Manager' },
           { label: 'Course Analytics', path: '/instructor/courses', icon: BarChart2 },
-            { label: 'My Reports', path: '/instructor/reports', icon: Flag },
-            { category: 'Account' },
+          { label: 'My Reports', path: '/instructor/reports', icon: Flag },
+          { category: 'Account' },
           { label: 'Settings', path: '/instructor/profile', icon: UserIcon }
         ]
       : [
@@ -110,6 +112,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'All Courses', path: '/courses', icon: BookOpen },
           { label: 'My Courses', path: '/student/courses/my', icon: BookOpen },
           { label: 'Discussions', path: '/student/discussions', icon: MessageSquare },
+          { label: 'Course Queries', path: '/student/queries', icon: HelpCircle },
           { label: 'Quizzes', path: '/student/quizzes', icon: Target },
           { label: 'Exams', path: '/exams', icon: Award },
           { label: 'My Analytics', path: '/student/analytics', icon: BarChart2 },

@@ -24,6 +24,18 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+select,
+select option,
+select optgroup {
+  color: var(--lms-text-primary);
+  background-color: var(--lms-surface-elevated);
+}
+
+select option:checked {
+  color: #ffffff;
+  background-color: var(--lms-accent);
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.02em;

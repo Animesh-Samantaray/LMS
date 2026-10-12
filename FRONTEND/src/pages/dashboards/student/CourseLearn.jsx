@@ -12,6 +12,10 @@ import CourseCertificateTab from '../../../components/CourseCertificateTab';
 import CourseReviews from '../../../components/reviews/CourseReviews';
 import StarRating from '../../../components/reviews/StarRating';
 import reviewService from '../../../services/review.service';
+import courseQueryService from '../../../services/courseQuery.service';
+import CreateQueryModal from '../../../components/queries/CreateQueryModal';
+import QueryStatusBadge from '../../../components/queries/QueryStatusBadge';
+import QueryConversation from '../../../components/queries/QueryConversation';
 import { useAuth } from '../../../context/AuthContext';
 import DashboardLayout from '../../../components/DashboardLayout';
 
@@ -43,8 +47,30 @@ const CourseLearn = () => {
 
   
   const [showQuestionModal, setShowQuestionModal] = useState(false);
-  const [questionText, setQuestionText] = useState('');
-  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+  const [courseQueries, setCourseQueries] = useState([]);
+  const [loadingQueries, setLoadingQueries] = useState(false);
+  const [selectedLearnQuery, setSelectedLearnQuery] = useState(null);
+
+  const fetchCourseQueries = async () => {
+    if (!id) return;
+    try {
+      setLoadingQueries(true);
+      const res = await courseQueryService.getMyQueries();
+      if (res?.success) {
+        const forThisCourse = (res.data || []).filter(
+          (q) => String(q.courseId?._id || q.courseId) === String(id)
+        );
+        setCourseQueries(forThisCourse);
+        if (forThisCourse.length > 0 && !selectedLearnQuery) {
+          setSelectedLearnQuery(forThisCourse[0]);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch course queries:', err);
+    } finally {
+      setLoadingQueries(false);
+    }
+  };
 
   
   const [assignments, setAssignments] = useState([]);
@@ -74,6 +100,7 @@ const CourseLearn = () => {
     fetchAssignments();
     fetchQuizzes();
     fetchReviewSummary();
+    fetchCourseQueries();
 
     if (id) {
       api.get(`/api/certificates/eligibility/${id}`)
@@ -720,31 +747,119 @@ const CourseLearn = () => {
           )}
 
           {activeTab === 'qa' && (
-            <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)]">Questions & Answers</h2>
-                <button 
-                  onClick={() => setShowQuestionModal(true)}
-                  className="px-5 py-2.5 bg-[var(--lms-text-primary)] hover:opacity-90 text-[var(--lms-surface)] font-bold rounded-xl text-sm transition-colors shadow-lg shadow-[var(--lms-text-primary)]/10"
-                >
-                  Ask a Question
-                </button>
+            <div className="bg-[var(--lms-surface)] rounded-3xl shadow-sm border border-[var(--lms-border)] p-6 sm:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--lms-border)]">
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)]">
+                    Course Questions & Answers
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[var(--lms-text-muted)] mt-0.5">
+                    Ask questions specifically for {course.title} and converse directly with the course instructor.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={fetchCourseQueries}
+                    disabled={loadingQueries}
+                    className="p-2.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-muted)] hover:text-[var(--lms-text-primary)] transition-all shadow-sm"
+                    title="Refresh Q&A"
+                  >
+                    <Loader size={16} className={loadingQueries ? 'animate-spin' : ''} />
+                  </button>
+                  <button 
+                    onClick={() => setShowQuestionModal(true)}
+                    className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
+                  >
+                    <HelpCircle size={16} />
+                    <span>Ask a Question</span>
+                  </button>
+                </div>
               </div>
-              
-              <div className="text-center py-12">
-                <MessageSquare size={48} className="text-[var(--lms-border)] mx-auto mb-4" />
-                {questionSubmitted ? (
-                  <>
-                    <h3 className="text-lg font-bold text-[var(--lms-text-secondary)] mb-1">Question Submitted!</h3>
-                    <p className="text-[var(--lms-text-muted)] text-sm">Your question has been sent to the instructor. They will respond shortly.</p>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-lg font-bold text-[var(--lms-text-secondary)] mb-1">No questions yet</h3>
-                    <p className="text-[var(--lms-text-muted)] text-sm">Be the first to ask a question in this course!</p>
-                  </>
-                )}
-              </div>
+
+              {loadingQueries ? (
+                <div className="py-16 text-center space-y-3">
+                  <Loader size={32} className="animate-spin text-indigo-500 mx-auto" />
+                  <p className="text-xs text-[var(--lms-text-muted)] font-medium">Loading course questions...</p>
+                </div>
+              ) : courseQueries.length === 0 ? (
+                <div className="text-center py-16 border border-dashed border-[var(--lms-border)] rounded-2xl p-8 space-y-3">
+                  <MessageSquare size={48} className="text-indigo-500/40 mx-auto" />
+                  <h3 className="text-base font-bold text-[var(--lms-text-primary)]">No questions yet</h3>
+                  <p className="text-xs text-[var(--lms-text-muted)] max-w-sm mx-auto">
+                    Need help with this course? Ask your first question and the instructor will respond here.
+                  </p>
+                  <button
+                    onClick={() => setShowQuestionModal(true)}
+                    className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-md shadow-indigo-600/20 hover:bg-indigo-500 transition-all"
+                  >
+                    <HelpCircle size={14} />
+                    <span>Ask Your First Question</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-5 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-[var(--lms-text-muted)] uppercase tracking-wider px-1">
+                      <span>Questions ({courseQueries.length})</span>
+                    </div>
+                    <div className="space-y-2.5">
+                      {courseQueries.map((q) => (
+                        <div
+                          key={q._id}
+                          onClick={() => setSelectedLearnQuery(q)}
+                          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                            selectedLearnQuery?._id === q._id
+                              ? 'border-indigo-500 bg-indigo-50/10 ring-2 ring-indigo-500/20 shadow-md'
+                              : 'border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:border-indigo-400/50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <QueryStatusBadge status={q.status} size="xs" />
+                            <span className="text-[10px] text-[var(--lms-text-muted)] font-medium">
+                              {new Date(q.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-[var(--lms-text-primary)] line-clamp-1 mb-1">
+                            {q.subject}
+                          </h4>
+                          <p className="text-xs text-[var(--lms-text-secondary)] line-clamp-2 leading-relaxed">
+                            {q.description}
+                          </p>
+                          <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[var(--lms-border)] text-[11px] text-[var(--lms-text-muted)]">
+                            <span className="flex items-center gap-1">
+                              <MessageSquare size={12} className="text-indigo-500" />
+                              <span>{q.replies?.length || 0} replies</span>
+                            </span>
+                            <span className="text-indigo-600 dark:text-indigo-400 font-bold">
+                              View Thread →
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-7">
+                    {selectedLearnQuery ? (
+                      <QueryConversation
+                        query={selectedLearnQuery}
+                        currentUser={user}
+                        canChangeStatus={false}
+                        onReplyAdded={(updated) => {
+                          setCourseQueries((prev) =>
+                            prev.map((item) => (item._id === updated._id ? updated : item))
+                          );
+                          setSelectedLearnQuery(updated);
+                        }}
+                      />
+                    ) : (
+                      <div className="p-12 text-center rounded-2xl border border-dashed border-[var(--lms-border)] text-xs text-[var(--lms-text-muted)]">
+                        Select a question to view the conversation.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -969,42 +1084,16 @@ const CourseLearn = () => {
 
       </div>
 
-      {showQuestionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="absolute inset-0" onClick={() => setShowQuestionModal(false)}></div>
-          <div className="relative bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-2xl">
-            <h2 className="text-2xl font-extrabold text-[var(--lms-text-primary)] mb-2">Ask a Question</h2>
-            <p className="text-sm font-semibold text-[var(--lms-text-muted)] mb-6">Your question will be sent directly to the instructor.</p>
-            
-            <textarea
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
-              placeholder="E.g., Can you explain more about how this specific concept applies to real-world scenarios?"
-              className="w-full h-32 px-4 py-3 rounded-2xl bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none transition-all mb-6"
-            ></textarea>
-            
-            <div className="flex items-center justify-end gap-3">
-              <button 
-                onClick={() => setShowQuestionModal(false)}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-[var(--lms-text-secondary)] hover:bg-[var(--lms-surface-elevated)] transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={() => {
-                  setQuestionSubmitted(true);
-                  setShowQuestionModal(false);
-                  setQuestionText('');
-                }}
-                disabled={!questionText.trim()}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-500/20"
-              >
-                Submit Question
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateQueryModal
+        isOpen={showQuestionModal}
+        onClose={() => setShowQuestionModal(false)}
+        courseId={id}
+        courseTitle={course?.title}
+        onCreated={(newQ) => {
+          setCourseQueries((prev) => [newQ, ...prev]);
+          setSelectedLearnQuery(newQ);
+        }}
+      />
 
       {/* Assignment Detail Modal */}
       <AssignmentDetailModal

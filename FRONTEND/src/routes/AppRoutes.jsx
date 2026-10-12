@@ -47,6 +47,9 @@ import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
 import DiscussionPage from "../pages/dashboards/DiscussionPage";
 import StudentCalendar from "../pages/dashboards/student/StudentCalendar";
 import StudentReviews from "../pages/dashboards/student/StudentReviews";
+import StudentQueries from "../pages/dashboards/student/StudentQueries";
+import InstructorQueries from "../pages/dashboards/instructor/InstructorQueries";
+import AdminQueries from "../pages/dashboards/admin/AdminQueries";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -347,6 +350,10 @@ const AppRoutes = () => {
           element={<PracticeZone />}
         />
         <Route
+          path="/student/queries"
+          element={<StudentQueries />}
+        />
+        <Route
           path="/exams"
           element={<StudentExams />}
         />
@@ -415,6 +422,10 @@ const AppRoutes = () => {
 
           element={<AddPracticeChallenge />}
 
+        />
+        <Route
+          path="/instructor/queries"
+          element={<InstructorQueries />}
         />
       </Route>
 
@@ -498,6 +509,10 @@ const AppRoutes = () => {
         <Route
           path="/admin/analytics"
           element={<AdminAnalytics />}
+        />
+        <Route
+          path="/admin/queries"
+          element={<AdminQueries />}
         />
 
       </Route>
