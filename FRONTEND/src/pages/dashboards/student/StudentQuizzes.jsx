@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Target, Clock, AlertCircle, Loader, PlayCircle, CheckCircle } from 'lucide-react';
 import quizService from '../../../services/quiz.service';
 import DashboardLayout from '../../../components/DashboardLayout';
+import { ExportButton } from '../../../components/ExportButton';
+
 
 const StudentQuizzes = () => {
   const navigate = useNavigate();
@@ -35,14 +37,26 @@ const StudentQuizzes = () => {
   return (
     <DashboardLayout roleTitle="STUDENT" pageTitle="My Quizzes">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-xl bg-purple-500/15 text-purple-600 border border-purple-500/30">
-              <Target size={24} />
+        <div className="bg-[var(--lms-surface)] border border-[var(--lms-border)] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-xl bg-purple-500/15 text-purple-600 border border-purple-500/30">
+                <Target size={24} />
+              </div>
+              <h1 className="text-2xl font-bold text-[var(--lms-text-primary)]">My Quizzes</h1>
             </div>
-            <h1 className="text-2xl font-bold text-[var(--lms-text-primary)]">My Quizzes</h1>
+            <p className="text-sm text-[var(--lms-text-secondary)]">View and attempt quizzes for your enrolled courses.</p>
           </div>
-          <p className="text-sm text-[var(--lms-text-secondary)]">View and attempt quizzes for your enrolled courses.</p>
+          <ExportButton 
+            data={quizzes} 
+            filename="My_Quizzes" 
+            columns={[
+              {header: 'Quiz Title', accessor: 'title'},
+              {header: 'Course', accessor: 'courseTitle'},
+              {header: 'Duration (min)', accessor: 'duration'},
+              {header: 'Max Marks', accessor: 'totalMarks'}
+            ]} 
+          />
         </div>
 
         {error && (

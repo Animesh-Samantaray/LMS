@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AlertCircle, BookOpen, Loader, CheckCircle, Home, Users, FolderOpen, Sparkles, Settings, Award } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
 import CourseCard from '../../../components/CourseCard';
+import { ExportButton } from '../../../components/ExportButton';
+
 import api from '../../../services/api.service';
 
 const CourseManagement = () => {
@@ -88,7 +90,18 @@ const CourseManagement = () => {
             <h1 className="text-2xl font-bold text-[var(--lms-text-primary)]">Course Management</h1>
             <p className="text-[var(--lms-text-secondary)] text-sm">Oversee and manage all platform courses.</p>
           </div>
-        </div>
+        <ExportButton 
+              data={courses} 
+              filename="LMS_Courses" 
+              columns={[
+                {header: 'Title', accessor: 'title'},
+                {header: 'Status', accessor: 'status'},
+                {header: 'Price', accessor: 'price'},
+                {header: 'Category', accessor: c => c.category?.name || 'N/A'},
+                {header: 'Instructor', accessor: c => c.instructor?.name || 'N/A'}
+              ]} 
+            />
+          </div>
 
         {error && (
           <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs sm:text-sm flex items-center gap-2.5 animate-fade-in">
