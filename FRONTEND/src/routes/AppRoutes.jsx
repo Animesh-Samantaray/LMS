@@ -50,6 +50,7 @@ import StudentReviews from "../pages/dashboards/student/StudentReviews";
 import StudentQueries from "../pages/dashboards/student/StudentQueries";
 import InstructorQueries from "../pages/dashboards/instructor/InstructorQueries";
 import AdminQueries from "../pages/dashboards/admin/AdminQueries";
+import AdminChatbotLogs from "../pages/dashboards/admin/AdminChatbotLogs";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
@@ -513,6 +514,10 @@ const AppRoutes = () => {
         <Route
           path="/admin/queries"
           element={<AdminQueries />}
+        />
+        <Route
+          path="/admin/chatbot-logs"
+          element={<AdminChatbotLogs />}
         />
 
       </Route>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle, Flag, Download } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle, Flag, Download, Bot } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
@@ -77,6 +77,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { label: 'Overview', path: '/admin/dashboard', icon: Home },
           { category: 'Administration' },
           { label: 'Manage Users', path: '/admin/users', icon: Users },
+          { label: 'Chatbot Logs', path: '/admin/chatbot-logs', icon: Bot },
           { label: 'Analytics', path: '/admin/analytics', icon: BarChart2 },
           { label: 'Course Queries', path: '/admin/queries', icon: HelpCircle },
           { category: 'Management' },
