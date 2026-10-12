@@ -1,6 +1,8 @@
 
 :root,
 html.dark {
+  color-scheme: dark;
+
   --lms-bg: #0b0f19;
   --lms-bg-gradient: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.22) 0%, rgba(139, 92, 246, 0.12) 35%, transparent 70%),
                      radial-gradient(circle at 100% 60%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
@@ -49,6 +51,8 @@ html.dark {
 
 
 html.light {
+  color-scheme: light;
+
   --lms-bg: #f8fafc;
   --lms-bg-gradient: radial-gradient(circle at 50% -10%, rgba(224, 231, 255, 0.8) 0%, rgba(241, 245, 249, 0.6) 45%, transparent 75%),
                      radial-gradient(circle at 90% 70%, rgba(238, 242, 255, 0.6) 0%, transparent 50%),
@@ -96,6 +100,8 @@ html.light {
 
 
 html.theme-cream {
+  color-scheme: light;
+
   --lms-bg: #fffbeb;
   --lms-bg-gradient: radial-gradient(circle at 50% -10%, rgba(253, 230, 138, 0.7) 0%, rgba(254, 243, 199, 0.5) 45%, transparent 75%),
                      radial-gradient(circle at 90% 70%, rgba(254, 249, 195, 0.8) 0%, transparent 50%),
