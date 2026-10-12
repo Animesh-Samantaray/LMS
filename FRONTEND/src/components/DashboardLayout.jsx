@@ -78,7 +78,6 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
           { category: 'Administration' },
           { label: 'Manage Users', path: '/admin/users', icon: Users },
           { label: 'Analytics', path: '/admin/analytics', icon: BarChart2 },
-          { label: 'Exports', path: '/admin/exports', icon: Download },
           { category: 'Management' },
           { label: 'Categories', path: '/admin/categories', icon: FolderOpen },
           { label: 'Courses', path: '/admin/courses', icon: BookOpen },

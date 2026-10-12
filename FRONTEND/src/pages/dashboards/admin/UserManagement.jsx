@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen, CheckCircle, Edit2, FolderOpen, Home, Loader, Search, Settings, Shield, Trash2, Users, X } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
+import { ExportButton } from '../../../components/ExportButton';
+
 import adminService from '../../../services/admin.service';
 
 const sidebarItems = [
@@ -121,7 +123,19 @@ const UserManagement = () => {
             <h1 className="text-xl sm:text-2xl font-bold text-[var(--lms-text-primary)]">User Management</h1>
             <p className="text-xs sm:text-sm text-[var(--lms-text-secondary)] mt-1">Review accounts and update access across the platform.</p>
           </div>
-          <div className="lms-badge self-start md:self-auto shrink-0">{users.length} users</div>
+          <div className="flex items-center gap-3 self-start md:self-auto shrink-0">
+            <div className="lms-badge">{users.length} users</div>
+            <ExportButton 
+              data={filteredUsers} 
+              filename="LMS_Users" 
+              columns={[
+                {header: 'Name', accessor: 'name'},
+                {header: 'Email', accessor: 'email'},
+                {header: 'Role', accessor: 'role'},
+                {header: 'Status', accessor: 'accountStatus'}
+              ]} 
+            />
+          </div>
         </div>
 
         {error && (

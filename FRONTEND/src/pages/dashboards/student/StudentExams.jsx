@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Award, Clock, AlertCircle, Loader, PlayCircle, Trophy, BookOpen, Filter } from 'lucide-react';
 import examService from '../../../services/exam.service';
 import DashboardLayout from '../../../components/DashboardLayout';
+import { ExportButton } from '../../../components/ExportButton';
+
 import { ExamCard } from '../../../components/exam/ExamCard';
 import { ExamStartModal } from '../../../components/exam/ExamStartModal';
 
@@ -76,7 +78,18 @@ const StudentExams = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-end gap-3">
+              <ExportButton 
+                data={filteredExams} 
+                filename="My_Exams" 
+                columns={[
+                  {header: 'Title', accessor: 'title'},
+                  {header: 'Duration (min)', accessor: 'duration'},
+                  {header: 'Total Marks', accessor: 'totalMarks'},
+                  {header: 'Status', accessor: 'status'}
+                ]} 
+              />
+              <div className="flex items-center gap-2">
             {['all', 'live', 'upcoming', 'completed'].map((st) => (
               <button
                 key={st}
@@ -90,6 +103,7 @@ const StudentExams = () => {
                 {st}
               </button>
             ))}
+          </div>
           </div>
         </div>
 

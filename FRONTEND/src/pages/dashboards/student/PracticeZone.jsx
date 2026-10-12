@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api.service';
 import DashboardLayout from '../../../components/DashboardLayout';
+import { ExportButton } from '../../../components/ExportButton';
+
 import Editor from '@monaco-editor/react';
 import { Play, Send, Check } from 'lucide-react';
 
@@ -311,13 +313,24 @@ const PracticeZone = () => {
   return (
     <DashboardLayout roleTitle="STUDENT" pageTitle="Practice Zone">
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold text-[var(--lms-text-primary)] flex items-center gap-2">
           Problem List <span className="text-gray-500 text-lg">&gt;</span>
         </h1>
-        <div className="text-sm text-gray-400 flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <ExportButton 
+            data={challenges} 
+            filename="Practice_Problems" 
+            columns={[
+              {header: 'Title', accessor: 'title'},
+              {header: 'Difficulty', accessor: 'difficulty'},
+              {header: 'Language', accessor: 'language'}
+            ]} 
+          />
+          <div className="text-sm text-gray-400 flex items-center gap-2">
           <div className="w-3 h-3 rounded-full border border-gray-500"></div>
           {solvedCount}/{challenges.length} Solved
+        </div>
         </div>
       </div>
       
