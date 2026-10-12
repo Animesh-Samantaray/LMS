@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { PlayCircle, Check, ChevronDown, ChevronUp, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle, User, Edit2, Lock, Plus } from 'lucide-react';
+import { PlayCircle, Check, ChevronDown, ChevronUp, MonitorPlay, FileText, Award, Share2, Star, Clock, Globe, ArrowLeft, LayoutGrid, Loader, AlertCircle, User, Edit2, Lock, Plus, HelpCircle, MessageSquare } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DashboardLayout from '../components/DashboardLayout';
@@ -504,12 +504,21 @@ const CourseDetails = () => {
                 </div>
                 
                 {user?.role === 'Student' && isEnrolled ? (
-                    <button 
-                      onClick={() => navigate(`/student/courses/${id}/learn`)}
-                      className="w-full lms-btn py-3.5 text-base mb-3 bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20" 
-                    >
-                      <PlayCircle size={18} /> Continue Learning
-                    </button>
+                    <>
+                      <button 
+                        onClick={() => navigate(`/student/courses/${id}/learn`)}
+                        className="w-full lms-btn py-3.5 text-base mb-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20" 
+                      >
+                        <PlayCircle size={18} /> Continue Learning
+                      </button>
+
+                      <button
+                        onClick={() => navigate(`/student/queries?courseId=${id}`)}
+                        className="w-full py-2.5 px-4 mb-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                      >
+                        <HelpCircle size={15} /> Course Q&A / Ask Question
+                      </button>
+                    </>
                   ) : user?.role === 'Student' ? (
                     <button
                       onClick={handleEnroll}
