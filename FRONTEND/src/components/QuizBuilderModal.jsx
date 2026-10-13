@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AlertCircle,
   ArrowDown,
@@ -389,8 +390,8 @@ const QuizBuilderModal = ({
   const selectedIssue = selectedQuestion ? getQuestionIssue(selectedQuestion) : '';
   const statusLabel = isReadOnly ? 'Published' : isEdit ? 'Draft' : 'New quiz';
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-12 pb-4 px-4 bg-black/60 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-12 pb-4 px-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="flex max-h-[calc(100vh-4rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-[var(--lms-border)] bg-[var(--lms-surface-elevated)] shadow-2xl">
         <header className="flex shrink-0 items-center justify-between border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] px-4 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
@@ -478,7 +479,8 @@ const QuizBuilderModal = ({
 
         <footer className="flex shrink-0 flex-col gap-3 border-t border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6"><div className="flex items-center gap-2 text-xs font-semibold text-[var(--lms-text-muted)]"><ArrowLeft size={14} /> Changes stay here until you save</div><div className="flex w-full gap-2 sm:w-auto"><button type="button" onClick={onClose} disabled={submitting} className="flex-1 rounded-xl border border-[var(--lms-border)] px-4 py-2.5 text-xs font-bold text-[var(--lms-text-primary)] transition hover:bg-[var(--lms-surface)] sm:flex-none">Cancel</button>{!isReadOnly && <><button type="button" onClick={() => saveQuizAndQuestions(false)} disabled={submitting || loadingData} className="flex-1 rounded-xl border border-[var(--lms-border)] px-4 py-2.5 text-xs font-bold text-[var(--lms-text-primary)] transition hover:bg-[var(--lms-surface)] disabled:opacity-50 sm:flex-none">{submitting ? <Loader size={14} className="mx-auto animate-spin" /> : <span className="flex items-center justify-center gap-1.5"><Save size={14} /> Save draft</span>}</button><button type="button" onClick={() => saveQuizAndQuestions(true)} disabled={submitting || loadingData || questions.length === 0} className="flex-1 rounded-xl bg-[var(--lms-accent)] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[var(--lms-accent-hover)] disabled:opacity-50 sm:flex-none">{submitting ? <Loader size={14} className="mx-auto animate-spin" /> : <span className="flex items-center justify-center gap-1.5"><Globe size={14} /> Publish quiz</span>}</button></>}</div></footer>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

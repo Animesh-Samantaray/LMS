@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -1129,9 +1130,9 @@ const CourseContent = () => {
       {/* ========================================================= */}
       {/* MODAL: UNIT CREATE / EDIT                                */}
       {/* ========================================================= */}
-      {unitModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
+      {unitModal.open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
                 {unitModal.isEdit ? 'Edit Unit' : 'Create New Unit'}
@@ -1187,15 +1188,16 @@ const CourseContent = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================= */}
       {/* MODAL: LESSON CREATE / EDIT                              */}
       {/* ========================================================= */}
-      {lessonModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
+      {lessonModal.open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] shrink-0 flex items-center justify-between">
               <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
                 {lessonModal.isEdit ? 'Edit Lesson' : 'Add Lesson'}
@@ -1339,15 +1341,16 @@ const CourseContent = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================= */}
       {/* MODAL: RESOURCE CREATE / EDIT (NO MANUAL TYPE REQUIRED)   */}
       {/* ========================================================= */}
-      {resourceModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
+      {resourceModal.open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-lg shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
               <div>
                 <h3 className="text-base font-bold text-[var(--lms-text-primary)]">
@@ -1531,15 +1534,16 @@ const CourseContent = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================= */}
       {/* MODAL: DELETE CONFIRMATION                                */}
       {/* ========================================================= */}
-      {deleteConfirm.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm shadow-2xl border border-[var(--lms-border)] p-6 space-y-4">
+      {deleteConfirm.open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-sm shadow-2xl border border-[var(--lms-border)] p-6 space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 flex items-center justify-center mx-auto mb-2 border border-rose-500/20">
               <AlertCircle size={24} />
             </div>
@@ -1576,7 +1580,8 @@ const CourseContent = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     
       {/* Quiz Builder Modal */}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Plus, Edit2, Trash2, AlertCircle, CheckCircle, FolderOpen, Loader, Home, Users, BookOpen, Sparkles, Settings, X } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
 import api from '../../../services/api.service';
@@ -228,8 +229,8 @@ const CategoryManagement = () => {
 
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+      {isModalOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-[var(--lms-surface-elevated)] rounded-2xl w-full max-w-md shadow-2xl border border-[var(--lms-border)] overflow-hidden">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] flex justify-between items-center bg-[var(--lms-surface-subtle)]">
               <h2 className="text-base font-bold text-[var(--lms-text-primary)]">
@@ -295,7 +296,8 @@ const CategoryManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </DashboardLayout>

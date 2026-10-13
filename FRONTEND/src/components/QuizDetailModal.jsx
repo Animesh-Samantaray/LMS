@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Clock, HelpCircle, AlertCircle, Loader, PlayCircle, CheckCircle } from 'lucide-react';
 import quizService from '../services/quiz.service';
 
@@ -42,8 +43,8 @@ const QuizDetailModal = ({
   const attemptsRemaining = quiz.attemptsRemaining ?? (Number(quiz.maxAttempts || 1) - Number(quiz.attempts || 0));
   const isSubmitted = Number(attemptsRemaining) <= 0;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-2xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
         <div className="px-6 py-5 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -143,7 +144,8 @@ const QuizDetailModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
