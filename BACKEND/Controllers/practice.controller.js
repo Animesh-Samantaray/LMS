@@ -12,6 +12,7 @@ const languageMap = {
   'cpp': { language: 'c++', version: '10.2.0' }
 };
 
+// get challenges
 export const getChallenges = async (req, res) => {
   try {
     const challenges = await PracticeChallenge.find().lean();
@@ -31,6 +32,7 @@ export const getChallenges = async (req, res) => {
   }
 };
 
+// get challenge by id
 export const getChallengeById = async (req, res) => {
   try {
     const challenge = await PracticeChallenge.findById(req.params.id);
@@ -43,6 +45,7 @@ export const getChallengeById = async (req, res) => {
   }
 };
 
+// create challenge
 export const createChallenge = async (req, res) => {
   try {
     const newChallenge = new PracticeChallenge(req.body);
@@ -53,6 +56,7 @@ export const createChallenge = async (req, res) => {
   }
 };
 
+// get saved code
 export const getSavedCode = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -63,6 +67,7 @@ export const getSavedCode = async (req, res) => {
   }
 };
 
+// run code
 export const runCode = async (req, res) => {
   try {
     const { code, language } = req.body;
@@ -107,6 +112,7 @@ export const runCode = async (req, res) => {
   }
 };
 
+// submit code
 export const submitCode = async (req, res) => {
   try {
     const { code, language } = req.body;
@@ -160,6 +166,7 @@ export const submitCode = async (req, res) => {
   }
 };
 
+// update challenge
 export const updateChallenge = async (req, res) => {
   try {
     const updated = await PracticeChallenge.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -170,6 +177,7 @@ export const updateChallenge = async (req, res) => {
   }
 };
 
+// delete challenge
 export const deleteChallenge = async (req, res) => {
   try {
     const deleted = await PracticeChallenge.findByIdAndDelete(req.params.id);

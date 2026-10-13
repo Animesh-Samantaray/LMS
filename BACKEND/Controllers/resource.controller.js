@@ -98,6 +98,7 @@ const determineResourceTypeFromMime = (mimeType = "", fallbackType = "Other") =>
   return fallbackType || "Other";
 };
 
+// create resource
 export const createResource = async (req, res) => {
   try {
     const { lessonId } = req.params;
@@ -188,6 +189,7 @@ export const createResource = async (req, res) => {
 };
 
 
+// get lesson resources
 export const getLessonResources = async (req, res) => {
   try {
     const { lessonId } = req.params;
@@ -228,6 +230,7 @@ export const getLessonResources = async (req, res) => {
 };
 
 
+// get resource by id
 export const getResourceById = async (req, res) => {
   try {
     const { resourceId } = req.params;
@@ -263,6 +266,7 @@ export const getResourceById = async (req, res) => {
 };
 
 
+// update resource
 export const updateResource = async (req, res) => {
   try {
     const { resourceId } = req.params;
@@ -336,6 +340,7 @@ export const updateResource = async (req, res) => {
 };
 
 
+// delete resource
 export const deleteResource = async (req, res) => {
   try {
     const { resourceId } = req.params;
@@ -382,6 +387,7 @@ export const deleteResource = async (req, res) => {
 };
 
 
+// reorder resources
 export const reorderResources = async (req, res) => {
   try {
     const { lessonId } = req.params;

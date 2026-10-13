@@ -4,6 +4,7 @@ import QuizQuestion from "../Models/QuizQuestion.model.js";
 import Quiz from "../Models/Quiz.model.js";
 import Course from "../Models/Course.model.js";
 
+// create question
 export const createQuestion = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -166,6 +167,7 @@ export const createQuestion = async (req, res) => {
 };
 
 
+// get quiz questions
 export const getQuizQuestions = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -258,6 +260,7 @@ export const getQuizQuestions = async (req, res) => {
 };
 
 
+// get question by id
 export const getQuestionById = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -351,6 +354,7 @@ export const getQuestionById = async (req, res) => {
 };
 
 
+// update question
 export const updateQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -547,6 +551,7 @@ export const updateQuestion = async (req, res) => {
 };
 
 
+// delete question
 export const deleteQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;

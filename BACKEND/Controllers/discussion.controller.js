@@ -4,6 +4,7 @@ import Course from "../Models/Course.model.js";
 import User from "../Models/User.model.js";
 import Message from "../Models/Message.model.js";
 
+// get my discussions
 export const getMyDiscussions = async (req, res) => {
   try {
     const userId = req.user?.id || req.user?._id;
@@ -148,6 +149,7 @@ export const getMyDiscussions = async (req, res) => {
   }
 };
 
+// get course discussion
 export const getCourseDiscussion = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -241,6 +243,7 @@ export const getCourseDiscussion = async (req, res) => {
   }
 };
 
+// delete discussion
 export const deleteDiscussion = async (req, res) => {
   try {
     const { discussionId } = req.params;

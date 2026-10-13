@@ -7,6 +7,7 @@ import {
 } from "../Services/export.service.js";
 
 
+// get export catalog
 export const getExportCatalog = async (req, res) => {
   try {
     const datasets = await getExportCatalogList();
@@ -24,6 +25,7 @@ export const getExportCatalog = async (req, res) => {
 };
 
 
+// preview dataset
 export const previewDataset = async (req, res) => {
   try {
     const { dataset } = req.params;
@@ -52,6 +54,7 @@ export const previewDataset = async (req, res) => {
 };
 
 
+// download dataset
 export const downloadDataset = async (req, res) => {
   try {
     const { dataset } = req.params;
@@ -81,6 +84,7 @@ export const downloadDataset = async (req, res) => {
 };
 
 
+// download complete export
 export const downloadCompleteExport = async (req, res) => {
   try {
     const fullExport = await getCompletePlatformExport();

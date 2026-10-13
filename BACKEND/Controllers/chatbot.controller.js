@@ -2,6 +2,7 @@ import { generateChatResponse } from "../Services/chatbot.service.js";
 import ChatbotLog from "../Models/ChatbotLog.model.js";
 import User from "../Models/User.model.js";
 
+// handle chat message
 export const handleChatMessage = async (req, res) => {
   try {
     const { message, messages } = req.body;
@@ -69,6 +70,7 @@ export const handleChatMessage = async (req, res) => {
   }
 };
 
+// get chatbot logs
 export const getChatbotLogs = async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -121,6 +123,7 @@ export const getChatbotLogs = async (req, res) => {
   }
 };
 
+// delete chatbot log
 export const deleteChatbotLog = async (req, res) => {
   try {
     const { id } = req.params;
@@ -144,6 +147,7 @@ export const deleteChatbotLog = async (req, res) => {
   }
 };
 
+// clear all chatbot logs
 export const clearAllChatbotLogs = async (req, res) => {
   try {
     await ChatbotLog.deleteMany({});

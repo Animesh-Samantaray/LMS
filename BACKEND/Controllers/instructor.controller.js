@@ -17,6 +17,7 @@ const findInstructorProfile = async (id) => {
   );
 };
 
+// get instructor profile
 export const getInstructorProfile = async (req, res) => {
   try {
     const profile = await findInstructorProfile(req.user.id);
@@ -34,6 +35,7 @@ export const getInstructorProfile = async (req, res) => {
   }
 };
 
+// update instructor profile
 export const updateInstructorProfile = async (req, res) => {
   try {
     const profile = await InstructorProfile.findOne({ user: req.user.id });
@@ -75,6 +77,7 @@ export const updateInstructorProfile = async (req, res) => {
   }
 };
 
+// get all instructors
 export const getAllInstructors = async (req, res) => {
   try {
     const profiles = await InstructorProfile.find().populate(
@@ -87,6 +90,7 @@ export const getAllInstructors = async (req, res) => {
   }
 };
 
+// get instructor by id
 export const getInstructorById = async (req, res) => {
   try {
     const profile = await findInstructorProfile(req.params.id);
@@ -100,6 +104,7 @@ export const getInstructorById = async (req, res) => {
   }
 };
 
+// delete instructor profile
 export const deleteInstructorProfile = async (req, res) => {
   try {
     const profile = await InstructorProfile.findOneAndDelete({ user: req.user.id });
@@ -113,6 +118,7 @@ export const deleteInstructorProfile = async (req, res) => {
   }
 };
 
+// upload instructor profile image
 export const uploadInstructorProfileImage = async (req, res) => {
   try {
     if (!req.file) {

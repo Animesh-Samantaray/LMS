@@ -87,6 +87,7 @@ const validateQuestionData = ({
   return null;
 };
 
+// create question
 export const createQuestion = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -215,6 +216,7 @@ export const createQuestion = async (req, res) => {
   }
 };
 
+// get exam questions
 export const getExamQuestions = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -311,6 +313,7 @@ export const getExamQuestions = async (req, res) => {
   }
 };
 
+// get question by id
 export const getQuestionById = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -419,6 +422,7 @@ export const getQuestionById = async (req, res) => {
   }
 };
 
+// update question
 export const updateQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -584,6 +588,7 @@ export const updateQuestion = async (req, res) => {
   }
 };
 
+// delete question
 export const deleteQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;

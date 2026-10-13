@@ -21,6 +21,7 @@ const VALID_REPORT_STATUSES = [
   "Rejected",
 ];
 
+// create report
 export const createReport = async (req, res) => {
   try {
     const { type, name, description, courseId } = req.body;
@@ -107,6 +108,7 @@ export const createReport = async (req, res) => {
   }
 };
 
+// get my reports
 export const getMyReports = async (req, res) => {
   try {
     const { status, type, search } = req.query;
@@ -147,6 +149,7 @@ export const getMyReports = async (req, res) => {
   }
 };
 
+// get report by id
 export const getReportById = async (req, res) => {
   try {
     const { reportId } = req.params;
@@ -196,6 +199,7 @@ export const getReportById = async (req, res) => {
   }
 };
 
+// get all reports
 export const getAllReports = async (req, res) => {
   try {
     const { status, type, search } = req.query;
@@ -237,6 +241,7 @@ export const getAllReports = async (req, res) => {
   }
 };
 
+// update report status
 export const updateReportStatus = async (req, res) => {
   try {
     const { reportId } = req.params;
@@ -280,6 +285,7 @@ export const updateReportStatus = async (req, res) => {
   }
 };
 
+// reply to report
 export const replyToReport = async (req, res) => {
   try {
     const { reportId } = req.params;

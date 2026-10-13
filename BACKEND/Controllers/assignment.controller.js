@@ -3,6 +3,7 @@ import Assignment from "../Models/Assignment.model.js";
 import Course from "../Models/Course.model.js";
 import uploadToCloudinary from "../Utils/uploadToCloudinary.js";
 
+// assignment creating
 export const createAssignment = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -144,6 +145,7 @@ export const createAssignment = async (req, res) => {
   }
 };
 
+// get assignments for course
 export const getCourseAssignments = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -211,6 +213,7 @@ export const getCourseAssignments = async (req, res) => {
   }
 };
 
+// get assignment by id
 export const getAssignmentById = async (req, res) => {
   try {
     const { assignmentId } = req.params;
@@ -286,6 +289,7 @@ export const getAssignmentById = async (req, res) => {
   }
 };
 
+// assignment editing
 export const updateAssignment = async (req, res) => {
   try {
     const { assignmentId } = req.params;
@@ -448,6 +452,7 @@ export const updateAssignment = async (req, res) => {
   }
 };
 
+// publish or unpublish assignment
 export const publishAssignment = async (req, res) => {
   try {
     const { assignmentId } = req.params;
@@ -520,6 +525,7 @@ export const publishAssignment = async (req, res) => {
   }
 };
 
+// assignment deleting
 export const deleteAssignment = async (req, res) => {
   try {
     const { assignmentId } = req.params;

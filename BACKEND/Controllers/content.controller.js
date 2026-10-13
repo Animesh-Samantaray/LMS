@@ -20,6 +20,7 @@ const isAuthorized = async (courseId, req) => {
 // UNITS
 // ==============================
 
+// create unit
 export const createUnit = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -50,6 +51,7 @@ export const createUnit = async (req, res) => {
   }
 };
 
+// get course units
 export const getCourseUnits = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -71,6 +73,7 @@ export const getCourseUnits = async (req, res) => {
   }
 };
 
+// update unit
 export const updateUnit = async (req, res) => {
   try {
     const { unitId } = req.params;
@@ -94,6 +97,7 @@ export const updateUnit = async (req, res) => {
   }
 };
 
+// delete unit
 export const deleteUnit = async (req, res) => {
   try {
     const { unitId } = req.params;
@@ -115,6 +119,7 @@ export const deleteUnit = async (req, res) => {
   }
 };
 
+// reorder units
 export const reorderUnits = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -144,6 +149,7 @@ export const reorderUnits = async (req, res) => {
 // LESSONS
 // ==============================
 
+// create lesson
 export const createLesson = async (req, res) => {
   try {
     const { unitId } = req.params;
@@ -181,6 +187,7 @@ export const createLesson = async (req, res) => {
   }
 };
 
+// get unit lessons
 export const getUnitLessons = async (req, res) => {
   try {
     const { courseId, unitId } = req.params;
@@ -208,6 +215,7 @@ export const getUnitLessons = async (req, res) => {
   }
 };
 
+// update lesson
 export const updateLesson = async (req, res) => {
   try {
     const { lessonId } = req.params;
@@ -239,6 +247,7 @@ export const updateLesson = async (req, res) => {
   }
 };
 
+// delete lesson
 export const deleteLesson = async (req, res) => {
   try {
     const { lessonId } = req.params;
@@ -261,6 +270,7 @@ export const deleteLesson = async (req, res) => {
   }
 };
 
+// reorder lessons
 export const reorderLessons = async (req, res) => {
   try {
     const { unitId } = req.params;

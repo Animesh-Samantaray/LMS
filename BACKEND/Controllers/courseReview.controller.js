@@ -3,6 +3,7 @@ import CourseReview from "../Models/CourseReview.model.js";
 import Course from "../Models/Course.model.js";
 
 
+// create review
 export const createReview = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -74,6 +75,7 @@ if (!isEnrolled) {
   }
 };
 
+// get course reviews
 export const getCourseReviews = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -117,6 +119,7 @@ export const getCourseReviews = async (req, res) => {
   }
 };
 
+// get course review summary
 export const getCourseReviewSummary = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -190,6 +193,7 @@ export const getCourseReviewSummary = async (req, res) => {
   }
 };
 
+// get my course review
 export const getMyCourseReview = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -212,6 +216,7 @@ export const getMyCourseReview = async (req, res) => {
   }
 };
 
+// update review
 export const updateReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
@@ -260,6 +265,7 @@ export const updateReview = async (req, res) => {
   }
 };
 
+// delete review
 export const deleteReview = async (req, res) => {
   try {
     const { reviewId } = req.params;

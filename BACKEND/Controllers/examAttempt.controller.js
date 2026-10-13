@@ -90,6 +90,7 @@ const buildLeaderboardData = async (examId) => {
   }));
 };
 
+// start exam attempt
 export const startExamAttempt = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -275,6 +276,7 @@ export const startExamAttempt = async (req, res) => {
   }
 };
 
+// get active attempt
 export const getActiveAttempt = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -342,6 +344,7 @@ export const getActiveAttempt = async (req, res) => {
   }
 };
 
+// save exam answers
 export const saveExamAnswers = async (req, res) => {
   try {
     const { attemptId } = req.params;
@@ -460,6 +463,7 @@ export const saveExamAnswers = async (req, res) => {
   }
 };
 
+// submit exam attempt
 export const submitExam = async (req, res) => {
   try {
     const { attemptId } = req.params;
@@ -669,6 +673,7 @@ export const submitExam = async (req, res) => {
   }
 };
 
+// get exam result
 export const getExamResult = async (req, res) => {
   try {
     const { attemptId } = req.params;
@@ -755,6 +760,7 @@ export const getExamResult = async (req, res) => {
   }
 };
 
+// get exam leaderboard ranking
 export const getExamLeaderboard = async (req, res) => {
   try {
     const { examId } = req.params;

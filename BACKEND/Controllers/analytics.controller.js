@@ -25,6 +25,7 @@ const parseDateRange = (rangeQuery) => {
   return startDate;
 };
 
+// get student dashboard analytics
 export const getStudentDashboardAnalytics = async (req, res) => {
   try {
     const studentId = req.user._id || req.user.id;
@@ -363,6 +364,7 @@ export const getStudentDashboardAnalytics = async (req, res) => {
   }
 };
 
+// get instructor dashboard analytics
 export const getInstructorDashboardAnalytics = async (req, res) => {
   try {
     const instructorId = req.user._id || req.user.id;
@@ -668,6 +670,7 @@ export const getInstructorDashboardAnalytics = async (req, res) => {
   }
 };
 
+// get course detailed analytics
 export const getCourseDetailedAnalytics = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -967,6 +970,7 @@ export const getCourseDetailedAnalytics = async (req, res) => {
   }
 };
 
+// get student detailed analytics
 export const getStudentDetailedAnalytics = async (req, res) => {
   try {
     let targetStudentId = req.params.studentId;
@@ -1296,6 +1300,7 @@ export const getStudentDetailedAnalytics = async (req, res) => {
 
 
 
+// get admin dashboard analytics
 export const getAdminDashboardAnalytics = async (req, res) => {
   try {
     const rangeQuery = req.query.range || "30d";
