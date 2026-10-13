@@ -3,6 +3,7 @@ import Course from "../Models/Course.model.js";
 import Discussion from "../Models/Discussion.model.js";
 import User from "../Models/User.model.js";
 
+// create new course
 export const createCourse = async (req, res) => {
   try {
     const { title, description = "", thumbnail = "", category } = req.body;
@@ -59,6 +60,7 @@ export const createCourse = async (req, res) => {
   }
 };
 
+// get all published courses
 export const getAllCourses = async (req, res) => {
   try {
     const { search, category, status, sort } = req.query;
@@ -109,6 +111,7 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
+// get course details by id
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -146,6 +149,7 @@ export const getCourseById = async (req, res) => {
   }
 };
 
+// get my courses
 export const getMyCourses = async (req, res) => {
   try {
     const { search, category, status } = req.query;
@@ -183,6 +187,7 @@ export const getMyCourses = async (req, res) => {
   }
 };
 
+// edit course details
 export const updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -268,6 +273,7 @@ export const updateCourse = async (req, res) => {
   }
 };
 
+// delete course
 export const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -315,6 +321,7 @@ export const deleteCourse = async (req, res) => {
   }
 };
 
+// publish course
 export const publishCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -370,6 +377,7 @@ export const publishCourse = async (req, res) => {
   }
 };
 
+// enroll student in course
 export const enrollInCourse = async (req, res) => {
   try {
     const { id } = req.params;
@@ -445,6 +453,7 @@ export const enrollInCourse = async (req, res) => {
   }
 };
 
+// get student enrolled courses
 export const getStudentEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;

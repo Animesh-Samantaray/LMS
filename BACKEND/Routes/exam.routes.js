@@ -15,24 +15,28 @@ import upload from "../Middlewares/upload.middleware.js";
 
 const router = express.Router();
 
+// get course exams
 router.get(
   "/course/:courseId",
   authMiddleware,
   getCourseExams
 );
 
+// get my exams
 router.get(
   "/student/my-exams",
   authMiddleware,
   getMyExams
 );
 
+// get exam by id
 router.get(
   "/:examId",
   authMiddleware,
   getExamById
 );
 
+// create new exam
 router.post(
   "/course/:courseId",
   authMiddleware,
@@ -40,6 +44,7 @@ router.post(
   createExam
 );
 
+// edit exam details
 router.put(
   "/:examId",
   authMiddleware,
@@ -47,6 +52,7 @@ router.put(
   updateExam
 );
 
+// publish exam
 router.patch(
   "/:examId/publish",
   authMiddleware,
@@ -54,12 +60,14 @@ router.patch(
   publishExam
 );
 
+// delete exam
 router.delete(
   "/:examId",
   authMiddleware,
   authorizeRoles("Instructor", "Admin"),
   deleteExam
 );
+// generate exam questions
 router.post(
   "/:examId/ai-generate-questions",
   authMiddleware,

@@ -3,6 +3,7 @@ import Assignment from "../Models/Assignment.model.js";
 import Course from "../Models/Course.model.js";
 import uploadToCloudinary from "../Utils/uploadToCloudinary.js";
 
+// student assignment submission
 export const submitAssignment = async (req, res) => {
   try {
     const studentId = req.user._id;
@@ -81,6 +82,7 @@ export const submitAssignment = async (req, res) => {
   }
 };
 
+// get my assignment submission
 export const getMySubmission = async (req, res) => {
   try {
     const studentId = req.user._id;
@@ -115,6 +117,7 @@ export const getMySubmission = async (req, res) => {
   }
 };
 
+// get all submissions for assignment
 export const getAssignmentSubmissions = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -166,6 +169,7 @@ export const getAssignmentSubmissions = async (req, res) => {
   }
 };
 
+// grade and review submission
 export const evaluateSubmission = async (req, res) => {
   try {
     const userId = req.user._id;

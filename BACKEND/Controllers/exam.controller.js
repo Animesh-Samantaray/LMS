@@ -244,6 +244,7 @@ const validateGeneratedQuestions = (
   });
 };
 
+// create new exam
 export const createExam = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -344,6 +345,7 @@ export const createExam = async (req, res) => {
   }
 };
 
+// get course exams
 export const getCourseExams = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -450,6 +452,7 @@ export const getCourseExams = async (req, res) => {
   }
 };
 
+// get exam by id
 export const getExamById = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -548,6 +551,7 @@ export const getExamById = async (req, res) => {
   }
 };
 
+// get my exams
 export const getMyExams = async (req, res) => {
   try {
     const enrolledCourses = await Course.find({
@@ -583,6 +587,7 @@ export const getMyExams = async (req, res) => {
   }
 };
 
+// edit exam details
 export const updateExam = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -716,6 +721,7 @@ export const updateExam = async (req, res) => {
   }
 };
 
+// publish exam
 export const publishExam = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -812,6 +818,7 @@ export const publishExam = async (req, res) => {
   }
 };
 
+// delete exam
 export const deleteExam = async (req, res) => {
   try {
     const { examId } = req.params;
@@ -871,6 +878,7 @@ export const deleteExam = async (req, res) => {
   }
 };
 
+// generate exam questions
 export const generateExamQuestions = async (
   req,
   res

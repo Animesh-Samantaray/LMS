@@ -34,6 +34,7 @@ import {
   FileSpreadsheet,
   Presentation,
   Archive,
+  Award,
   X
 } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';

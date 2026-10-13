@@ -19,6 +19,7 @@ const findStudentProfile = async (id) => {
   );
 };
 
+// get student profile
 export const getStudentProfile = async (req, res) => {
   try {
     const profile = await findStudentProfile(req.user.id);
@@ -36,6 +37,7 @@ export const getStudentProfile = async (req, res) => {
   }
 };
 
+// update student profile
 export const updateStudentProfile = async (req, res) => {
   try {
     const profile = await StudentProfile.findOne({ user: req.user.id });
@@ -77,6 +79,7 @@ export const updateStudentProfile = async (req, res) => {
   }
 };
 
+// get all students
 export const getAllStudents = async (req, res) => {
   try {
     const profiles = await StudentProfile.find().populate(
@@ -89,6 +92,7 @@ export const getAllStudents = async (req, res) => {
   }
 };
 
+// get student by id
 export const getStudentById = async (req, res) => {
   try {
     const profile = await findStudentProfile(req.params.id);
@@ -102,6 +106,7 @@ export const getStudentById = async (req, res) => {
   }
 };
 
+// delete student profile
 export const deleteStudentProfile = async (req, res) => {
   try {
     const profile = await StudentProfile.findOneAndDelete({ user: req.user.id });
@@ -115,6 +120,7 @@ export const deleteStudentProfile = async (req, res) => {
   }
 };
 
+// upload student profile avatar
 export const uploadStudentProfileImage = async (req, res) => {
   try {
     if (!req.file) {

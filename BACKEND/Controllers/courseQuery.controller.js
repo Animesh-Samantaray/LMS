@@ -2,6 +2,7 @@ import CourseQuery from "../Models/CourseQuery.model.js";
 import Course from "../Models/Course.model.js";
 import sendMail from "../Utils/sendMail.js";
 
+// create query
 export const createQuery = async (req, res) => {
   try {
     const { courseId, subject, description } = req.body;
@@ -42,6 +43,7 @@ export const createQuery = async (req, res) => {
   }
 };
 
+// get my queries
 export const getMyQueries = async (req, res) => {
   try {
     const queries = await CourseQuery.find({
@@ -63,6 +65,7 @@ export const getMyQueries = async (req, res) => {
   }
 };
 
+// get course queries
 export const getCourseQueries = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId);
@@ -104,6 +107,7 @@ export const getCourseQueries = async (req, res) => {
   }
 };
 
+// get query by id
 export const getQueryById = async (req, res) => {
   try {
     const query = await CourseQuery.findById(req.params.queryId)
@@ -147,6 +151,7 @@ export const getQueryById = async (req, res) => {
   }
 };
 
+// reply to query
 export const replyToQuery = async (req, res) => {
   try {
     const { message } = req.body;
@@ -279,6 +284,7 @@ export const replyToQuery = async (req, res) => {
   }
 };
 
+// update query status
 export const updateQueryStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -330,6 +336,7 @@ export const updateQueryStatus = async (req, res) => {
   }
 };
 
+// get all queries
 export const getAllQueries = async (req, res) => {
   try {
     const queries = await CourseQuery.find()
@@ -350,6 +357,7 @@ export const getAllQueries = async (req, res) => {
   }
 };
 
+// get query stats
 export const getQueryStats = async (req, res) => {
   try {
     const total = await CourseQuery.countDocuments();

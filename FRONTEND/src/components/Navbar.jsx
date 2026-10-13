@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   GraduationCap,
   Menu,
   X,
   ArrowRight,
+  Moon,
+  Sun,
+  Sparkles,
+  Leaf,
+  Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import TwoFactorToggle from "./TwoFactorToggle";
 
 const Navbar = () => {
@@ -19,6 +25,27 @@ const Navbar = () => {
   const location = useLocation();
 
   const { user, setUser } = useAuth();
+  const { theme, setTheme } = useTheme();
+
+  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const themeDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target)) {
+        setThemeDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  const themeOptions = [
+    { id: "dark", label: "Dark", icon: Moon, desc: "Deep glassmorphism" },
+    { id: "light", label: "Light", icon: Sun, desc: "Crisp soft glass" },
+    { id: "cream", label: "Cream", icon: Sparkles, desc: "Warm pastel glass" },
+    { id: "eco", label: "Eco", icon: Leaf, desc: "MongoDB green & white" },
+  ];
 
   const isLoggedIn = Boolean(user?.role);
 
@@ -305,6 +332,63 @@ const Navbar = () => {
               </motion.button>
             </>
           )}
+
+    
+          <div className="relative ml-1" ref={themeDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+              className="flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white transition-all shadow-sm"
+              aria-label="Select theme"
+              title="Select theme"
+            >
+              {theme === "dark" ? (
+                <Moon size={16} className="text-indigo-400" />
+              ) : theme === "cream" ? (
+                <Sparkles size={16} className="text-amber-500" />
+              ) : theme === "eco" ? (
+                <Leaf size={16} className="text-emerald-500" />
+              ) : (
+                <Sun size={16} className="text-amber-500" />
+              )}
+            </button>
+
+            {themeDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-white/10 bg-slate-900/95 p-1.5 shadow-2xl backdrop-blur-xl z-50">
+                <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Theme Mode
+                </div>
+                {themeOptions.map((opt) => {
+                  const isSelected = theme === opt.id;
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setTheme(opt.id);
+                        setThemeDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium transition-colors ${
+                        isSelected
+                          ? "bg-white/10 text-white font-semibold"
+                          : "text-slate-300 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon size={15} className={opt.id === "eco" ? "text-emerald-500" : opt.id === "dark" ? "text-indigo-400" : "text-amber-500"} />
+                        <div className="text-left">
+                          <p className="leading-tight">{opt.label}</p>
+                          <p className="text-[9px] opacity-70">{opt.desc}</p>
+                        </div>
+                      </div>
+                      {isSelected && <Check size={14} className="shrink-0 text-emerald-500" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         
@@ -647,6 +731,37 @@ const Navbar = () => {
                   </motion.button>
                 </div>
               )}
+
+       
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
+                  Theme Mode
+                </div>
+                <div className="grid grid-cols-4 gap-1.5 p-1 bg-slate-900 rounded-xl border border-white/10">
+                  {themeOptions.map((opt) => {
+                    const isSelected = theme === opt.id;
+                    const Icon = opt.icon;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => {
+                          setTheme(opt.id);
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`py-2 px-1 rounded-lg text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all ${
+                          isSelected
+                            ? "bg-white/15 text-white shadow-sm"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <Icon size={14} className={opt.id === "eco" ? "text-emerald-500" : opt.id === "dark" ? "text-indigo-400" : "text-amber-500"} />
+                        <span className="text-[10px]">{opt.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

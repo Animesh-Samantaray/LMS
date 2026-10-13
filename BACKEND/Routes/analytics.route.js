@@ -12,6 +12,7 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
+// get student dashboard analytics
 router.get(
   "/student/dashboard",
   authMiddleware,
@@ -19,6 +20,7 @@ router.get(
   getStudentDashboardAnalytics
 );
 
+// get instructor dashboard analytics
 router.get(
   "/instructor/dashboard",
   authMiddleware,
@@ -26,6 +28,7 @@ router.get(
   getInstructorDashboardAnalytics
 );
 
+// get course detailed analytics
 router.get(
   "/course/:courseId",
   authMiddleware,
@@ -33,6 +36,7 @@ router.get(
   getCourseDetailedAnalytics
 );
 
+// get student detailed analytics
 router.get(
   "/student/:studentId",
   authMiddleware,
@@ -43,6 +47,7 @@ router.get(
 export default router;
 
 
+// get admin dashboard analytics
 router.get(
   "/admin",
   authMiddleware,

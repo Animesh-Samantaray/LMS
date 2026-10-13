@@ -75,6 +75,7 @@ const clearTwoFactorCookie = (res) => {
 
 
 
+// user registration
 export const register = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -277,9 +278,10 @@ export const register = async (req, res) => {
 
 
 
+// get logged in user profile
 export const getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = req.userDoc || (await User.findById(req.user._id));
 
     if (!user) {
       return res.status(404).json({
@@ -311,9 +313,10 @@ export const getCurrentUser = async (req, res) => {
 
 
 
+// check 2fa requirement
 export const checkTwoFactor = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = req.userDoc || (await User.findById(req.user._id));
 
     if (!user) {
       return res.status(404).json({
@@ -392,12 +395,16 @@ export const checkTwoFactor = async (req, res) => {
 
     await user.save();
 
-    await sendMail({
-  to: user.email,
-  subject: "LMS Platform - Login Verification Code",
-  html: loginOtpTemplate(otp),
-  text: `Your LMS login verification code is ${otp}. This OTP is valid for 10 minutes.`,
-});
+    try {
+      await sendMail({
+        to: user.email,
+        subject: "LMS Platform - Login Verification Code",
+        html: loginOtpTemplate(otp),
+        text: `Your LMS login verification code is ${otp}. This OTP is valid for 10 minutes.`,
+      });
+    } catch (mailError) {
+      console.error("[Check 2FA] Warning: sendMail error:", mailError.message);
+    }
 
     return res.status(200).json({
       success: true,
@@ -417,6 +424,7 @@ export const checkTwoFactor = async (req, res) => {
 };
 
 
+// verify 2fa otp code
 export const verifyTwoFactor = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -560,6 +568,7 @@ export const verifyTwoFactor = async (req, res) => {
 
 
 
+// resend 2fa otp code
 export const resendTwoFactor = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -640,6 +649,7 @@ export const resendTwoFactor = async (req, res) => {
 
 
 
+// enable 2fa
 export const enableTwoFactor = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -693,6 +703,7 @@ export const enableTwoFactor = async (req, res) => {
 
 
 
+// disable 2fa
 export const disableTwoFactor = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -741,6 +752,7 @@ export const disableTwoFactor = async (req, res) => {
 
 
 
+// logout user
 export const logout = async (req, res) => {
   try {
     clearTwoFactorCookie(res);

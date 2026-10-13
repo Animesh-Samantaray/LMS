@@ -110,7 +110,10 @@ const Signup = () => {
       console.log('[Signup:Email] Step 3: MongoDB registration succeeded. Calling refreshUser()...');
 
       setSuccessMsg('Account created successfully! Redirecting...');
-      await refreshUser();
+      const registeredUser = await refreshUser(credential.user, token);
+      if (registeredUser?.role) {
+        navigate(getDashboardPath(registeredUser.role), { replace: true });
+      }
     } catch (err) {
       console.error('[Signup:Email] Error:', err);
       setActionLoading(false);
@@ -151,7 +154,10 @@ const Signup = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log(`[Signup:${providerName}] Existing LMS account found | Role:`, meRes.data?.user?.role);
-        await refreshUser();
+        const existingUser = await refreshUser(credential.user, token);
+        if (existingUser?.role) {
+          navigate(getDashboardPath(existingUser.role), { replace: true });
+        }
       } catch (meErr) {
         const status = meErr?.status || meErr?.response?.status;
         if (status === 404) {
@@ -167,7 +173,10 @@ const Signup = () => {
             }
           );
           console.log(`[Signup:${providerName}] Registration completed. Refreshing LMS user...`);
-          await refreshUser();
+          const newUser = await refreshUser(credential.user, token);
+          if (newUser?.role) {
+            navigate(getDashboardPath(newUser.role), { replace: true });
+          }
         } else {
           throw meErr;
         }

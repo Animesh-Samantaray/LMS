@@ -15,6 +15,7 @@ const router = express.Router();
 
 // all
 router.get("/", getAllCategories);
+// get category by id
 router.get("/:id", getCategoryById);
 
 
@@ -28,6 +29,7 @@ router.post(
   createCategory
 );
 
+// update category
 router.put(
   "/:id",
   authMiddleware,
@@ -35,6 +37,7 @@ router.put(
   updateCategory
 );
 
+// delete category
 router.delete(
   "/:id",
   authMiddleware,

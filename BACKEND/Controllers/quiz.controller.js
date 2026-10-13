@@ -137,6 +137,7 @@ const validateGeneratedQuestions = (payload, expectedCount, expectedMarks) => {
   });
 };
 
+// generate quiz questions
 export const generateQuizQuestions = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -217,6 +218,7 @@ ${documentText}`;
   }
 };
 
+// create new quiz
 export const createQuiz = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -298,6 +300,7 @@ export const createQuiz = async (req, res) => {
   }
 };
 
+// get course quizzes
 export const getCourseQuizzes = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -394,6 +397,7 @@ export const getCourseQuizzes = async (req, res) => {
   }
 };
 
+// get quiz details by id
 export const getQuizById = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -497,6 +501,7 @@ export const getQuizById = async (req, res) => {
   }
 };
 
+// edit quiz details
 export const updateQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -596,6 +601,7 @@ export const updateQuiz = async (req, res) => {
   }
 };
 
+// publish quiz
 export const publishQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -675,6 +681,7 @@ export const publishQuiz = async (req, res) => {
   }
 };
 
+// delete quiz
 export const deleteQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -729,6 +736,7 @@ export const deleteQuiz = async (req, res) => {
     });
   }
 };
+// evaluate quiz
 export const evaluateQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
@@ -813,6 +821,7 @@ export const evaluateQuiz = async (req, res) => {
   }
 };
 
+// get my quizzes
 export const getMyQuizzes = async (req, res) => {
   try {
     const userId = req.user._id.toString();

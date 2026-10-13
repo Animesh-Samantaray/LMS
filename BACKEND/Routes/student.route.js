@@ -9,11 +9,17 @@ import {
 
 const router = express.Router();
 
+// get student profile
 router.get("/profile", authMiddleware, authorizeRoles("Student", "Admin"), getStudentProfile);
+// update student profile
 router.put("/profile", authMiddleware, authorizeRoles("Student", "Admin"), updateStudentProfile);
+// delete student profile
 router.delete("/profile", authMiddleware, authorizeRoles("Student", "Admin"), deleteStudentProfile);
+// upload student profile avatar
 router.post("/profile/image", authMiddleware, authorizeRoles("Student", "Admin"), profileUpload.single("profileImage"), uploadStudentProfileImage);
+// get all students
 router.get("/", authMiddleware, authorizeRoles("Admin"), getAllStudents);
+// get student by id
 router.get("/:id", authMiddleware, authorizeRoles("Admin"), getStudentById);
 
 export default router;

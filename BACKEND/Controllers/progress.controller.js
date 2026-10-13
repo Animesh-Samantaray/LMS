@@ -2,6 +2,7 @@ import Progress from "../Models/Progress.model.js";
 import Unit from "../Models/Unit.model.js";
 import Lesson from "../Models/Lesson.model.js";
 
+// get course progress
 export const getCourseProgress = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;
@@ -94,6 +95,7 @@ export const getCourseProgress = async (req, res) => {
   }
 };
 
+// complete lesson
 export const completeLesson = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;

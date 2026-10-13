@@ -3,6 +3,7 @@ import uploadProfileImage from "../Utils/uploadProfileImage.js";
 
 const userFields = "name email profileImage role accountStatus authProvider createdAt";
 
+// get admin profile
 export const getAdminProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select(userFields);
@@ -14,6 +15,7 @@ export const getAdminProfile = async (req, res) => {
   }
 };
 
+// update admin profile
 export const updateAdminProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -37,6 +39,7 @@ export const updateAdminProfile = async (req, res) => {
   }
 };
 
+// get all users
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select(userFields);
@@ -47,6 +50,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+// get user by id
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select(userFields);
@@ -58,6 +62,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
+// update user
 export const updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -79,6 +84,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
+// delete user
 export const deleteUser = async (req, res) => {
   try {
     if (req.params.id === req.user.id) {
@@ -94,6 +100,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+// upload admin profile image
 export const uploadAdminProfileImage = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: "Profile image is required" });

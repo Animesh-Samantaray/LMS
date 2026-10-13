@@ -54,12 +54,7 @@ import AdminChatbotLogs from "../pages/dashboards/admin/AdminChatbotLogs";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
-
-const LoadingScreen = () => (
-  <div className="flex h-screen items-center justify-center bg-slate-50">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-  </div>
-);
+import LoadingScreen from "../components/LoadingScreen";
 
 
 

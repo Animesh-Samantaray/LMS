@@ -1,6 +1,7 @@
 import Notification from '../Models/Notification.model.js';
 import PushSubscription from '../Models/PushSubscription.model.js';
 
+// get notifications
 export const getNotifications = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -31,6 +32,7 @@ export const getNotifications = async (req, res) => {
   }
 };
 
+// get unread count
 export const getUnreadCount = async (req, res) => {
   try {
     const count = await Notification.countDocuments({ recipient: req.user._id, isRead: false });
@@ -40,6 +42,7 @@ export const getUnreadCount = async (req, res) => {
   }
 };
 
+// mark as read
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -57,6 +60,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
+// mark all as read
 export const markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany(
@@ -69,6 +73,7 @@ export const markAllAsRead = async (req, res) => {
   }
 };
 
+// delete notification
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
@@ -87,6 +92,7 @@ export const getVapidPublicKey = (req, res) => {
   res.json({ publicKey: process.env.VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuB-5L6jL7QxZ_T5G8U2T8ZZ4s' });
 };
 
+// subscribe push
 export const subscribePush = async (req, res) => {
   try {
     const subscription = req.body;
@@ -113,6 +119,7 @@ export const subscribePush = async (req, res) => {
   }
 };
 
+// unsubscribe push
 export const unsubscribePush = async (req, res) => {
   try {
     const { endpoint } = req.body;

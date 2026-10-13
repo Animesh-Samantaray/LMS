@@ -27,6 +27,7 @@ const checkDiscussionAccess = async (discussionId, user) => {
   };
 };
 
+// send chat message
 export const sendMessage = async (req, res) => {
   try {
     const { discussionId } = req.params;
@@ -142,6 +143,7 @@ export const sendMessage = async (req, res) => {
   }
 };
 
+// upload discussion file
 export const uploadDiscussionFile = async (req, res) => {
   try {
     const { discussionId } = req.params;
@@ -190,6 +192,7 @@ export const uploadDiscussionFile = async (req, res) => {
   }
 };
 
+// get discussion messages
 export const getDiscussionMessages = async (req, res) => {
   try {
     const { discussionId } = req.params;
@@ -231,6 +234,7 @@ export const getDiscussionMessages = async (req, res) => {
   }
 };
 
+// clear discussion messages
 export const clearDiscussionMessages = async (req, res) => {
   try {
     const { discussionId } = req.params;
@@ -282,6 +286,7 @@ export const clearDiscussionMessages = async (req, res) => {
 };
 
 
+// toggle reaction
 export const toggleReaction = async (req, res) => {
   try {
     const { discussionId, messageId } = req.params;
@@ -338,6 +343,7 @@ export const toggleReaction = async (req, res) => {
   }
 };
 
+// delete message
 export const deleteMessage = async (req, res) => {
   try {
     const { discussionId, messageId } = req.params;

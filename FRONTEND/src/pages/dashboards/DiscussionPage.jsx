@@ -437,7 +437,7 @@ const DiscussionPage = () => {
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-repeat"
               style={{
                 backgroundImage: `url(${
-                  theme === 'dark'
+                  theme === 'dark' || theme === 'eco'
                     ? '/chat-wallpaper-dark.png'
                     : '/chat-wallpaper-light.png'
                 })`,

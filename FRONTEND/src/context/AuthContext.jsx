@@ -18,33 +18,12 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [firebaseUser, setFirebaseUser] = useState(null);
-
   const [lmsProfileMissing, setLmsProfileMissing] = useState(false);
-
   const [loading, setLoading] = useState(true);
-
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
-
   const [twoFactorVerified, setTwoFactorVerified] = useState(false);
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const loadAuthState = useCallback(async (fbUser) => {
+  const loadAuthState = useCallback(async (fbUser, explicitToken = null) => {
     if (!fbUser) {
       setUser(null);
       setFirebaseUser(null);
@@ -52,7 +31,6 @@ export const AuthProvider = ({ children }) => {
       setTwoFactorRequired(false);
       setTwoFactorVerified(false);
       setLoading(false);
-
       return null;
     }
 
@@ -64,58 +42,12 @@ export const AuthProvider = ({ children }) => {
         `[AuthContext] Firebase user detected | UID: ${fbUser.uid} | Email: ${fbUser.email}`
       );
 
-      
+      const token = explicitToken || (await fbUser.getIdToken());
+      console.log("[AuthContext] Fetching LMS user profile...");
 
-
-
-      console.log("[AuthContext] Checking 2FA...");
-
-      const twoFactorResponse = await api.post(
-        "/api/auth/2fa/check"
-      );
-
-      const isTwoFactorRequired =
-        twoFactorResponse.data?.twoFactorRequired === true;
-
-      console.log(
-        "[AuthContext] 2FA required:",
-        isTwoFactorRequired
-      );
-
-      if (isTwoFactorRequired) {
-        
-
-
-
-        setUser(null);
-        setFirebaseUser(fbUser);
-        setLmsProfileMissing(false);
-        setTwoFactorRequired(true);
-        setTwoFactorVerified(false);
-        setLoading(false);
-
-        return null;
-      }
-
-      
-
-
-      setTwoFactorRequired(false);
-
-      
-
-
-
-
-      setTwoFactorVerified(true);
-
-      
-
-
-
-      console.log("[AuthContext] Fetching LMS user...");
-
-      const response = await api.get("/api/auth/me");
+      const response = await api.get("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const dbUser = response.data?.user || response.data;
 
@@ -133,14 +65,8 @@ export const AuthProvider = ({ children }) => {
       setUser(mergedUser);
       setFirebaseUser(fbUser);
       setLmsProfileMissing(false);
-
-      
-
-
-
-      if (!dbUser.twoFactorEnabled) {
-        setTwoFactorVerified(false);
-      }
+      setTwoFactorRequired(false);
+      setTwoFactorVerified(true);
 
       console.log(
         "[AuthContext] LMS user loaded | Role:",
@@ -162,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         "Unknown error";
 
       console.log(
-        "[AuthContext] Authentication flow failed",
+        "[AuthContext] Authentication flow status:",
         {
           status,
           code,
@@ -170,42 +96,39 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      
-
-
-
       if (status === 404) {
         setUser(null);
         setFirebaseUser(fbUser);
         setLmsProfileMissing(true);
         setTwoFactorRequired(false);
         setTwoFactorVerified(false);
-
         return null;
       }
-
-      
-
-
-
-
-
 
       if (
         status === 403 &&
         code === "TWO_FACTOR_REQUIRED"
       ) {
+        try {
+          const token = explicitToken || (await fbUser.getIdToken());
+          await api.post(
+            "/api/auth/2fa/check",
+            {},
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+        } catch (otpErr) {
+          console.warn("[AuthContext] 2FA check trigger error:", otpErr?.message);
+        }
+
         setUser(null);
         setFirebaseUser(fbUser);
         setLmsProfileMissing(false);
         setTwoFactorRequired(true);
         setTwoFactorVerified(false);
-
         return null;
       }
-
-      
-
 
       if (status === 403) {
         setUser({
@@ -219,33 +142,19 @@ export const AuthProvider = ({ children }) => {
         setLmsProfileMissing(false);
         setTwoFactorRequired(false);
         setTwoFactorVerified(false);
-
         return null;
       }
-
-      
-
 
       setUser(null);
       setFirebaseUser(fbUser);
       setLmsProfileMissing(false);
       setTwoFactorRequired(false);
       setTwoFactorVerified(false);
-
       return null;
     } finally {
       setLoading(false);
     }
   }, []);
-
-  
-
-
-
-
-
-
-
 
   useEffect(() => {
     let mounted = true;
@@ -270,39 +179,27 @@ export const AuthProvider = ({ children }) => {
     };
   }, [loadAuthState]);
 
-  
+  const refreshUser = useCallback(
+    async (targetFbUser = null, explicitToken = null) => {
+      const currentFirebaseUser = targetFbUser || auth.currentUser;
 
+      if (!currentFirebaseUser) {
+        setUser(null);
+        setFirebaseUser(null);
+        setLmsProfileMissing(false);
+        setTwoFactorRequired(false);
+        setTwoFactorVerified(false);
+        setLoading(false);
+        return null;
+      }
 
-
-
-  const refreshUser = useCallback(async () => {
-    const currentFirebaseUser = auth.currentUser;
-
-    if (!currentFirebaseUser) {
-      setUser(null);
-      setFirebaseUser(null);
-      setLmsProfileMissing(false);
-      setTwoFactorRequired(false);
-      setTwoFactorVerified(false);
-      setLoading(false);
-
-      return null;
-    }
-
-    return await loadAuthState(currentFirebaseUser);
-  }, [loadAuthState]);
-
-  
-
-
-
-
+      return await loadAuthState(currentFirebaseUser, explicitToken);
+    },
+    [loadAuthState]
+  );
 
   const logout = useCallback(async () => {
     try {
-      
-
-
       try {
         await api.post("/api/auth/logout");
       } catch (error) {
@@ -311,9 +208,6 @@ export const AuthProvider = ({ children }) => {
           error?.message
         );
       }
-
-      
-
 
       await signOut(auth);
 
@@ -327,7 +221,6 @@ export const AuthProvider = ({ children }) => {
         "[AuthContext] Logout failed:",
         error
       );
-
       throw error;
     }
   }, []);
@@ -344,22 +237,15 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
-
         firebaseUser,
-
         loading,
-
         lmsProfileMissing,
-
         isAuthenticated,
-
+        loadAuthState,
         refreshUser,
-
         logout,
-
         twoFactorRequired,
         setTwoFactorRequired,
-
         twoFactorVerified,
         setTwoFactorVerified,
       }}
