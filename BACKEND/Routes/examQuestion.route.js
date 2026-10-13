@@ -13,18 +13,21 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
+// get exam questions
 router.get(
   "/exam/:examId",
   authMiddleware,
   getExamQuestions
 );
 
+// get question by id
 router.get(
   "/:questionId",
   authMiddleware,
   getQuestionById
 );
 
+// create question
 router.post(
   "/exam/:examId",
   authMiddleware,
@@ -32,6 +35,7 @@ router.post(
   createQuestion
 );
 
+// update question
 router.put(
   "/:questionId",
   authMiddleware,
@@ -39,6 +43,7 @@ router.put(
   updateQuestion
 );
 
+// delete question
 router.delete(
   "/:questionId",
   authMiddleware,

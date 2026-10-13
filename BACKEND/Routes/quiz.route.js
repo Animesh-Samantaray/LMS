@@ -32,24 +32,28 @@ const uploadDocument = (req, res, next) => {
   });
 };
 
+// get course quizzes
 router.get(
   "/course/:courseId",
   authMiddleware,
   getCourseQuizzes
 );
 
+// get my quizzes
 router.get(
   "/student/my-quizzes",
   authMiddleware,
   getMyQuizzes
 );
 
+// get quiz details by id
 router.get(
   "/:quizId",
   authMiddleware,
   getQuizById
 );
 
+// create new quiz
 router.post(
   "/course/:courseId",
   authMiddleware,
@@ -57,6 +61,7 @@ router.post(
   createQuiz
 );
 
+// edit quiz details
 router.put(
   "/:quizId",
   authMiddleware,
@@ -64,6 +69,7 @@ router.put(
   updateQuiz
 );
 
+// generate quiz questions
 router.post(
   "/:quizId/ai-generate-questions",
   authMiddleware,
@@ -72,6 +78,7 @@ router.post(
   generateQuizQuestions
 );
 
+// publish quiz
 router.patch(
   "/:quizId/publish",
   authMiddleware,
@@ -79,6 +86,7 @@ router.patch(
   publishQuiz
 );
 
+// delete quiz
 router.delete(
   "/:quizId",
   authMiddleware,
@@ -86,6 +94,7 @@ router.delete(
   deleteQuiz
 );
 
+// evaluate quiz
 router.post(
   "/:quizId/evaluate",
   authMiddleware,

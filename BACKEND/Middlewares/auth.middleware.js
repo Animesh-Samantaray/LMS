@@ -62,6 +62,7 @@ const authMiddleware = async (req, res, next) => {
       twoFactorEnabled: user.twoFactorEnabled,
     };
 
+    req.userDoc = user;
     req.firebaseAuthTime = decodedToken.auth_time;
 
     next();
@@ -179,6 +180,7 @@ export const optionalAuth = async (req, res, next) => {
         twoFactorEnabled: user.twoFactorEnabled,
       };
 
+      req.userDoc = user;
       req.firebaseAuthTime = decodedToken.auth_time;
     }
   } catch (error) {

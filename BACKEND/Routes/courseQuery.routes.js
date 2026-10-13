@@ -14,6 +14,7 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
+// create query
 router.post(
   "/",
   authMiddleware,
@@ -21,6 +22,7 @@ router.post(
   createQuery
 );
 
+// get my queries
 router.get(
   "/my-queries",
   authMiddleware,
@@ -28,6 +30,7 @@ router.get(
   getMyQueries
 );
 
+// get course queries
 router.get(
   "/course/:courseId",
   authMiddleware,
@@ -35,6 +38,7 @@ router.get(
   getCourseQueries
 );
 
+// get all queries
 router.get(
   "/admin/all",
   authMiddleware,
@@ -42,6 +46,7 @@ router.get(
   getAllQueries
 );
 
+// get query stats
 router.get(
   "/admin/stats",
   authMiddleware,
@@ -49,6 +54,7 @@ router.get(
   getQueryStats
 );
 
+// get query by id
 router.get(
   "/:queryId",
   authMiddleware,
@@ -56,6 +62,7 @@ router.get(
   getQueryById
 );
 
+// reply to query
 router.post(
   "/:queryId/replies",
   authMiddleware,
@@ -63,6 +70,7 @@ router.post(
   replyToQuery
 );
 
+// update query status
 router.patch(
   "/:queryId/status",
   authMiddleware,

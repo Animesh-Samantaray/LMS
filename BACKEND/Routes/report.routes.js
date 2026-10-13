@@ -14,14 +14,17 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 import upload from "../Middlewares/upload.middleware.js";
 const router = express.Router();
 
+// create report
 router.post("/", authMiddleware, upload.single("file"), createReport);
 
+// get my reports
 router.get(
   "/my",
   authMiddleware,
   getMyReports
 );
 
+// get all reports
 router.get(
   "/admin/all",
   authMiddleware,
@@ -29,12 +32,14 @@ router.get(
   getAllReports
 );
 
+// get report by id
 router.get(
   "/:reportId",
   authMiddleware,
   getReportById
 );
 
+// update report status
 router.patch(
   "/:reportId/status",
   authMiddleware,
@@ -42,6 +47,7 @@ router.patch(
   updateReportStatus
 );
 
+// reply to report
 router.patch(
   "/:reportId/reply",
   authMiddleware,

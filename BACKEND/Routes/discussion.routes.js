@@ -11,14 +11,17 @@ import authMiddleware from "../Middlewares/auth.middleware.js";
 
 const router = express.Router();
 
+// get my discussions
 router.get("/my", authMiddleware, getMyDiscussions);
 
+// get course discussion
 router.get(
   "/course/:courseId",
   authMiddleware,
   getCourseDiscussion
 );
 
+// delete discussion
 router.delete(
   "/:discussionId",
   authMiddleware,

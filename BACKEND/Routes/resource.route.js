@@ -40,11 +40,13 @@ const handleUpload = (req, res, next) => {
   });
 };
 
+// get lesson resources
 router.get(
   "/lesson/:lessonId",
   getLessonResources
 );
 
+// create resource
 router.post(
   "/lesson/:lessonId",
   authMiddleware,
@@ -53,6 +55,7 @@ router.post(
   createResource
 );
 
+// reorder resources
 router.patch(
   "/lesson/:lessonId/reorder",
   authMiddleware,
@@ -60,11 +63,13 @@ router.patch(
   reorderResources
 );
 
+// get resource by id
 router.get(
   "/:resourceId",
   getResourceById
 );
 
+// update resource
 router.put(
   "/:resourceId",
   authMiddleware,
@@ -73,6 +78,7 @@ router.put(
   updateResource
 );
 
+// delete resource
 router.delete(
   "/:resourceId",
   authMiddleware,

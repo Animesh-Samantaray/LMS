@@ -1,4 +1,4 @@
-import Course from "../Models/course.model.js";
+import Course from "../Models/Course.model.js";
 
 const courseAccessMiddleware = async (req, res, next) => {
   try {

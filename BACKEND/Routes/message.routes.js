@@ -39,8 +39,10 @@ const handleUpload = (req, res, next) => {
   });
 };
 
+// send chat message
 router.post("/discussion/:discussionId", authMiddleware, sendMessage);
 
+// upload discussion file
 router.post(
   "/discussion/:discussionId/upload",
   authMiddleware,
@@ -48,15 +50,19 @@ router.post(
   uploadDiscussionFile
 );
 
+// clear discussion messages
 router.delete(
   "/discussion/:discussionId/clear",
   authMiddleware,
   clearDiscussionMessages
 );
 
+// get discussion messages
 router.get("/discussion/:discussionId", authMiddleware, getDiscussionMessages);
 
 export default router;
+// toggle reaction
 router.post('/discussion/:discussionId/message/:messageId/react', authMiddleware, toggleReaction);
 
+// delete message
 router.delete('/discussion/:discussionId/message/:messageId', authMiddleware, deleteMessage);

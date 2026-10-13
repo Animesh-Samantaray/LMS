@@ -12,6 +12,7 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
+// start exam attempt
 router.post(
   "/exam/:examId/start",
   authMiddleware,
@@ -19,6 +20,7 @@ router.post(
   startExamAttempt
 );
 
+// get active attempt
 router.get(
   "/exam/:examId/active",
   authMiddleware,
@@ -26,6 +28,7 @@ router.get(
   getActiveAttempt
 );
 
+// save exam answers
 router.put(
   "/:attemptId/answers",
   authMiddleware,
@@ -33,6 +36,7 @@ router.put(
   saveExamAnswers
 );
 
+// submit exam attempt
 router.post(
   "/:attemptId/submit",
   authMiddleware,
@@ -40,12 +44,14 @@ router.post(
   submitExam
 );
 
+// get exam result
 router.get(
   "/:attemptId/result",
   authMiddleware,
   getExamResult
 );
 
+// get exam leaderboard ranking
 router.get(
   "/exam/:examId/leaderboard",
   authMiddleware,

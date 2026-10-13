@@ -11,9 +11,12 @@ import authMiddleware from "../Middlewares/auth.middleware.js";
 import authorizeRoles from "../Middlewares/role.middleware.js";
 const router = express.Router();
 
+// get course reviews
 router.get("/course/:courseId", getCourseReviews);
+// get course review summary
 router.get("/course/:courseId/summary", getCourseReviewSummary);
 
+// get my course review
 router.get(
   "/course/:courseId/mine",
   authMiddleware,
@@ -21,6 +24,7 @@ router.get(
   getMyCourseReview
 );
 
+// create review
 router.post(
   "/course/:courseId",
   authMiddleware,
@@ -28,6 +32,7 @@ router.post(
   createReview
 );
 
+// update review
 router.put(
   "/:reviewId",
   authMiddleware,
@@ -35,6 +40,7 @@ router.put(
   updateReview
 );
 
+// delete review
 router.delete(
   "/:reviewId",
   authMiddleware,

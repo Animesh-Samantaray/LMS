@@ -19,6 +19,7 @@ import courseAccessMiddleware from "../Middlewares/courseAccess.middleware.js";
 
 const router = express.Router();
 
+// get course units
 router.get(
   "/courses/:courseId/units",
   authMiddleware,
@@ -26,6 +27,7 @@ router.get(
   getCourseUnits
 );
 
+// get unit lessons
 router.get(
   "/courses/:courseId/units/:unitId/lessons",
   authMiddleware,
@@ -33,6 +35,7 @@ router.get(
   getUnitLessons
 );
 
+// create unit
 router.post(
   "/courses/:courseId/units",
   authMiddleware,
@@ -40,6 +43,7 @@ router.post(
   createUnit
 );
 
+// reorder units
 router.patch(
   "/courses/:courseId/units/reorder",
   authMiddleware,
@@ -47,6 +51,7 @@ router.patch(
   reorderUnits
 );
 
+// update unit
 router.put(
   "/units/:unitId",
   authMiddleware,
@@ -54,6 +59,7 @@ router.put(
   updateUnit
 );
 
+// delete unit
 router.delete(
   "/units/:unitId",
   authMiddleware,
@@ -61,6 +67,7 @@ router.delete(
   deleteUnit
 );
 
+// create lesson
 router.post(
   "/units/:unitId/lessons",
   authMiddleware,
@@ -68,6 +75,7 @@ router.post(
   createLesson
 );
 
+// reorder lessons
 router.patch(
   "/units/:unitId/lessons/reorder",
   authMiddleware,
@@ -75,6 +83,7 @@ router.patch(
   reorderLessons
 );
 
+// update lesson
 router.put(
   "/lessons/:lessonId",
   authMiddleware,
@@ -82,6 +91,7 @@ router.put(
   updateLesson
 );
 
+// delete lesson
 router.delete(
   "/lessons/:lessonId",
   authMiddleware,

@@ -22,10 +22,13 @@ import authorizeRoles from "../Middlewares/role.middleware.js";
 
 const router = express.Router();
 
+// get assignments for course
 router.get("/course/:courseId", authMiddleware, getCourseAssignments);
 
+// get assignment by id
 router.get("/:assignmentId", authMiddleware, getAssignmentById);
 
+// assignment creating
 router.post(
   "/course/:courseId",
   authMiddleware,
@@ -34,6 +37,7 @@ router.post(
   createAssignment
 );
 
+// assignment editing
 router.put(
   "/:assignmentId",
   authMiddleware,
@@ -42,6 +46,7 @@ router.put(
   updateAssignment
 );
 
+// publish or unpublish assignment
 router.patch(
   "/:assignmentId/publish",
   authMiddleware,
@@ -49,6 +54,7 @@ router.patch(
   publishAssignment
 );
 
+// assignment deleting
 router.delete(
   "/:assignmentId",
   authMiddleware,
@@ -56,6 +62,7 @@ router.delete(
   deleteAssignment
 );
 
+// student assignment submission
 router.post(
   "/:assignmentId/submit",
   authMiddleware,
@@ -64,6 +71,7 @@ router.post(
   submitAssignment
 );
 
+// get my assignment submission
 router.get(
   "/:assignmentId/my-submission",
   authMiddleware,
@@ -71,6 +79,7 @@ router.get(
   getMySubmission
 );
 
+// get all submissions for assignment
 router.get(
   "/:assignmentId/submissions",
   authMiddleware,
@@ -78,6 +87,7 @@ router.get(
   getAssignmentSubmissions
 );
 
+// grade and review submission
 router.patch(
   "/submissions/:submissionId/evaluate",
   authMiddleware,
