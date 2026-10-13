@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-const SESSION_DURATION_MS = 2 * 60 * 60 * 1000;
+const SESSION_DURATION_MS = 10 * 60 * 60 * 1000;
 const WARNING_WINDOW_MS = 5 * 60 * 1000;
 
 export const SessionTimeoutModal = () => {

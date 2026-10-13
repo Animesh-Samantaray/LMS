@@ -17,6 +17,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
+    config.headers = config.headers || {};
+
+    if (config.headers.Authorization) {
+      return config;
+    }
+
     const currentUser = auth.currentUser;
 
     if (currentUser) {
@@ -24,7 +30,6 @@ api.interceptors.request.use(
         const token = await currentUser.getIdToken();
 
         if (token) {
-          config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${token}`;
         }
       } catch (error) {

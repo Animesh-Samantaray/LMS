@@ -82,7 +82,7 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', on
     }
   }, [messages, isNearBottom]);
 
-  const wallpaperUrl = theme === 'dark' ? '/chat-bg-dark.png' : '/chat-bg-light.png';
+  const wallpaperUrl = (theme === 'dark' || theme === 'eco') ? '/chat-bg-dark.png' : '/chat-bg-light.png';
 
   return (
     <div

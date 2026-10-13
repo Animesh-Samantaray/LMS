@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle, Flag, Download, Bot } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Moon, Sun, Sparkles, Leaf, Check, ChevronDown, Home, Users, BookOpen, FolderOpen, Settings, User as UserIcon, BarChart2, Shield, User, Target, FileText, Award, MessageSquare, Calendar, HelpCircle, Flag, Download, Bot } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import TwoFactorToggle from './TwoFactorToggle';
@@ -65,6 +65,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
     { id: 'dark', label: 'Dark Theme', icon: Moon, desc: 'Deep glassmorphism' },
     { id: 'light', label: 'Light Theme', icon: Sun, desc: 'Crisp soft glass' },
     { id: 'cream', label: 'Cream Theme', icon: Sparkles, desc: 'Warm pastel glass' },
+    { id: 'eco', label: 'Eco Theme', icon: Leaf, desc: 'MongoDB green & white' },
   ];
 
   const effectiveRoleTitle =
@@ -313,6 +314,8 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
                   <Moon size={16} className="text-indigo-400" />
                 ) : theme === 'cream' ? (
                   <Sparkles size={16} className="text-amber-500" />
+                ) : theme === 'eco' ? (
+                  <Leaf size={16} className="text-emerald-500" />
                 ) : (
                   <Sun size={16} className="text-amber-500" />
                 )}

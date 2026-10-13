@@ -38,6 +38,19 @@ export default {
           800: '#673621',  
           900: '#532e1d',  
           950: '#2e160c',
+        },
+        eco: {
+          50: '#e6fcf0',
+          100: '#c2f8db',
+          200: '#8cf3bd',
+          300: '#4eed98',
+          400: '#1be27a',
+          500: '#00ed64',
+          600: '#00c652',
+          700: '#009b40',
+          800: '#00684a',
+          900: '#003629',
+          950: '#001e2b',
         }
       },
       fontFamily: {
@@ -66,5 +79,9 @@ export default {
     },
   },
   plugins: [
-    plugin(function({ addVariant }) { addVariant('cream', '.theme-cream &') }),],
+    plugin(function({ addVariant }) {
+      addVariant('cream', '.theme-cream &');
+      addVariant('eco', '.theme-eco &');
+    }),
+  ],
 }

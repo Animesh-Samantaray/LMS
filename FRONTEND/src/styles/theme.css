@@ -31,8 +31,8 @@ html.dark {
   --lms-accent-text: #c7d2fe;
   --lms-accent-border: rgba(99, 102, 241, 0.35);
 
-  --lms-hero-gradient: linear-gradient(135deg, #3730a3 0%, #4f46e5 50%, #7c3aed 100%);
-  --lms-hero-surface: rgba(255, 255, 255, 0.14);
+  --lms-hero-gradient: linear-gradient(135deg, #090e17 0%, #111a2e 50%, #0d1527 100%);
+  --lms-hero-surface: rgba(255, 255, 255, 0.08);
 
   --lms-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
   --lms-shadow-sm: 0 4px 16px 0 rgba(0, 0, 0, 0.35);
@@ -80,8 +80,8 @@ html.light {
   --lms-accent-text: #4338ca;
   --lms-accent-border: rgba(199, 210, 254, 0.9);
 
-  --lms-hero-gradient: linear-gradient(135deg, #3730a3 0%, #4f46e5 60%, #6366f1 100%);
-  --lms-hero-surface: rgba(255, 255, 255, 0.16);
+  --lms-hero-gradient: linear-gradient(135deg, #0b1329 0%, #15223c 60%, #1a2c4e 100%);
+  --lms-hero-surface: rgba(255, 255, 255, 0.08);
 
   --lms-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
   --lms-shadow-sm: 0 2px 8px -1px rgba(0, 0, 0, 0.04);
@@ -146,3 +146,283 @@ html.theme-cream {
   --lms-kpi-emerald: #059669;
   --lms-kpi-rose: #e11d48;
 }
+
+html.theme-eco {
+  color-scheme: dark;
+
+  --lms-bg: #001e2b;
+  --lms-bg-gradient: radial-gradient(circle at 50% -20%, rgba(0, 237, 100, 0.20) 0%, rgba(0, 104, 74, 0.16) 38%, transparent 70%),
+                     radial-gradient(circle at 100% 60%, rgba(0, 237, 100, 0.08) 0%, transparent 50%),
+                     radial-gradient(circle at 0% 80%, rgba(2, 52, 48, 0.30) 0%, transparent 55%),
+                     #001e2b;
+
+  --lms-surface: rgba(0, 30, 43, 0.88);
+  --lms-surface-hover: rgba(0, 44, 62, 0.95);
+  --lms-surface-elevated: #002838;
+  --lms-surface-subtle: rgba(0, 237, 100, 0.06);
+
+  --lms-sidebar-bg: rgba(0, 20, 29, 0.95);
+  --lms-header-bg: rgba(0, 20, 29, 0.90);
+
+  --lms-border: rgba(0, 237, 100, 0.18);
+  --lms-border-hover: rgba(0, 237, 100, 0.55);
+  --lms-border-subtle: rgba(255, 255, 255, 0.08);
+  --lms-text-primary: #ffffff;
+  --lms-text-secondary: #c1c7c6;
+  --lms-text-muted: #718783;
+
+
+  --lms-accent: #00684a;
+  --lms-accent-hover: #02563e;
+  --lms-accent-subtle: rgba(0, 104, 74, 0.22);
+  --lms-accent-text: #00ed64;
+  --lms-accent-border: rgba(0, 104, 74, 0.45);
+
+  --lms-hero-gradient: linear-gradient(135deg, #001e2b 0%, #00382b 50%, #00201a 100%);
+  --lms-hero-surface: rgba(255, 255, 255, 0.08);
+
+  --lms-shadow: 0 10px 30px -5px rgba(0, 10, 15, 0.7), 0 4px 12px -2px rgba(0, 10, 15, 0.45);
+  --lms-shadow-sm: 0 4px 16px 0 rgba(0, 10, 15, 0.5);
+  --lms-shadow-glow: 0 0 25px rgba(0, 104, 74, 0.35);
+
+
+  --lms-input-bg: rgba(0, 24, 34, 0.85);
+  --lms-input-border: rgba(0, 104, 74, 0.35);
+  --lms-input-focus: rgba(0, 104, 74, 0.60);
+
+  
+  --lms-kpi-blue: #00845a;
+  --lms-kpi-purple: #00684a;
+  --lms-kpi-amber: #eab308;
+  --lms-kpi-emerald: #00684a;
+  --lms-kpi-rose: #f87171;
+
+  --gradient-brand: linear-gradient(135deg, #00684a 0%, #028059 100%);
+  --border-glow: rgba(0, 104, 74, 0.4);
+}
+html.theme-eco body {
+  background-image:
+    linear-gradient(to right, rgba(0, 237, 100, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 237, 100, 0.035) 1px, transparent 1px),
+    var(--lms-bg-gradient) !important;
+  background-size: 44px 44px, 44px 44px, auto !important;
+  background-attachment: fixed !important;
+}
+
+
+html.theme-eco aside nav a.bg-\[var\(--lms-accent\)\],
+html.theme-eco .bg-\[var\(--lms-accent\)\] {
+  background: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(0, 237, 100, 0.28) !important;
+  box-shadow: 0 4px 14px rgba(0, 25, 17, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+html.theme-eco aside nav a.bg-\[var\(--lms-accent\)\] svg {
+  color: #ffffff !important;
+}
+
+html.theme-eco .lms-btn-primary {
+  background: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px 0 rgba(0, 25, 17, 0.45) !important;
+  border: 1px solid rgba(0, 237, 100, 0.3) !important;
+}
+
+html.theme-eco .lms-btn-primary:hover {
+  background: linear-gradient(135deg, #02563e 0%, #004430 100%) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgba(0, 25, 17, 0.65) !important;
+  border-color: rgba(0, 237, 100, 0.45) !important;
+}
+
+html.theme-eco .lms-btn-secondary {
+  background: rgba(0, 36, 50, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco .lms-btn-secondary:hover {
+  background: rgba(0, 48, 66, 0.95) !important;
+  border-color: rgba(0, 237, 100, 0.5) !important;
+  color: #00ed64 !important;
+}
+
+
+html.theme-eco .lms-glass-hero {
+  border-color: rgba(0, 237, 100, 0.25) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 10, 15, 0.7), 0 0 35px -8px rgba(0, 237, 100, 0.15) !important;
+}
+
+html.theme-eco .lms-glass-hero::before {
+  background: radial-gradient(circle, rgba(0, 237, 100, 0.18) 0%, rgba(0, 104, 74, 0.08) 50%, transparent 70%) !important;
+}
+
+
+html.theme-eco select option:checked {
+  background-color: #00684a !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+html.theme-eco .lms-badge {
+  background: rgba(0, 104, 74, 0.25) !important;
+  color: #00ed64 !important;
+  border-color: rgba(0, 237, 100, 0.35) !important;
+}
+
+
+html.theme-eco * {
+  scrollbar-color: rgba(0, 237, 100, 0.3) transparent;
+}
+html.theme-eco ::-webkit-scrollbar-thumb {
+  background: rgba(0, 237, 100, 0.3) !important;
+}
+html.theme-eco ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 237, 100, 0.6) !important;
+}
+
+
+html.theme-eco ::selection {
+  background: rgba(0, 237, 100, 0.35) !important;
+  color: #ffffff !important;
+}
+
+
+html.theme-eco .bg-indigo-600,
+html.theme-eco .bg-indigo-500,
+html.theme-eco .bg-violet-600,
+html.theme-eco .bg-violet-500 {
+  background: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco .hover\:bg-indigo-700:hover,
+html.theme-eco .hover\:bg-indigo-600:hover,
+html.theme-eco .hover\:bg-indigo-500:hover,
+html.theme-eco .hover\:bg-violet-600:hover,
+html.theme-eco .hover\:bg-violet-500:hover {
+  background: linear-gradient(135deg, #02563e 0%, #004430 100%) !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco .text-indigo-600,
+html.theme-eco .text-indigo-500,
+html.theme-eco .text-indigo-400,
+html.theme-eco .text-violet-600,
+html.theme-eco .text-violet-500,
+html.theme-eco .text-violet-400,
+html.theme-eco .dark\:text-indigo-400,
+html.theme-eco .dark\:text-indigo-300,
+html.theme-eco .dark\:text-violet-400 {
+  color: #00ed64 !important;
+}
+
+html.theme-eco .bg-indigo-50,
+html.theme-eco .bg-indigo-100,
+html.theme-eco .bg-indigo-500\/10,
+html.theme-eco .bg-indigo-500\/15,
+html.theme-eco .bg-indigo-500\/20,
+html.theme-eco .dark\:bg-indigo-500\/10,
+html.theme-eco .dark\:bg-indigo-500\/20,
+html.theme-eco .dark\:bg-indigo-950\/40,
+html.theme-eco .dark\:bg-indigo-950\/20 {
+  background-color: rgba(0, 104, 74, 0.22) !important;
+}
+
+html.theme-eco .border-indigo-100,
+html.theme-eco .border-indigo-200,
+html.theme-eco .border-indigo-500,
+html.theme-eco .border-indigo-500\/20,
+html.theme-eco .border-indigo-500\/25,
+html.theme-eco .border-indigo-500\/30,
+html.theme-eco .dark\:border-indigo-800\/40,
+html.theme-eco .dark\:border-indigo-900\/50 {
+  border-color: rgba(0, 104, 74, 0.45) !important;
+}
+
+html.theme-eco .ring-indigo-500,
+html.theme-eco .ring-indigo-500\/20 {
+  --tw-ring-color: rgba(0, 104, 74, 0.5) !important;
+}
+
+html.theme-eco .shadow-indigo-500\/30,
+html.theme-eco .shadow-indigo-600\/20,
+html.theme-eco .shadow-purple-500\/20 {
+  box-shadow: 0 4px 14px 0 rgba(0, 25, 17, 0.35) !important;
+}
+
+html.theme-eco .from-violet-600.to-purple-600 {
+  background-image: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 {
+  background: #001e2b !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child {
+  background: linear-gradient(145deg, #001e2b 0%, #003629 60%, #00221c 100%) !important;
+  border-right-color: rgba(0, 237, 100, 0.2) !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child h1,
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child span.text-3xl {
+  color: #ffffff !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child p,
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child div.text-xs {
+  color: #c1c7c6 !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child h3 {
+  color: #ffffff !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child .bg-blue-50,
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 > div:first-child .bg-purple-50 {
+  background-color: rgba(0, 237, 100, 0.15) !important;
+  color: #00ed64 !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 .max-w-\[480px\].bg-white {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 237, 100, 0.35) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 10, 15, 0.9), 0 0 35px rgba(0, 237, 100, 0.15) !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 .max-w-\[480px\].bg-white button[type="submit"] {
+  background: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 25, 17, 0.45) !important;
+  border: 1px solid rgba(0, 237, 100, 0.3) !important;
+}
+
+html.theme-eco .min-h-screen.w-full.flex.bg-slate-50 .max-w-\[480px\].bg-white button[type="submit"]:hover {
+  background: linear-gradient(135deg, #02563e 0%, #004430 100%) !important;
+  color: #ffffff !important;
+}
+
+html.theme-eco table thead tr {
+  background-color: rgba(0, 20, 29, 0.7) !important;
+  border-bottom: 1px solid rgba(0, 237, 100, 0.2) !important;
+}
+
+html.theme-eco table tbody tr:hover {
+  background-color: rgba(0, 237, 100, 0.04) !important;
+}
+
+html.theme-eco input:focus,
+html.theme-eco textarea:focus,
+html.theme-eco select:focus {
+  border-color: #00ed64 !important;
+  box-shadow: 0 0 0 3px rgba(0, 237, 100, 0.25) !important;
+}
+
+
+

@@ -23,6 +23,17 @@
   color: var(--text-primary) !important;
 }
 
+html.theme-eco .landing-page {
+  --bg-primary: #001e2b !important;
+  --bg-secondary: rgba(0, 36, 50, 0.85) !important;
+  --border-subtle: rgba(0, 104, 74, 0.35) !important;
+  --border-glow: rgba(0, 104, 74, 0.5) !important;
+  --gradient-brand: linear-gradient(135deg, #00684a 0%, #01543c 100%) !important;
+  --gradient-glow: radial-gradient(circle at center, rgba(0, 104, 74, 0.25) 0%, transparent 70%) !important;
+  --accent-indigo: #00845a !important;
+  --accent-emerald: #00684a !important;
+}
+
 
 .landing-page {
   position: relative;

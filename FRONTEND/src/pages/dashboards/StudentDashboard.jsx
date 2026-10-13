@@ -90,38 +90,38 @@ const StudentDashboard = () => {
 
   return (
     <DashboardLayout roleTitle="STUDENT" pageTitle="Student Dashboard">
-      <div className="bg-[var(--lms-accent)] rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-md relative overflow-hidden">
-        <div className="space-y-2 max-w-xl z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-bold uppercase tracking-wider">
-            <Sparkles size={13} className="text-amber-300" />
+      <div className="lms-glass-hero p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div className="space-y-2.5 max-w-xl z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold uppercase tracking-wider text-slate-200">
+            <Sparkles size={13} className="text-amber-400" />
             Personalized Learner Portal
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Welcome back, {user?.name || 'Learner'} 👋
           </h2>
-          <p className="text-sm text-white/80 leading-relaxed">
+          <p className="text-sm text-slate-300 leading-relaxed">
             {getGreetingMessage()}
           </p>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-5 bg-white/10 p-3 sm:p-4 rounded-2xl border border-white/20 z-10">
+        <div className="flex items-center gap-3 sm:gap-5 bg-black/30 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/10 z-10 shadow-lg">
           <div className="text-center px-2">
-            <div className="text-2xl sm:text-3xl font-black">{kpis.totalEnrolled ?? 0}</div>
-            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Enrolled</div>
+            <div className="text-2xl sm:text-3xl font-black text-white">{kpis.totalEnrolled ?? 0}</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Enrolled</div>
           </div>
-          <div className="w-px h-8 bg-white/20"></div>
+          <div className="w-px h-8 bg-white/15"></div>
           <div className="text-center px-2">
-            <div className="text-2xl sm:text-3xl font-black text-emerald-300">
+            <div className="text-2xl sm:text-3xl font-black text-emerald-400">
               {kpis.completedCourses ?? 0}
             </div>
-            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Completed</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Completed</div>
           </div>
-          <div className="w-px h-8 bg-white/20"></div>
+          <div className="w-px h-8 bg-white/15"></div>
           <div className="text-center px-2">
-            <div className="text-2xl sm:text-3xl font-black text-amber-300">
+            <div className="text-2xl sm:text-3xl font-black text-cyan-400">
               {kpis.overallProgress ?? 0}%
             </div>
-            <div className="text-[10px] text-white/70 uppercase font-semibold tracking-wider">Overall Avg</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Overall Avg</div>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ import {
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
+import api from "../services/api.service";
 
 const Login = () => {
   const {
@@ -32,6 +33,7 @@ const Login = () => {
     loading: authLoading,
     lmsProfileMissing,
     twoFactorRequired,
+    refreshUser,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -65,23 +67,9 @@ const Login = () => {
   useEffect(() => {
     if (authLoading) return;
 
-    
-    if (lmsProfileMissing) {
-      setActionLoading(false);
-      setProviderLoading(false);
-
-      setErrorMsg(
-        "No LMS account found for this account. Please sign up to choose your role."
-      );
-
-      return;
-    }
-
-   
     if (firebaseUser && twoFactorRequired) {
       setActionLoading(false);
       setProviderLoading(false);
-
       navigate("/verify-2fa", { replace: true });
       return;
     }
@@ -96,18 +84,15 @@ const Login = () => {
     if (user?.role) {
       setActionLoading(false);
       setProviderLoading(false);
-
       navigate(getDashboardPath(user.role), { replace: true });
       return;
     }
-    
-    // If auth state loaded but no conditions were met (e.g. backend error), reset spinners
-    if (!user && !lmsProfileMissing && !twoFactorRequired && (actionLoading || providerLoading)) {
+
+    if (lmsProfileMissing && !actionLoading && !providerLoading) {
       setActionLoading(false);
       setProviderLoading(false);
-      if (firebaseUser) {
-        setErrorMsg("Authentication failed. Please check your network connection or contact support.");
-      }
+      setErrorMsg("No LMS account found for this account. Please sign up to choose your role.");
+      return;
     }
   }, [
     authLoading,
@@ -115,6 +100,8 @@ const Login = () => {
     user,
     lmsProfileMissing,
     twoFactorRequired,
+    actionLoading,
+    providerLoading,
     navigate,
   ]);
 
@@ -162,16 +149,20 @@ const Login = () => {
 
     try {
       console.log("[Login:Email] Authenticating with Firebase...");
-
-    
-      await login(email, formData.password);
-
+      const credential = await login(email, formData.password);
       console.log("[Login:Email] Firebase authentication successful.");
+
+      const token = await credential.user.getIdToken();
+      const loggedUser = await refreshUser(credential.user, token);
+
+      if (loggedUser?.role) {
+        setActionLoading(false);
+        navigate(getDashboardPath(loggedUser.role), { replace: true });
+        return;
+      }
     } catch (err) {
       console.error("[Login:Email] Firebase authentication error:", err);
-
       setActionLoading(false);
-
       setErrorMsg(
         getAuthErrorMessage(
           err,
@@ -192,21 +183,54 @@ const Login = () => {
 
     try {
       console.log(`[Login:${providerName}] Opening popup...`);
+      const credential = await providerFn();
+      console.log(`[Login:${providerName}] Firebase authentication successful.`);
 
-     
-      await providerFn();
+      const token = await credential.user.getIdToken();
+      let loggedUser = await refreshUser(credential.user, token);
 
-      console.log(
-        `[Login:${providerName}] Firebase authentication successful.`
-      );
+      // If user does not have an LMS account yet, auto-create default Student account
+      if (!loggedUser && !twoFactorRequired) {
+        try {
+          console.log(`[Login:${providerName}] Auto-creating Student profile...`);
+          const displayName = (
+            credential.user.displayName ||
+            credential.user.email?.split("@")[0] ||
+            "Learner"
+          ).trim();
+
+          await api.post(
+            "/api/auth/register",
+            {
+              name: displayName,
+              role: "Student",
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          );
+
+          loggedUser = await refreshUser(credential.user, token);
+        } catch (regErr) {
+          if (regErr?.status === 409 || regErr?.response?.status === 409) {
+            loggedUser = await refreshUser(credential.user, token);
+          } else {
+            console.warn(`[Login:${providerName}] Auto-registration note:`, regErr?.message);
+          }
+        }
+      }
+
+      if (loggedUser?.role) {
+        setProviderLoading(false);
+        navigate(getDashboardPath(loggedUser.role), { replace: true });
+        return;
+      }
     } catch (err) {
       console.error(
         `[Login:${providerName}] Authentication error:`,
         err
       );
-
       setProviderLoading(false);
-
       setErrorMsg(
         getAuthErrorMessage(
           err,
