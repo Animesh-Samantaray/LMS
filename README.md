@@ -59,6 +59,7 @@ graph TD
 - **Student Learning View**: Smooth video playback, completion tracking, downloadable files, and lecture notes.
 - **Reviews & Ratings**: Students rate and review courses with aggregated stars and feedback.
 
+
 ### 📝 3. Assessment, Quiz & Anti-Cheat Exam Engine
 - **Quizzes**: Timed interactive quizzes with immediate feedback, explanations, and attempts tracking.
 - **AI-Powered Question Generator**: Instructors can auto-generate multiple-choice and conceptual questions using Groq/Gemini.
@@ -253,3 +254,199 @@ SHNOOR/LMS/
 ```
 
 ---
+## 🔌 API Endpoints Overview
+
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `POST` | `/register` | Register new user profile in MongoDB | Public (Firebase Bearer) |
+| `GET` | `/me` | Get current authenticated user profile & role | Authenticated (2FA verified) |
+| `POST` | `/2fa/check` | Check 2FA requirement and send OTP | Authenticated (Bearer) |
+| `POST` | `/2fa/verify` | Verify 6-digit 2FA OTP and issue session cookie | Authenticated (Bearer) |
+| `POST` | `/2fa/resend` | Resend new 2FA OTP code | Authenticated (Bearer) |
+| `POST` | `/2fa/enable` | Enable two-factor authentication on account | Authenticated (Bearer) |
+| `POST` | `/2fa/disable` | Disable two-factor authentication | Authenticated (Bearer) |
+| `POST` | `/logout` | Invalidate user session & clear cookies | Authenticated |
+
+### Courses (`/api/courses`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/` | Get all published courses | Public |
+| `GET` | `/:id` | Get single course details by ID | Public / Enrolled |
+| `POST` | `/` | Create new course | Instructor, Admin |
+| `PUT` | `/:id` | Edit course information & thumbnail | Instructor, Admin |
+| `DELETE` | `/:id` | Delete course | Instructor, Admin |
+| `POST` | `/:id/enroll` | Enroll student in course | Student |
+
+### Assignments (`/api/assignment`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/course/:courseId` | Get assignments for course | Authenticated |
+| `POST` | `/course/:courseId` | Create new assignment | Instructor, Admin |
+| `PUT` | `/:assignmentId` | Edit assignment details | Instructor, Admin |
+| `DELETE` | `/:assignmentId` | Delete assignment | Instructor, Admin |
+| `POST` | `/:assignmentId/submit` | Student file submission | Student |
+| `GET` | `/:assignmentId/submissions` | View all submissions | Instructor, Admin |
+| `PATCH` | `/submissions/:submissionId/evaluate` | Grade & evaluate submission | Instructor, Admin |
+
+### Quizzes & Exams (`/api/quizzes`, `/api/exams`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/api/quizzes/course/:courseId` | Get quizzes for course | Authenticated |
+| `POST` | `/api/quizzes` | Create new quiz | Instructor, Admin |
+| `POST` | `/api/quizzes/:id/submit` | Submit quiz attempt & score | Student |
+| `GET` | `/api/exams` | Get available exams | Authenticated |
+| `POST` | `/api/exams/:id/start` | Start timed exam attempt | Student |
+| `POST` | `/api/exams/:id/submit` | Submit exam answers | Student |
+| `GET` | `/api/exams/:id/leaderboard` | View exam leaderboard | Authenticated |
+
+### Certificates (`/api/certificates`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/my-certificates` | Get all earned certificates | Student |
+| `POST` | `/generate/:courseId` | Generate course completion certificate | Student |
+| `GET` | `/verify/:code` | Public certificate verification | Public |
+
+### AI Assistant & Chatbot (`/api/chatbot`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `POST` | `/ask` | Ask AI chatbot tutor for help | Authenticated |
+| `GET` | `/logs` | View chatbot usage logs and analytics | Admin |
+
+---
+
+## ⚙️ Environment Configuration
+
+### Backend (`BACKEND/.env`)
+Create a `.env` file in the `BACKEND/` directory with the following variables:
+
+```env
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+
+# Database
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/lms?retryWrites=true&w=majority
+
+# Security & Secrets
+JWT_SECRET=your_super_secret_jwt_key
+SESSION_SECRET=your_session_secret_key
+TWO_FACTOR_OTP_SECRET=your_hmac_sha256_otp_secret_key
+LMS_2FA_SESSION_SECRET=your_2fa_session_jwt_secret_key
+ADMIN_ACCESS_TOKEN=your_admin_registration_passcode
+
+# Cloudinary (Media & Files)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Email Service (Nodemailer Gmail SMTP)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
+
+# AI Integrations
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
+GEMINI_API_KEY=your_gemini_api_key
+
+# Payment Gateway (Optional / Razorpay)
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+```
+
+### Frontend (`FRONTEND/.env`)
+Create a `.env` file in the `FRONTEND/` directory with the following variables:
+
+```env
+# Backend API Base URL
+VITE_API_BASE_URL=http://localhost:5000
+
+# Firebase Client SDK Configuration
+VITE_FIREBASE_API_KEY=AIzaSy...
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=1:your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=G-XXXXX
+```
+
+---
+
+## 🚀 Setup & Installation
+
+### Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **MongoDB**: Local MongoDB instance or free MongoDB Atlas cluster
+- **Firebase Account**: Free Firebase project with Authentication (Email/Password & Google providers enabled)
+
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/Animesh-Samantaray/LMS.git
+cd LMS
+```
+
+### Step 2: Install Backend Dependencies
+```bash
+cd BACKEND
+npm install
+```
+
+### Step 3: Install Frontend Dependencies
+```bash
+cd ../FRONTEND
+npm install
+```
+
+### Step 4: Configure Environment Files
+Set up both `BACKEND/.env` and `FRONTEND/.env` as detailed in the [Environment Configuration](#-environment-configuration) section.
+
+### Step 5: Start Development Servers
+
+**Terminal 1 — Backend:**
+```bash
+cd BACKEND
+npm run dev
+# Server starts on http://localhost:5000
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd FRONTEND
+npm run dev
+# Vite dev server starts on http://localhost:5173
+```
+
+Open your browser and navigate to `http://localhost:5173`.
+
+---
+
+## 📦 Production Build
+
+To build the frontend for production:
+```bash
+cd FRONTEND
+npm run build
+```
+The optimized bundle will be created in `FRONTEND/dist`.
+
+To test the production build locally:
+```bash
+npm run preview
+```
+
+---
+
+## 🔒 Security & Best Practices
+
+1. **Token Authentication**: All protected API endpoints verify Firebase ID tokens via the server-side Firebase Admin SDK. Token spoofing is impossible.
+2. **Two-Factor Authentication (2FA)**: High-security accounts can toggle 2FA. The backend generates HMAC-SHA256 hashed OTP codes valid for 10 minutes with strict cooldown and attempt thresholds.
+3. **CORS & Cookies**: Credentials (`withCredentials: true`) are enforced with `httpOnly` secure cookies to prevent XSS session theft.
+4. **Input Sanitization**: Request bodies, names, and emails are normalized, trimmed, and validated before database persistence.
+
+---
+
+## 📄 License
+This project is proprietary and developed for LMS educational platform delivery. All rights reserved.
