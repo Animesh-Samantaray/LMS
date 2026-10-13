@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { X, Users, CheckCircle, Clock, AlertCircle, FileText, Download, ExternalLink, Loader } from "lucide-react";
 import assignmentService from "../services/assignment.service";
 
@@ -75,8 +76,8 @@ const AssignmentSubmissionsModal = ({ isOpen, assignment, onClose }) => {
 
   if (!isOpen || !assignment) return null;
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-5xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col max-h-[90vh]">
         
         <div className="px-6 py-4 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
@@ -293,7 +294,8 @@ const AssignmentSubmissionsModal = ({ isOpen, assignment, onClose }) => {
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

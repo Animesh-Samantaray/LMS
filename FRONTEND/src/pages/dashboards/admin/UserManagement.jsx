@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AlertCircle, BookOpen, CheckCircle, Edit2, FolderOpen, Home, Loader, Search, Settings, Shield, Trash2, Users, X } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
 import { ExportButton } from '../../../components/ExportButton';
@@ -284,8 +285,8 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {editingUser && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+      {editingUser && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-[var(--lms-surface-elevated)] rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[95dvh] overflow-y-auto shadow-2xl border border-[var(--lms-border)]">
             <div className="px-6 py-4 border-b border-[var(--lms-border)] flex items-center justify-between">
               <h2 className="text-base font-bold text-[var(--lms-text-primary)]">Edit User</h2>
@@ -326,7 +327,8 @@ const UserManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </DashboardLayout>
   );

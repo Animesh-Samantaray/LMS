@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Upload, FileText, AlertCircle, Loader } from 'lucide-react';
 
 const AssignmentModal = ({
@@ -123,8 +124,8 @@ const AssignmentModal = ({
     return `${(kb / 1024).toFixed(1)} MB`;
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 pb-4 px-4 bg-black/60 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-12 pb-4 px-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-[var(--lms-surface-elevated)] rounded-3xl w-full max-w-2xl shadow-2xl border border-[var(--lms-border)] overflow-hidden flex flex-col ">
         <div className="px-6 py-3 border-b border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] flex items-center justify-between shrink-0">
           <div>
@@ -301,7 +302,8 @@ const AssignmentModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
