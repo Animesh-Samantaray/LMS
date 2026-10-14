@@ -16,6 +16,8 @@ const DiscussionHeader = ({
   onBack,
   canManage,
   onToggleMedia,
+  onOpenMembers,
+  showMembersPanel,
   onClearMessages,
   showBackButton,
   isClearing,
@@ -71,10 +73,18 @@ const DiscussionHeader = ({
           </div>
 
           <div className="flex items-center gap-3 text-xs text-[var(--lms-text-muted)] mt-0.5">
-            <span className="flex items-center gap-1">
-              <Users size={12} className="text-cyan-500" />
-              {discussion?.memberCount || 1} {discussion?.memberCount === 1 ? 'member' : 'members'}
-            </span>
+            <button
+              type="button"
+              onClick={onOpenMembers}
+              className="flex items-center gap-1.5 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer group text-left"
+              title="View group members"
+              aria-label="View group members"
+            >
+              <Users size={13} className="text-cyan-500 group-hover:scale-110 transition-transform" />
+              <span className="underline decoration-dotted underline-offset-2">
+                {discussion?.memberCount || 1} {discussion?.memberCount === 1 ? 'member' : 'members'}
+              </span>
+            </button>
             {course.category && (
               <>
                 <span className="text-[var(--lms-border)]">•</span>
@@ -86,7 +96,21 @@ const DiscussionHeader = ({
       </div>
 
       <div className="flex items-center gap-2 shrink-0 relative" ref={menuRef}>
-        
+        <button
+          onClick={onOpenMembers}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border transition-all text-xs font-semibold cursor-pointer ${
+            showMembersPanel
+              ? 'bg-cyan-500 text-white border-cyan-500 shadow-sm'
+              : 'border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] hover:border-cyan-500/40'
+          }`}
+          title="Group Members"
+          aria-label="Group Members"
+        >
+          <Users size={16} className={showMembersPanel ? 'text-white' : 'text-cyan-500'} />
+          <span className="font-bold">{discussion?.memberCount || 1}</span>
+          <span className="hidden sm:inline">Members</span>
+        </button>
+
         <button
           onClick={onToggleMedia}
           className="p-2 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface)] text-[var(--lms-text-secondary)] hover:text-[var(--lms-text-primary)] transition-colors"

@@ -11,9 +11,13 @@ import { showBrowserMessageNotification, requestBrowserNotificationPermission } 
 import DiscussionSidebar from '../../components/discussions/DiscussionSidebar';
 import DiscussionHeader from '../../components/discussions/DiscussionHeader';
 import SharedMediaPanel from '../../components/discussions/SharedMediaPanel';
+import GroupMembersPanel from '../../components/discussions/GroupMembersPanel';
+import DirectChatRoom from '../../components/discussions/DirectChatRoom';
 import MessageList from '../../components/discussions/MessageList';
 import MessageComposer from '../../components/discussions/MessageComposer';
 import ClearDiscussionDialog from '../../components/discussions/ClearDiscussionDialog';
+import directChatService from '../../services/directChat.service';
+import { toast } from 'react-hot-toast';
 
 const DiscussionPage = () => {
   const { user } = useAuth();
@@ -38,12 +42,69 @@ const DiscussionPage = () => {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [showMediaPanel, setShowMediaPanel] = useState(false);
+  const [showMembersPanel, setShowMembersPanel] = useState(false);
+
+  // Direct 1-on-1 Chat states
+  const [sidebarTab, setSidebarTab] = useState('groups'); // 'groups' | 'direct'
+  const [directConversations, setDirectConversations] = useState([]);
+  const [loadingDirect, setLoadingDirect] = useState(false);
+  const [activeDirectChat, setActiveDirectChat] = useState(null); // { conversation, otherUser, returnDiscussion }
 
   const socketRef = useRef(null);
   const selectedDiscussionRef = useRef(null);
   selectedDiscussionRef.current = selectedDiscussion;
 
   const currentUserId = user?._id || user?.id;
+
+  const fetchDirectConversations = useCallback(async () => {
+    try {
+      setLoadingDirect(true);
+      const res = await directChatService.getMyDirectConversations();
+      if (res?.success) {
+        setDirectConversations(res.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to load direct conversations:', err);
+    } finally {
+      setLoadingDirect(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDirectConversations();
+  }, [fetchDirectConversations]);
+
+  const handleStartDirectChat = async (targetMember) => {
+    if (!targetMember?._id) return;
+    try {
+      const res = await directChatService.getOrCreateDirectConversation(targetMember._id);
+      if (res?.success && res.conversation) {
+        setActiveDirectChat({
+          conversation: res.conversation,
+          otherUser: targetMember,
+          returnDiscussion: selectedDiscussion,
+        });
+        setShowMembersPanel(false);
+        setShowMediaPanel(false);
+        fetchDirectConversations();
+      } else {
+        toast.error(res?.message || 'Failed to start direct conversation');
+      }
+    } catch (err) {
+      console.error('Error starting direct chat:', err);
+      toast.error(err.response?.data?.message || 'Failed to start direct chat');
+    }
+  };
+
+  const handleSelectDirectChat = (conv) => {
+    setActiveDirectChat({
+      conversation: conv,
+      otherUser: conv.otherParticipant,
+      returnDiscussion: selectedDiscussion,
+    });
+    setShowMembersPanel(false);
+    setShowMediaPanel(false);
+  };
 
   const fetchDiscussions = useCallback(async (autoSelectCourseId = null) => {
     try {
@@ -184,6 +245,23 @@ const DiscussionPage = () => {
           })
         );
       });
+
+      socket.on('direct:notification', ({ conversationId, message }) => {
+        fetchDirectConversations();
+        const otherName = message?.senderId?.name || 'A group member';
+        showBrowserMessageNotification({
+          messageId: message?._id,
+          courseTitle: 'Direct Message',
+          senderName: otherName,
+          content: message?.content,
+          type: message?.type,
+          fileName: message?.fileName,
+          onClick: () => {
+            window.focus();
+            fetchDirectConversations();
+          },
+        });
+      });
     };
 
     setupSocket();
@@ -193,9 +271,10 @@ const DiscussionPage = () => {
       if (socketRef.current) {
         socketRef.current.off('message:new');
         socketRef.current.off('discussion:cleared');
+        socketRef.current.off('direct:notification');
       }
     };
-  }, [user, discussions.length]);
+  }, [user, discussions.length, fetchDirectConversations]);
 
   useEffect(() => {
     if (!selectedDiscussion) return;
@@ -232,7 +311,10 @@ const DiscussionPage = () => {
   }, [selectedDiscussion]);
 
   const handleSelectDiscussion = (disc) => {
+    setActiveDirectChat(null);
     setSelectedDiscussion(disc);
+    setShowMembersPanel(false);
+    setShowMediaPanel(false);
     if (disc?.courseId?._id) {
       setSearchParams({ courseId: disc.courseId._id });
     }
@@ -373,7 +455,7 @@ const DiscussionPage = () => {
       <div className="h-[calc(100vh-8.5rem)] min-h-[500px] flex rounded-3xl border border-[var(--lms-border)] bg-[var(--lms-surface)] shadow-2xl overflow-hidden relative">
         <div
           className={`w-full md:w-80 lg:w-96 shrink-0 h-full ${
-            selectedDiscussion ? 'hidden md:flex flex-col' : 'flex flex-col'
+            selectedDiscussion || activeDirectChat ? 'hidden md:flex flex-col' : 'flex flex-col'
           }`}
         >
           <DiscussionSidebar
@@ -382,56 +464,98 @@ const DiscussionPage = () => {
             onSelectDiscussion={handleSelectDiscussion}
             loading={loadingDiscussions}
             error={discussionsError}
-            onRefresh={() => fetchDiscussions()}
+            onRefresh={() => {
+              fetchDiscussions();
+              fetchDirectConversations();
+            }}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             filterType={filterType}
             setFilterType={setFilterType}
             user={user}
+            sidebarTab={sidebarTab}
+            setSidebarTab={setSidebarTab}
+            directConversations={directConversations}
+            activeDirectChat={activeDirectChat}
+            onSelectDirectChat={handleSelectDirectChat}
           />
         </div>
 
         <div
           className={`flex-1 h-full flex flex-col min-w-0 bg-[var(--lms-surface-elevated)] ${
-            !selectedDiscussion ? 'hidden md:flex' : 'flex'
+            !selectedDiscussion && !activeDirectChat ? 'hidden md:flex' : 'flex'
           }`}
         >
-          {selectedDiscussion ? (
+          {activeDirectChat ? (
+            <DirectChatRoom
+              conversation={activeDirectChat.conversation}
+              otherUser={activeDirectChat.otherUser}
+              currentUserId={currentUserId}
+              onBackToGroup={() => {
+                setActiveDirectChat(null);
+              }}
+              returnDiscussion={activeDirectChat.returnDiscussion || selectedDiscussion}
+              theme={theme}
+            />
+          ) : selectedDiscussion ? (
             <>
               <DiscussionHeader
                 discussion={selectedDiscussion}
-                onBack={() => setSelectedDiscussion(null)}
+                onBack={() => {
+                  setSelectedDiscussion(null);
+                  setShowMembersPanel(false);
+                  setShowMediaPanel(false);
+                }}
                 canManage={canManageSelected}
-                  onToggleMedia={() => setShowMediaPanel(!showMediaPanel)}
+                onToggleMedia={() => {
+                  setShowMediaPanel(!showMediaPanel);
+                  setShowMembersPanel(false);
+                }}
+                onOpenMembers={() => {
+                  setShowMembersPanel(!showMembersPanel);
+                  setShowMediaPanel(false);
+                }}
+                showMembersPanel={showMembersPanel}
                 onClearMessages={() => setClearDialogOpen(true)}
                 showBackButton={Boolean(selectedDiscussion)}
                 isClearing={clearing}
               />
 
               <div className="flex-1 flex min-h-0 relative">
-  <div className="flex-1 flex flex-col min-w-0">
-    <MessageList
-                  onReply={(msg) => setReplyingTo(msg)}
-                  onReact={handleReact}
-                  onDelete={handleDelete}
-                  messages={messages}
-                currentUserId={currentUserId}
-                loading={loadingMessages}
-                theme={theme}
-              />
+                <div className="flex-1 flex flex-col min-w-0">
+                  <MessageList
+                    onReply={(msg) => setReplyingTo(msg)}
+                    onReact={handleReact}
+                    onDelete={handleDelete}
+                    messages={messages}
+                    currentUserId={currentUserId}
+                    loading={loadingMessages}
+                    theme={theme}
+                  />
 
-              <MessageComposer
-                  replyingTo={replyingTo}
-                  onCancelReply={() => setReplyingTo(null)}
-                onSendMessage={handleSendMessage}
-                onSendSticker={handleSendSticker}
-                onSendFile={handleSendFile}
-                sending={sending}
-                uploading={uploading}
-              />
-  </div>
-  <SharedMediaPanel isOpen={showMediaPanel} onClose={() => setShowMediaPanel(false)} messages={messages} />
-</div>
+                  <MessageComposer
+                    replyingTo={replyingTo}
+                    onCancelReply={() => setReplyingTo(null)}
+                    onSendMessage={handleSendMessage}
+                    onSendSticker={handleSendSticker}
+                    onSendFile={handleSendFile}
+                    sending={sending}
+                    uploading={uploading}
+                  />
+                </div>
+                <SharedMediaPanel
+                  isOpen={showMediaPanel}
+                  onClose={() => setShowMediaPanel(false)}
+                  messages={messages}
+                />
+                <GroupMembersPanel
+                  isOpen={showMembersPanel}
+                  onClose={() => setShowMembersPanel(false)}
+                  discussion={selectedDiscussion}
+                  currentUserId={currentUserId}
+                  onStartDirectChat={handleStartDirectChat}
+                />
+              </div>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-repeat"

@@ -11,6 +11,11 @@ export const discussionService = {
     return res.data;
   },
 
+  getDiscussionMembers: async (discussionId) => {
+    const res = await api.get(`/api/discussions/${discussionId}/members`);
+    return res.data;
+  },
+
   getDiscussionMessages: async (discussionId) => {
     const res = await api.get(`/api/messages/discussion/${discussionId}`);
     return res.data;

@@ -4,6 +4,7 @@ import express from "express";
 import {
   getMyDiscussions,
   getCourseDiscussion,
+  getDiscussionMembers,
   deleteDiscussion,
 } from "../Controllers/discussion.controller.js";
 import authorizeRoles from "../Middlewares/role.middleware.js";
@@ -19,6 +20,13 @@ router.get(
   "/course/:courseId",
   authMiddleware,
   getCourseDiscussion
+);
+
+// get discussion members
+router.get(
+  "/:discussionId/members",
+  authMiddleware,
+  getDiscussionMembers
 );
 
 // delete discussion
