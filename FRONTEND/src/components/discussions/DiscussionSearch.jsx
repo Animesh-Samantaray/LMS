@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
 
-const DiscussionSearch = ({ searchQuery, setSearchQuery }) => {
+const DiscussionSearch = ({ searchQuery, setSearchQuery, placeholder = "Search or start new chat" }) => {
   return (
     <div className="p-3 border-b border-[var(--lms-border)] bg-[var(--lms-surface-elevated)]">
       <div className="relative flex items-center">
@@ -13,7 +13,7 @@ const DiscussionSearch = ({ searchQuery, setSearchQuery }) => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search or start new chat"
+          placeholder={placeholder}
           className="w-full pl-10 pr-9 py-2 rounded-xl text-xs sm:text-sm bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] text-[var(--lms-text-primary)] placeholder:text-[var(--lms-text-muted)] focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all"
         />
         {searchQuery && (

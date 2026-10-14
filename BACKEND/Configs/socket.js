@@ -1,6 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import User from "../Models/User.model.js";
 import Discussion from "../Models/Discussion.model.js";
+import DirectConversation from "../Models/DirectConversation.model.js";
 import Course from "../Models/Course.model.js";
 
 let io;
@@ -46,6 +47,10 @@ export const setSocketIo = (socketIo) => {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
+    if (socket.user?.id) {
+      socket.join(`user:${socket.user.id}`);
+    }
+
     socket.on("discussion:join", async (discussionId) => {
       try {
         const discussion = await Discussion.findById(discussionId);
@@ -87,6 +92,28 @@ export const setSocketIo = (socketIo) => {
 
     socket.on("discussion:leave", (discussionId) => {
       socket.leave(`discussion:${discussionId}`);
+    });
+
+    socket.on("direct:join", async (conversationId) => {
+      try {
+        if (!conversationId) return;
+        const conversation = await DirectConversation.findById(conversationId);
+        if (!conversation) return;
+
+        const isParticipant = conversation.participants.some(
+          (p) => p && p.toString() === socket.user.id
+        );
+
+        if (isParticipant) {
+          socket.join(`direct:${conversationId}`);
+        }
+      } catch (error) {
+        console.error("Direct room join error:", error.message);
+      }
+    });
+
+    socket.on("direct:leave", (conversationId) => {
+      socket.leave(`direct:${conversationId}`);
     });
   });
 };
