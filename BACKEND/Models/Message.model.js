@@ -56,6 +56,24 @@ const messageSchema = new mongoose.Schema(
         emoji: String,
       }
     ],
+    isForwarded: {
+      type: Boolean,
+      default: false,
+    },
+    isDeletedForEveryone: {
+      type: Boolean,
+      default: false,
+    },
+    deletedFor: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -7,6 +7,7 @@ import {
   uploadDirectFile,
   getMyDirectConversations,
   toggleDirectReaction,
+  deleteDirectMessage,
 } from "../Controllers/directChat.controller.js";
 import authMiddleware from "../Middlewares/auth.middleware.js";
 import upload from "../Middlewares/upload.middleware.js";
@@ -54,5 +55,8 @@ router.post("/:conversationId/upload", authMiddleware, handleUpload, uploadDirec
 
 // Toggle reaction
 router.post("/:conversationId/message/:messageId/react", authMiddleware, toggleDirectReaction);
+
+// Delete direct message (Delete for Me or Delete for Everyone)
+router.delete("/:conversationId/message/:messageId", authMiddleware, deleteDirectMessage);
 
 export default router;

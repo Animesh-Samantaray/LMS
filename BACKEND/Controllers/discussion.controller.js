@@ -90,6 +90,7 @@ export const getMyDiscussions = async (req, res) => {
 
           const lastMessage = await Message.findOne({
             discussionId: discussion._id,
+            deletedFor: { $ne: userId },
           })
             .populate("senderId", "name profileImage role")
             .sort({ createdAt: -1 });

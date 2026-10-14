@@ -46,6 +46,13 @@ export const directChatService = {
     const res = await api.post(`/api/direct-chat/${conversationId}/message/${messageId}/react`, { emoji });
     return res.data;
   },
+
+  deleteDirectMessage: async (conversationId, messageId, deleteType = 'everyone') => {
+    const res = await api.delete(`/api/direct-chat/${conversationId}/message/${messageId}`, {
+      params: { deleteType },
+    });
+    return res.data;
+  },
 };
 
 export default directChatService;

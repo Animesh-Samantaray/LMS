@@ -16,6 +16,7 @@ import directChatService from '../../services/directChat.service';
 import { getSocket } from '../../services/socket.service';
 import MessageList from './MessageList';
 import MessageComposer from './MessageComposer';
+import DeleteMessageDialog from './DeleteMessageDialog';
 
 const getInitials = (name) => {
   if (!name || typeof name !== 'string') return '?';
@@ -48,6 +49,7 @@ const DirectChatRoom = ({
   onBackToGroup,
   returnDiscussion,
   theme = 'dark',
+  onOpenForward,
 }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
@@ -56,6 +58,13 @@ const DirectChatRoom = ({
   const [uploading, setUploading] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
   const [imgError, setImgError] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    messageId: null,
+    deleteType: null,
+    canDeleteForEveryone: false,
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const socketRef = useRef(null);
   const conversationId = conversation?._id;
@@ -102,6 +111,8 @@ const DirectChatRoom = ({
 
       socket.off('direct:message:new');
       socket.off('direct:message:reaction');
+      socket.off('direct:message:deletedForEveryone');
+      socket.off('direct:message:deleted');
 
       socket.on('direct:message:new', (newMsg) => {
         if (!newMsg) return;
@@ -135,6 +146,50 @@ const DirectChatRoom = ({
           );
         }
       });
+
+      socket.on('direct:message:deletedForEveryone', ({ conversationId: cId, messageId }) => {
+        if (cId?.toString() === conversationId?.toString()) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m._id === messageId
+                ? {
+                    ...m,
+                    isDeletedForEveryone: true,
+                    content: 'This message was deleted',
+                    fileUrl: '',
+                    fileName: '',
+                    fileSize: 0,
+                    fileMimeType: '',
+                    stickerId: '',
+                    reactions: [],
+                  }
+                : m
+            )
+          );
+        }
+      });
+
+      socket.on('direct:message:deleted', ({ conversationId: cId, messageId, isDeletedForEveryone }) => {
+        if (cId?.toString() === conversationId?.toString() && isDeletedForEveryone) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m._id === messageId
+                ? {
+                    ...m,
+                    isDeletedForEveryone: true,
+                    content: 'This message was deleted',
+                    fileUrl: '',
+                    fileName: '',
+                    fileSize: 0,
+                    fileMimeType: '',
+                    stickerId: '',
+                    reactions: [],
+                  }
+                : m
+            )
+          );
+        }
+      });
     };
 
     setupSocket();
@@ -145,6 +200,8 @@ const DirectChatRoom = ({
         socketRef.current.emit('direct:leave', conversationId);
         socketRef.current.off('direct:message:new');
         socketRef.current.off('direct:message:reaction');
+        socketRef.current.off('direct:message:deletedForEveryone');
+        socketRef.current.off('direct:message:deleted');
       }
     };
   }, [conversationId]);
@@ -308,6 +365,73 @@ const DirectChatRoom = ({
       }
     } catch (err) {
       console.error('Direct reaction failed:', err);
+    }
+  };
+
+  const handleInitiateDelete = (messageId, deleteType = null) => {
+    const msg = messages.find((m) => m._id === messageId);
+    const msgSenderId = msg?.senderId?._id || msg?.senderId;
+    const isOwn = msgSenderId && currentUserId && msgSenderId.toString() === currentUserId.toString();
+
+    setDeleteDialog({
+      isOpen: true,
+      messageId,
+      deleteType,
+      canDeleteForEveryone: Boolean(isOwn),
+    });
+  };
+
+  const handleConfirmDelete = async (deleteType) => {
+    if (!conversationId || !deleteDialog.messageId) return;
+    try {
+      setIsDeleting(true);
+      const res = await directChatService.deleteDirectMessage(
+        conversationId,
+        deleteDialog.messageId,
+        deleteType
+      );
+
+      if (res?.success) {
+        if (deleteType === 'me') {
+          setMessages((prev) => prev.filter((m) => m._id !== deleteDialog.messageId));
+          toast.success('Message deleted for you');
+        } else {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m._id === deleteDialog.messageId
+                ? {
+                    ...m,
+                    isDeletedForEveryone: true,
+                    content: 'This message was deleted',
+                    fileUrl: '',
+                    fileName: '',
+                    fileSize: 0,
+                    fileMimeType: '',
+                    stickerId: '',
+                    reactions: [],
+                  }
+                : m
+            )
+          );
+          toast.success('Message deleted for everyone');
+        }
+        setDeleteDialog({
+          isOpen: false,
+          messageId: null,
+          deleteType: null,
+          canDeleteForEveryone: false,
+        });
+        return true;
+      } else {
+        toast.error(res?.message || 'Failed to delete message');
+        return false;
+      }
+    } catch (err) {
+      console.error('Delete direct message error:', err);
+      toast.error(err.response?.data?.message || 'Failed to delete message');
+      return false;
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -479,6 +603,9 @@ const DirectChatRoom = ({
             theme={theme}
             onReply={(msg) => setReplyingTo(msg)}
             onReact={handleReact}
+            onDelete={handleInitiateDelete}
+            onForward={(msg) => onOpenForward && onOpenForward(msg)}
+            canDeleteForEveryone={false}
           />
         )}
 
@@ -490,6 +617,22 @@ const DirectChatRoom = ({
           onSendFile={handleSendFile}
           sending={false}
           uploading={uploading}
+        />
+
+        <DeleteMessageDialog
+          isOpen={deleteDialog.isOpen}
+          onClose={() =>
+            setDeleteDialog({
+              isOpen: false,
+              messageId: null,
+              deleteType: null,
+              canDeleteForEveryone: false,
+            })
+          }
+          onConfirm={handleConfirmDelete}
+          isDeleting={isDeleting}
+          canDeleteForEveryone={deleteDialog.canDeleteForEveryone}
+          initialDeleteType={deleteDialog.deleteType}
         />
       </div>
     </div>

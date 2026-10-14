@@ -31,7 +31,17 @@ const formatDateSeparator = (dateStr) => {
   });
 };
 
-const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', onReply, onReact, onDelete }) => {
+const MessageList = ({
+  messages = [],
+  currentUserId,
+  loading,
+  theme = 'dark',
+  onReply,
+  onReact,
+  onDelete,
+  onForward,
+  canDeleteForEveryone = false,
+}) => {
   const containerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -41,23 +51,23 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', on
 
   const toggleMessageSelection = (messageId, begin = false) => {
     if (begin) setSelectionMode(true);
-    setSelectedMessageIds((ids) => ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId]);
+    setSelectedMessageIds((ids) =>
+      ids.includes(messageId) ? ids.filter((id) => id !== messageId) : [...ids, messageId]
+    );
   };
 
   const deleteSelectedMessages = async () => {
-    const deletableIds = selectedMessageIds.filter((id) => {
-      const message = messages.find((item) => item._id === id);
-      const senderId = message?.senderId?._id || message?.senderId;
-      return senderId?.toString() === currentUserId?.toString();
-    });
-    if (!deletableIds.length || !window.confirm(`Delete ${deletableIds.length} selected message${deletableIds.length === 1 ? '' : 's'}?`)) return;
+    if (!selectedMessageIds.length) return;
+    if (!window.confirm(`Delete ${selectedMessageIds.length} selected message(s) for you?`)) return;
 
-    const results = await Promise.all(deletableIds.map((id) => onDelete?.(id)));
+    const results = await Promise.all(
+      selectedMessageIds.map((id) => onDelete?.(id, 'me'))
+    );
     if (results.every(Boolean)) {
       setSelectionMode(false);
       setSelectedMessageIds([]);
     } else {
-      setSelectedMessageIds((ids) => ids.filter((id) => !deletableIds.includes(id)));
+      setSelectedMessageIds((ids) => ids.filter((id) => !results[selectedMessageIds.indexOf(id)]));
     }
   };
 
@@ -151,16 +161,20 @@ const MessageList = ({ messages = [], currentUserId, loading, theme = 'dark', on
                   )}
 
                   <MessageBubble
-                      message={msg}
-                      isOwn={isOwn}
-                      showSenderInfo={showSenderInfo}
-                      onReply={() => onReply(msg)}
-                      onReact={(emoji) => onReact && onReact(msg._id, emoji)}
-                      onDelete={() => onDelete && onDelete(msg._id)}
-                      onSelect={toggleMessageSelection}
-                      selectionMode={selectionMode}
-                      selected={selectedMessageIds.includes(msg._id)}
-                    />
+                    message={msg}
+                    isOwn={isOwn}
+                    showSenderInfo={showSenderInfo}
+                    onReply={() => onReply(msg)}
+                    onReact={(emoji) => onReact && onReact(msg._id, emoji)}
+                    onDelete={(messageId, deleteType) =>
+                      onDelete && onDelete(messageId, deleteType)
+                    }
+                    onForward={() => onForward && onForward(msg)}
+                    onSelect={toggleMessageSelection}
+                    selectionMode={selectionMode}
+                    selected={selectedMessageIds.includes(msg._id)}
+                    canDeleteForEveryone={canDeleteForEveryone}
+                  />
                 </React.Fragment>
               );
             })}
