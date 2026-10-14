@@ -284,3 +284,125 @@ export const deleteDiscussion = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// get discussion members
+export const getDiscussionMembers = async (req, res) => {
+  try {
+    const { discussionId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!mongoose.Types.ObjectId.isValid(discussionId)) {
+      return res.status(400).json({ success: false, message: "Invalid discussion ID" });
+    }
+
+    const discussion = await Discussion.findOne({
+      _id: discussionId,
+      isDeleted: false,
+    });
+
+    if (!discussion) {
+      return res.status(404).json({ success: false, message: "Discussion not found" });
+    }
+
+    const course = await Course.findById(discussion.courseId)
+      .populate("createdBy", "name email profileImage role")
+      .populate("enrolled", "name email profileImage role");
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const currentUserIdStr = userId ? userId.toString() : "";
+    const isAdmin = req.user?.role === "Admin";
+    const courseCreatorId = course.createdBy?._id || course.createdBy;
+    const isCreator = courseCreatorId ? courseCreatorId.toString() === currentUserIdStr : false;
+    const isEnrolled = Array.isArray(course.enrolled) && course.enrolled.some(
+      (e) => (e._id ? e._id.toString() : e.toString()) === currentUserIdStr
+    );
+    const isMember = Array.isArray(discussion.members) && discussion.members.some(
+      (m) => m?.toString() === currentUserIdStr
+    );
+
+    if (!isAdmin && !isCreator && !isEnrolled && !isMember) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to view the members of this group.",
+      });
+    }
+
+    // Collect all member IDs
+    const memberIdSet = new Set();
+    if (courseCreatorId) {
+      memberIdSet.add(courseCreatorId.toString());
+    }
+    if (Array.isArray(course.enrolled)) {
+      course.enrolled.forEach((e) => {
+        const id = e?._id ? e._id.toString() : e?.toString();
+        if (id) memberIdSet.add(id);
+      });
+    }
+    if (Array.isArray(discussion.members)) {
+      discussion.members.forEach((m) => {
+        if (m) memberIdSet.add(m.toString());
+      });
+    }
+
+    const memberIds = Array.from(memberIdSet).filter((id) => mongoose.Types.ObjectId.isValid(id));
+    const users = await User.find({
+      _id: { $in: memberIds },
+    })
+      .select("name email role profileImage createdAt")
+      .lean();
+
+    // Sync any newly discovered members into discussion.members
+    const existingMemberStrings = new Set((discussion.members || []).map((m) => m.toString()));
+    const missingMembers = memberIds.filter((id) => !existingMemberStrings.has(id));
+    if (missingMembers.length > 0) {
+      discussion.members = Array.from(new Set([...(discussion.members || []), ...missingMembers]));
+      await discussion.save();
+    }
+
+    const members = users.map((u) => {
+      const uIdStr = u._id.toString();
+      const isOwner = courseCreatorId ? courseCreatorId.toString() === uIdStr : false;
+      return {
+        _id: u._id,
+        name: u.name || "Member",
+        email: u.email || "",
+        role: u.role || (isOwner ? "Instructor" : "Student"),
+        profileImage: u.profileImage || "",
+        isCreator: isOwner,
+        isCurrentUser: uIdStr === currentUserIdStr,
+        joinedAt: u.createdAt,
+      };
+    });
+
+    members.sort((a, b) => {
+      if (a.isCreator && !b.isCreator) return -1;
+      if (!a.isCreator && b.isCreator) return 1;
+
+      const priority = { Instructor: 1, Admin: 2, Student: 3 };
+      const aPri = priority[a.role] || 4;
+      const bPri = priority[b.role] || 4;
+      if (aPri !== bPri) return aPri - bPri;
+
+      return (a.name || "").localeCompare(b.name || "");
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        discussionId: discussion._id,
+        courseId: course._id,
+        courseTitle: course.title || "Course Group",
+        courseThumbnail: course.thumbnail || "",
+        category: course.category || "",
+        memberCount: members.length,
+        members,
+      },
+    });
+  } catch (error) {
+    console.error("Get discussion members error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
