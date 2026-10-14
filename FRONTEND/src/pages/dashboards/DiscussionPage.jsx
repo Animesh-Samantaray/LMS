@@ -16,6 +16,8 @@ import DirectChatRoom from '../../components/discussions/DirectChatRoom';
 import MessageList from '../../components/discussions/MessageList';
 import MessageComposer from '../../components/discussions/MessageComposer';
 import ClearDiscussionDialog from '../../components/discussions/ClearDiscussionDialog';
+import DeleteMessageDialog from '../../components/discussions/DeleteMessageDialog';
+import ForwardMessageModal from '../../components/discussions/ForwardMessageModal';
 import directChatService from '../../services/directChat.service';
 import { toast } from 'react-hot-toast';
 
@@ -43,6 +45,22 @@ const DiscussionPage = () => {
   const [clearing, setClearing] = useState(false);
   const [showMediaPanel, setShowMediaPanel] = useState(false);
   const [showMembersPanel, setShowMembersPanel] = useState(false);
+
+  // Message Delete & Forward states
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    messageId: null,
+    deleteType: null,
+    canDeleteForEveryone: false,
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [forwardModal, setForwardModal] = useState({
+    isOpen: false,
+    message: null,
+    sourceType: 'discussion',
+  });
+  const [isForwarding, setIsForwarding] = useState(false);
 
   // Direct 1-on-1 Chat states
   const [sidebarTab, setSidebarTab] = useState('groups'); // 'groups' | 'direct'
@@ -156,6 +174,10 @@ const DiscussionPage = () => {
 
       socket.off('message:new');
       socket.off('discussion:cleared');
+      socket.off('direct:notification');
+      socket.off('message:deletedForEveryone');
+      socket.off('message:deleted');
+      socket.off('message:reaction');
 
       discussions.forEach((d) => {
         if (d?._id) {
@@ -229,6 +251,82 @@ const DiscussionPage = () => {
         }
       });
 
+      socket.on('message:deletedForEveryone', ({ discussionId, messageId }) => {
+        const activeDisc = selectedDiscussionRef.current;
+        if (activeDisc?._id?.toString() === discussionId?.toString()) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m._id === messageId
+                ? {
+                    ...m,
+                    isDeletedForEveryone: true,
+                    content: 'This message was deleted',
+                    fileUrl: '',
+                    fileName: '',
+                    fileSize: 0,
+                    fileMimeType: '',
+                    stickerId: '',
+                    reactions: [],
+                  }
+                : m
+            )
+          );
+        }
+
+        setDiscussions((prevList) =>
+          prevList.map((d) => {
+            if (
+              d._id.toString() === discussionId?.toString() &&
+              d.lastMessage?._id?.toString() === messageId?.toString()
+            ) {
+              return {
+                ...d,
+                lastMessage: {
+                  ...d.lastMessage,
+                  content: 'This message was deleted',
+                },
+              };
+            }
+            return d;
+          })
+        );
+      });
+
+      socket.on('message:deleted', ({ discussionId, messageId, isDeletedForEveryone }) => {
+        if (isDeletedForEveryone) {
+          const activeDisc = selectedDiscussionRef.current;
+          if (activeDisc?._id?.toString() === discussionId?.toString()) {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m._id === messageId
+                  ? {
+                      ...m,
+                      isDeletedForEveryone: true,
+                      content: 'This message was deleted',
+                      fileUrl: '',
+                      fileName: '',
+                      fileSize: 0,
+                      fileMimeType: '',
+                      stickerId: '',
+                      reactions: [],
+                    }
+                  : m
+              )
+            );
+          }
+        }
+      });
+
+      socket.on('message:reaction', (updatedMsg) => {
+        if (!updatedMsg) return;
+        const activeDisc = selectedDiscussionRef.current;
+        if (activeDisc?._id?.toString() === updatedMsg.discussionId?.toString()) {
+          setMessages((prev) =>
+            prev.map((m) => (m._id === updatedMsg._id ? updatedMsg : m))
+          );
+        }
+      });
+
       socket.on('discussion:cleared', ({ discussionId }) => {
         if (selectedDiscussionRef.current?._id?.toString() === discussionId?.toString()) {
           setMessages([]);
@@ -272,6 +370,9 @@ const DiscussionPage = () => {
         socketRef.current.off('message:new');
         socketRef.current.off('discussion:cleared');
         socketRef.current.off('direct:notification');
+        socketRef.current.off('message:deletedForEveryone');
+        socketRef.current.off('message:deleted');
+        socketRef.current.off('message:reaction');
       }
     };
   }, [user, discussions.length, fetchDirectConversations]);
@@ -320,15 +421,106 @@ const DiscussionPage = () => {
     }
   };
 
-  const handleDelete = async (messageId) => {
-    if (!selectedDiscussion) return;
+  const handleInitiateDelete = (messageId, deleteType = null) => {
+    const msg = messages.find((m) => m._id === messageId);
+    const msgSenderId = msg?.senderId?._id || msg?.senderId;
+    const isOwn = msgSenderId && currentUserId && msgSenderId.toString() === currentUserId.toString();
+    const canDeleteEveryone = Boolean(isOwn || canManageSelected);
+
+    setDeleteDialog({
+      isOpen: true,
+      messageId,
+      deleteType,
+      canDeleteForEveryone: canDeleteEveryone,
+    });
+  };
+
+  const handleConfirmDelete = async (deleteType) => {
+    if (!selectedDiscussion || !deleteDialog.messageId) return;
     try {
-      await discussionService.deleteMessage(selectedDiscussion._id, messageId);
-      setMessages((prev) => prev.filter(m => m._id !== messageId));
-      return true;
+      setIsDeleting(true);
+      const res = await discussionService.deleteMessage(
+        selectedDiscussion._id,
+        deleteDialog.messageId,
+        deleteType
+      );
+
+      if (res?.success) {
+        if (deleteType === 'me') {
+          setMessages((prev) => prev.filter((m) => m._id !== deleteDialog.messageId));
+          toast.success('Message deleted for you');
+        } else {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m._id === deleteDialog.messageId
+                ? {
+                    ...m,
+                    isDeletedForEveryone: true,
+                    content: 'This message was deleted',
+                    fileUrl: '',
+                    fileName: '',
+                    fileSize: 0,
+                    fileMimeType: '',
+                    stickerId: '',
+                    reactions: [],
+                  }
+                : m
+            )
+          );
+          toast.success('Message deleted for everyone');
+        }
+        setDeleteDialog({
+          isOpen: false,
+          messageId: null,
+          deleteType: null,
+          canDeleteForEveryone: false,
+        });
+        return true;
+      } else {
+        toast.error(res?.message || 'Failed to delete message');
+        return false;
+      }
     } catch (err) {
       console.error('Failed to delete message:', err);
+      toast.error(err.response?.data?.message || 'Failed to delete message');
       return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleOpenForward = (message, sourceType = 'discussion') => {
+    setForwardModal({
+      isOpen: true,
+      message,
+      sourceType,
+    });
+  };
+
+  const handleConfirmForward = async ({ targetDiscussionIds, targetConversationIds }) => {
+    if (!forwardModal.message) return;
+    try {
+      setIsForwarding(true);
+      const res = await discussionService.forwardMessage({
+        sourceType: forwardModal.sourceType,
+        sourceMessageId: forwardModal.message._id,
+        targetDiscussionIds,
+        targetConversationIds,
+      });
+
+      if (res?.success) {
+        toast.success(res.message || 'Message forwarded successfully');
+        setForwardModal({ isOpen: false, message: null, sourceType: 'discussion' });
+        fetchDiscussions();
+        fetchDirectConversations();
+      } else {
+        toast.error(res?.message || 'Failed to forward message');
+      }
+    } catch (err) {
+      console.error('Forward message error:', err);
+      toast.error(err.response?.data?.message || 'Failed to forward message');
+    } finally {
+      setIsForwarding(false);
     }
   };
 
@@ -496,6 +688,7 @@ const DiscussionPage = () => {
               }}
               returnDiscussion={activeDirectChat.returnDiscussion || selectedDiscussion}
               theme={theme}
+              onOpenForward={(msg) => handleOpenForward(msg, 'direct')}
             />
           ) : selectedDiscussion ? (
             <>
@@ -526,7 +719,9 @@ const DiscussionPage = () => {
                   <MessageList
                     onReply={(msg) => setReplyingTo(msg)}
                     onReact={handleReact}
-                    onDelete={handleDelete}
+                    onDelete={handleInitiateDelete}
+                    onForward={(msg) => handleOpenForward(msg, 'discussion')}
+                    canDeleteForEveryone={canManageSelected}
                     messages={messages}
                     currentUserId={currentUserId}
                     loading={loadingMessages}
@@ -594,6 +789,39 @@ const DiscussionPage = () => {
         onConfirm={handleClearDiscussion}
         clearing={clearing}
         courseTitle={selectedDiscussion?.courseId?.title}
+      />
+
+      <DeleteMessageDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() =>
+          setDeleteDialog({
+            isOpen: false,
+            messageId: null,
+            deleteType: null,
+            canDeleteForEveryone: false,
+          })
+        }
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+        canDeleteForEveryone={deleteDialog.canDeleteForEveryone}
+        initialDeleteType={deleteDialog.deleteType}
+      />
+
+      <ForwardMessageModal
+        isOpen={forwardModal.isOpen}
+        onClose={() =>
+          setForwardModal({
+            isOpen: false,
+            message: null,
+            sourceType: 'discussion',
+          })
+        }
+        message={forwardModal.message}
+        sourceType={forwardModal.sourceType}
+        discussions={discussions}
+        directConversations={directConversations}
+        onConfirmForward={handleConfirmForward}
+        isForwarding={isForwarding}
       />
     </DashboardLayout>
   );

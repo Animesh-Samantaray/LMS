@@ -8,6 +8,7 @@ import {
   clearDiscussionMessages,
   toggleReaction,
   deleteMessage,
+  forwardMessage,
 } from "../Controllers/message.controller.js";
 
 import authMiddleware from "../Middlewares/auth.middleware.js";
@@ -39,6 +40,9 @@ const handleUpload = (req, res, next) => {
   });
 };
 
+// forward message (supports forwarding to discussions and direct chats)
+router.post("/forward", authMiddleware, forwardMessage);
+
 // send chat message
 router.post("/discussion/:discussionId", authMiddleware, sendMessage);
 
@@ -60,9 +64,10 @@ router.delete(
 // get discussion messages
 router.get("/discussion/:discussionId", authMiddleware, getDiscussionMessages);
 
-export default router;
 // toggle reaction
 router.post('/discussion/:discussionId/message/:messageId/react', authMiddleware, toggleReaction);
 
 // delete message
 router.delete('/discussion/:discussionId/message/:messageId', authMiddleware, deleteMessage);
+
+export default router;

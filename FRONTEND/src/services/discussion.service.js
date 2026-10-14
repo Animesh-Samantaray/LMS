@@ -35,8 +35,27 @@ export const discussionService = {
     return res.data;
   },
 
-  deleteMessage: async (discussionId, messageId) => {
-    const res = await api.delete(`/api/messages/discussion/${discussionId}/message/${messageId}`);
+  deleteMessage: async (discussionId, messageId, deleteType = 'everyone') => {
+    const res = await api.delete(`/api/messages/discussion/${discussionId}/message/${messageId}`, {
+      params: { deleteType },
+    });
+    return res.data;
+  },
+
+  forwardMessage: async ({
+    sourceType = 'discussion',
+    sourceMessageId,
+    targetDiscussionIds = [],
+    targetConversationIds = [],
+    targetUserIds = [],
+  }) => {
+    const res = await api.post('/api/messages/forward', {
+      sourceType,
+      sourceMessageId,
+      targetDiscussionIds,
+      targetConversationIds,
+      targetUserIds,
+    });
     return res.data;
   },
 

@@ -5,8 +5,14 @@ const ClearDiscussionDialog = ({ isOpen, onClose, onConfirm, clearing, courseTit
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md rounded-2xl bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] shadow-2xl p-6 relative animate-scale-in">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] shadow-2xl p-6 relative animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           disabled={clearing}

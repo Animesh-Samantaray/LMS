@@ -117,11 +117,14 @@ export const getDirectMessages = async (req, res) => {
       { $set: { [`unreadCounts.${uIdStr}`]: 0 } }
     ).catch(() => {});
 
-    const messages = await DirectMessage.find({ conversationId })
+    const messages = await DirectMessage.find({
+      conversationId,
+      deletedFor: { $ne: currentUserId },
+    })
       .populate("senderId", "name email role profileImage")
       .populate({
         path: "parentMessageId",
-        select: "content type fileName stickerId senderId",
+        select: "content type fileName stickerId senderId isDeletedForEveryone",
         populate: { path: "senderId", select: "name" },
       })
       .sort({ createdAt: 1 })
@@ -401,3 +404,107 @@ export const toggleDirectReaction = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 };
+
+export const deleteDirectMessage = async (req, res) => {
+  try {
+    const currentUserId = getUserId(req.user);
+    const { conversationId, messageId } = req.params;
+    const deleteType = (req.query.deleteType || req.body?.deleteType || "me").toLowerCase();
+
+    if (!currentUserId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    const { allowed, conversation } = await checkDirectAccess(conversationId, currentUserId);
+    if (!allowed || !conversation) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to access this direct conversation",
+      });
+    }
+
+    const message = await DirectMessage.findById(messageId);
+    if (!message || message.conversationId.toString() !== conversationId) {
+      return res.status(404).json({ success: false, message: "Direct message not found" });
+    }
+
+    if (deleteType === "me") {
+      // Delete for Me: Only hides the message from the current user
+      await DirectMessage.findByIdAndUpdate(messageId, {
+        $addToSet: { deletedFor: currentUserId },
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Message deleted for you",
+        data: { messageId, deleteType: "me" },
+      });
+    }
+
+    // Delete for Everyone: Must be original sender in 1-on-1 chat
+    if (message.senderId.toString() !== currentUserId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own messages for everyone",
+      });
+    }
+
+    message.isDeletedForEveryone = true;
+    message.deletedAt = new Date();
+    message.content = "This message was deleted";
+    message.fileUrl = "";
+    message.fileName = "";
+    message.fileSize = 0;
+    message.fileMimeType = "";
+    message.stickerId = "";
+    message.reactions = [];
+
+    await message.save();
+
+    // Check if conversation last message needs update
+    if (
+      conversation.lastMessage &&
+      conversation.lastMessage.createdAt &&
+      new Date(conversation.lastMessage.createdAt).getTime() === new Date(message.createdAt).getTime()
+    ) {
+      await DirectConversation.updateOne(
+        { _id: conversationId },
+        { $set: { "lastMessage.content": "This message was deleted", "lastMessage.type": "text" } }
+      );
+    }
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`direct:${conversationId}`).emit("direct:message:deletedForEveryone", {
+        conversationId,
+        messageId,
+        deletedAt: message.deletedAt,
+      });
+      io.to(`direct:${conversationId}`).emit("direct:message:deleted", {
+        conversationId,
+        messageId,
+        isDeletedForEveryone: true,
+      });
+
+      const otherParticipantId = conversation.participants?.find(
+        (p) => p && p.toString() !== currentUserId.toString()
+      );
+      if (otherParticipantId) {
+        io.to(`user:${otherParticipantId.toString()}`).emit("direct:message:deletedForEveryone", {
+          conversationId,
+          messageId,
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Message deleted for everyone",
+      data: { messageId, deleteType: "everyone" },
+    });
+  } catch (error) {
+    console.error("deleteDirectMessage error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
