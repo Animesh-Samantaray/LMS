@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../Models/User.model.js";
 import StudentProfile from "../Models/StudentProfile.model.js";
 import uploadProfileImage from "../Utils/uploadProfileImage.js";
@@ -95,6 +96,9 @@ export const getAllStudents = async (req, res) => {
 // get student by id
 export const getStudentById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
     const profile = await findStudentProfile(req.params.id);
     if (!profile) {
       return res.status(404).json({ success: false, message: "Student profile not found" });

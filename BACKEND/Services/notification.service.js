@@ -1,6 +1,7 @@
 import Notification from '../Models/Notification.model.js';
 import PushSubscription from '../Models/PushSubscription.model.js';
 import webpush from 'web-push';
+import { getSocketIo } from '../Configs/socket.js';
 
 // Configuration for web-push should normally be in .env
 // We'll use dummy VAPID keys if none are provided to avoid crashing
@@ -37,8 +38,9 @@ export const createNotification = async ({ recipient, actor, type, title, messag
     await notification.save();
 
     // 1. Emit to Socket.IO
-    if (ioRef) {
-      ioRef.to(`user:${recipient.toString()}`).emit('notification:new', notification);
+    const activeIo = ioRef || getSocketIo();
+    if (activeIo) {
+      activeIo.to(`user:${recipient.toString()}`).emit('notification:new', notification);
     }
 
     // 2. Send Web Push

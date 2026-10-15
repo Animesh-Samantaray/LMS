@@ -9,11 +9,21 @@ let io;
 export const setSocketIo = (socketIo) => {
   io = socketIo;
 
+  // Log Engine.IO connection errors safely
+  io.engine.on("connection_error", (err) => {
+    console.warn(
+      `[Socket.IO Engine] Error: code=${err.code}, message="${err.message}"`
+    );
+  });
+
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
 
       if (!token) {
+        console.warn(
+          `[Socket.IO Auth] Connection rejected: No auth token provided (socket: ${socket.id})`
+        );
         return next(new Error("Authentication required"));
       }
 
@@ -30,6 +40,9 @@ export const setSocketIo = (socketIo) => {
       }
 
       if (!user || user.accountStatus !== "active") {
+        console.warn(
+          `[Socket.IO Auth] Connection rejected: User not found or inactive (UID: ${decodedToken.uid})`
+        );
         return next(new Error("User not authorized"));
       }
 
@@ -38,14 +51,42 @@ export const setSocketIo = (socketIo) => {
         role: user.role,
       };
 
+      console.log(
+        `[Socket.IO Auth] User ${user._id} (${user.role}) authenticated on socket ${socket.id}`
+      );
       next();
     } catch (error) {
+      console.warn(
+        `[Socket.IO Auth] Token verification failed on socket ${socket.id}: ${error.message}`
+      );
       next(new Error("Invalid or expired authentication token"));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+    const transportName = socket.conn?.transport?.name || "unknown";
+    console.log(
+      `[Socket.IO] Client connected: ${socket.id} (User: ${socket.user?.id}, Transport: ${transportName})`
+    );
+
+    socket.conn?.on("upgrade", (transport) => {
+      console.log(
+        `[Socket.IO] Transport upgraded to ${transport.name} for socket ${socket.id}`
+      );
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log(
+        `[Socket.IO] Client disconnected: ${socket.id} (Reason: ${reason})`
+      );
+    });
+
+    socket.on("error", (err) => {
+      console.error(
+        `[Socket.IO] Socket error on ${socket.id}:`,
+        err.message
+      );
+    });
 
     if (socket.user?.id) {
       socket.join(`user:${socket.user.id}`);

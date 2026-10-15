@@ -6,9 +6,12 @@ import {
   getInstructorProfile, getAllInstructors, getInstructorById,
   updateInstructorProfile, deleteInstructorProfile, uploadInstructorProfileImage,
 } from "../Controllers/instructor.controller.js";
+import { getMyCourses } from "../Controllers/course.controller.js";
 
 const router = express.Router();
 
+// get instructor's courses
+router.get("/courses", authMiddleware, authorizeRoles("Instructor", "Admin"), getMyCourses);
 // get instructor profile
 router.get("/profile", authMiddleware, authorizeRoles("Instructor", "Admin"), getInstructorProfile);
 // update instructor profile

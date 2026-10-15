@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import api, { API_BASE_URL } from '../services/api.service';
-import { io } from 'socket.io-client';
+import api from '../services/api.service';
+import { getSocket } from '../services/socket.service';
 
 const NotificationContext = createContext();
 
@@ -44,52 +44,54 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    let isSubscribed = true;
+    let activeSocket = null;
+
+    const handleNewNotification = (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+
+      // Native Browser Notification
+      if (Notification.permission === 'granted') {
+        try {
+          new Notification(notification.title, {
+            body: notification.message,
+            icon: '/favicon.ico',
+            tag: notification.dedupeKey || notification._id,
+          });
+        } catch (e) {
+          console.error('Failed to show native notification', e);
+        }
+      }
+    };
+
     if (user) {
       fetchNotifications(1);
       fetchUnreadCount();
 
-      // Initialize Socket.io
-      const socketUrl = import.meta.env.VITE_SOCKET_URL || API_BASE_URL || window.location.origin;
-      const newSocket = io(socketUrl, {
-        withCredentials: true,
-        transports: ['polling', 'websocket'],
-      });
-
-      newSocket.on('connect', () => {
-        console.log('Notification socket connected');
-      });
-
-      newSocket.on('notification:new', (notification) => {
-        setNotifications((prev) => [notification, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-
-        // Native Browser Notification
-        if (Notification.permission === 'granted') {
-          try {
-            new Notification(notification.title, {
-              body: notification.message,
-              icon: '/favicon.ico', // Adjust icon if needed
-              tag: notification.dedupeKey || notification._id
-            });
-          } catch(e) {
-            console.error('Failed to show native notification', e);
-          }
-        }
-      });
-
-      setSocket(newSocket);
-
-      return () => {
-        newSocket.disconnect();
-      };
+      getSocket()
+        .then((s) => {
+          if (!isSubscribed || !s) return;
+          activeSocket = s;
+          setSocket(s);
+          s.on('notification:new', handleNewNotification);
+        })
+        .catch((err) => {
+          console.warn('[NotificationContext] Failed to get socket:', err?.message);
+        });
     } else {
       setNotifications([]);
       setUnreadCount(0);
-      if (socket) {
-        socket.disconnect();
-      }
+      setSocket(null);
     }
-  }, [user]); // Only run when user changes
+
+    return () => {
+      isSubscribed = false;
+      if (activeSocket) {
+        activeSocket.off('notification:new', handleNewNotification);
+      }
+    };
+  }, [user, fetchNotifications, fetchUnreadCount]);
 
   const markAsRead = async (id) => {
     try {

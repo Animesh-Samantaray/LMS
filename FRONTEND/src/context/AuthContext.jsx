@@ -10,6 +10,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../configs/firebase";
 import api from "../services/api.service";
 import { getDashboardPath } from "../utils/auth";
+import { disconnectSocket } from "../services/socket.service";
 
 export { getDashboardPath };
 
@@ -210,6 +211,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       await signOut(auth);
+      disconnectSocket();
 
       setUser(null);
       setFirebaseUser(null);

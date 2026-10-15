@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../Models/User.model.js";
 import InstructorProfile from "../Models/InstructorProfile.model.js";
 import uploadProfileImage from "../Utils/uploadProfileImage.js";
@@ -93,6 +94,9 @@ export const getAllInstructors = async (req, res) => {
 // get instructor by id
 export const getInstructorById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ success: false, message: "Instructor not found" });
+    }
     const profile = await findInstructorProfile(req.params.id);
     if (!profile) {
       return res.status(404).json({ success: false, message: "Instructor profile not found" });

@@ -29,7 +29,12 @@ const InstructorQueries = () => {
 
   const fetchInstructorCourses = async () => {
     try {
-      const res = await api.get('/api/instructor/courses');
+      let res;
+      try {
+        res = await api.get('/api/courses/instructor/my');
+      } catch (e) {
+        res = await api.get('/api/instructor/courses');
+      }
       const list = res.data?.courses || res.data || [];
       setCourses(list);
       if (list.length > 0 && !selectedCourseId) {

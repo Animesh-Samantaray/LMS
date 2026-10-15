@@ -65,19 +65,26 @@ const allowedOrigins = [
   "https://lms-plum-zeta.vercel.app",
 ].filter(Boolean);
 
+export const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  const normalizedOrigin = origin.replace(/\/$/, "");
+  if (
+    allowedOrigins.includes(normalizedOrigin) ||
+    process.env.NODE_ENV !== "production" ||
+    allowedOrigins.length === 0
+  ) {
+    return true;
+  }
+  return false;
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      const normalizedOrigin = origin.replace(/\/$/, "");
-      if (
-        allowedOrigins.includes(normalizedOrigin) ||
-        process.env.NODE_ENV !== "production" ||
-        allowedOrigins.length === 0
-      ) {
+      if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error(`Blocked by CORS: origin ${origin} is not allowed`));
       }
     },
     credentials: true,
@@ -138,10 +145,18 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      callback(null, true);
+      if (isOriginAllowed(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`[Socket.IO CORS] Blocked unauthorized origin: ${origin}`);
+        callback(new Error(`Socket.IO CORS blocked origin: ${origin}`));
+      }
     },
     credentials: true,
   },
+  transports: ["polling", "websocket"],
+  pingTimeout: 30000,
+  pingInterval: 25000,
 });
 
 setSocketIo(io);
