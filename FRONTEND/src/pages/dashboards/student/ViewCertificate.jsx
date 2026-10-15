@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Linkedin, Download, Loader } from 'lucide-react';
 import DashboardLayout from '../../../components/DashboardLayout';
-import api from '../../../services/api.service';
+import api, { API_BASE_URL } from '../../../services/api.service';
 
 const ViewCertificate = () => {
   const { id } = useParams();
@@ -51,11 +51,14 @@ const ViewCertificate = () => {
     );
   }
 
-  const pdfUrl = `http://localhost:5000${certificate.pdfUrl}`;
-  const imageUrl = `http://localhost:5000${certificate.pdfUrl.replace(".pdf", ".jpg")}`;
+  const pdfUrl = certificate.pdfUrl?.startsWith('http')
+    ? certificate.pdfUrl
+    : `${API_BASE_URL || ''}${certificate.pdfUrl}`;
+  const imageUrl = pdfUrl.replace(".pdf", ".jpg");
 
   const shareOnLinkedIn = () => {
-    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`http://localhost:5000/verify-certificate/${certificate.certificateId}`)}`;
+    const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.certificateId}`;
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`;
     window.open(shareUrl, '_blank');
   };
 

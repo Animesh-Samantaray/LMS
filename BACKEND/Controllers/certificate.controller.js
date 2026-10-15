@@ -249,10 +249,23 @@ export const generateCertificate = async (req, res) => {
     const pdfFilename = `${certId}.pdf`;
     const pdfPath = path.join(pdfDir, pdfFilename);
 
-    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-    await page.pdf({
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process'
+      ],
+      ...(process.env.PUPPETEER_EXECUTABLE_PATH ? { executablePath: process.env.PUPPETEER_EXECUTABLE_PATH } : {})
+    });
+    try {
+      const page = await browser.newPage();
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      await page.pdf({
         path: pdfPath,
         format: 'A4',
         landscape: true,
@@ -261,7 +274,9 @@ export const generateCertificate = async (req, res) => {
       });
       await page.setViewport({ width: 1024, height: 723 });
       await page.screenshot({ path: pdfPath.replace('.pdf', '.jpg'), type: 'jpeg', quality: 90 });
-    await browser.close();
+    } finally {
+      await browser.close();
+    }
 
     const pdfUrl = `/certificates/${pdfFilename}`;
 

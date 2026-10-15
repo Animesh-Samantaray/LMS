@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import api from '../services/api.service';
+import api, { API_BASE_URL } from '../services/api.service';
 import { io } from 'socket.io-client';
 
 const NotificationContext = createContext();
@@ -49,8 +49,10 @@ export const NotificationProvider = ({ children }) => {
       fetchUnreadCount();
 
       // Initialize Socket.io
-      const newSocket = io('http://localhost:5000', {
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || API_BASE_URL || window.location.origin;
+      const newSocket = io(socketUrl, {
         withCredentials: true,
+        transports: ['polling', 'websocket'],
       });
 
       newSocket.on('connect', () => {

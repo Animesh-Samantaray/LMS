@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Lock, CheckCircle, Download, FileText, Loader } from 'lucide-react';
-import axios from 'axios';
+import api, { API_BASE_URL } from '../services/api.service';
 
 const CourseCertificateTab = ({ courseId }) => {
   const [eligibility, setEligibility] = useState(null);
@@ -13,9 +13,7 @@ const CourseCertificateTab = ({ courseId }) => {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`http://localhost:5000/api/certificates/eligibility/${courseId}`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/certificates/eligibility/${courseId}`);
       setEligibility(res.data);
     } catch (err) {
       setError('Failed to load certificate information.');
@@ -34,9 +32,7 @@ const CourseCertificateTab = ({ courseId }) => {
       setGenerating(true);
       setError(null);
       setSuccessMsg(null);
-      const res = await axios.post(`http://localhost:5000/api/certificates/generate`, { courseId }, {
-        withCredentials: true,
-      });
+      const res = await api.post(`/api/certificates/generate`, { courseId });
       setSuccessMsg('Certificate generated successfully!');
       fetchEligibility(); // reload status
     } catch (err) {
@@ -150,7 +146,7 @@ const CourseCertificateTab = ({ courseId }) => {
               </div>
               <div className="flex items-center gap-3 w-full md:w-auto">
                 <a
-                  href={`http://localhost:5000${certificate.pdfUrl}`}
+                  href={certificate.pdfUrl?.startsWith('http') ? certificate.pdfUrl : `${API_BASE_URL || ''}${certificate.pdfUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 md:flex-none lms-btn lms-btn-primary py-2.5 flex items-center justify-center gap-2"
@@ -158,7 +154,7 @@ const CourseCertificateTab = ({ courseId }) => {
                   <FileText size={16} /> View Certificate
                 </a>
                 <a
-                  href={`http://localhost:5000${certificate.pdfUrl}`}
+                  href={certificate.pdfUrl?.startsWith('http') ? certificate.pdfUrl : `${API_BASE_URL || ''}${certificate.pdfUrl}`}
                   download
                   className="flex-1 md:flex-none p-2.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface-hover)] text-[var(--lms-text-primary)] transition-colors"
                   title="Download PDF"

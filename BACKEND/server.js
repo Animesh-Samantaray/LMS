@@ -34,6 +34,7 @@ import exportRoutes from "./Routes/export.routes.js";
 import courseQueryRoutes from "./Routes/courseQuery.routes.js";
 import { setSocketIo } from "./Configs/socket.js";
 import "./Configs/firebaseAdmin.js";
+import { verifyTransporter } from "./Utils/sendMail.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -42,14 +43,21 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const PORT = process.env.PORT || 5000;
 
 connectDB();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+const clientUrls = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((url) => url.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  ...clientUrls,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://localhost:3000",
@@ -59,7 +67,13 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.replace(/\/$/, "");
+      if (
+        allowedOrigins.includes(normalizedOrigin) ||
+        process.env.NODE_ENV !== "production" ||
+        allowedOrigins.length === 0
+      ) {
         callback(null, true);
       } else {
         callback(null, true);
@@ -98,6 +112,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api", contentRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/assignment", assignmentRoutes);
+app.use("/api/assignments", assignmentRoutes);
 app.use("/api/quiz-questions", quizQuestionRoutes);
 app.use("/api/quizzes", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
@@ -130,6 +145,7 @@ const io = new Server(server, {
 
 setSocketIo(io);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`LMS Server running on port ${PORT}`);
+  verifyTransporter().catch(() => {});
 });
