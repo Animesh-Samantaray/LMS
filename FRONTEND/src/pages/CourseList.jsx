@@ -138,13 +138,16 @@ const CourseList = () => {
               placeholder="Search by course title, category, or topic..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search courses"
               className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl text-xs sm:text-sm font-medium"
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={() => setSearchTerm('')}
                 className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
                 title="Clear search"
+                aria-label="Clear search"
               >
                 <X size={16} />
               </button>
@@ -155,11 +158,13 @@ const CourseList = () => {
 
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[var(--lms-surface-elevated)] border border-[var(--lms-border)] shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[var(--lms-text-secondary)]">
+          <label htmlFor="course-category-filter" className="flex items-center gap-2 text-xs font-semibold text-[var(--lms-text-secondary)]">
             <Filter size={15} />
             <span>Category:</span>
-          </div>
+          </label>
           <select
+            id="course-category-filter"
+            aria-label="Filter courses by category"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
@@ -172,10 +177,12 @@ const CourseList = () => {
             ))}
           </select>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-[var(--lms-text-secondary)] ml-2">
+          <label htmlFor="course-sort-by" className="flex items-center gap-2 text-xs font-semibold text-[var(--lms-text-secondary)] ml-2">
             <span>Sort by:</span>
-          </div>
+          </label>
           <select
+            id="course-sort-by"
+            aria-label="Sort courses by"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="bg-[var(--lms-surface-subtle)] border border-[var(--lms-border)] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-medium text-[var(--lms-text-primary)] focus:outline-none focus:ring-2 focus:ring-indigo-500/30"

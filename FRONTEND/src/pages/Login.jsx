@@ -333,10 +333,13 @@ const Login = () => {
       <form
         onSubmit={handleEmailSubmit}
         className="space-y-4"
+        aria-busy={isAnyLoading}
       >
-       
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
+          <label
+            htmlFor="login-email"
+            className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5"
+          >
             Email Address
           </label>
 
@@ -344,9 +347,11 @@ const Login = () => {
             <Mail
               size={17}
               className="absolute left-3.5 text-gray-500 pointer-events-none"
+              aria-hidden="true"
             />
 
             <input
+              id="login-email"
               type="email"
               name="email"
               value={formData.email}
@@ -355,15 +360,17 @@ const Login = () => {
               disabled={isAnyLoading}
               autoComplete="email"
               required
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
             />
           </div>
         </div>
 
-    
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            <label
+              htmlFor="login-password"
+              className="block text-xs font-semibold text-gray-700 uppercase tracking-wider"
+            >
               Password
             </label>
 
@@ -379,9 +386,11 @@ const Login = () => {
             <Lock
               size={17}
               className="absolute left-3.5 text-gray-500 pointer-events-none"
+              aria-hidden="true"
             />
 
             <input
+              id="login-password"
               type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
@@ -390,7 +399,7 @@ const Login = () => {
               disabled={isAnyLoading}
               autoComplete="current-password"
               required
-              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
+              className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-all disabled:opacity-50"
             />
 
             <button
@@ -399,7 +408,7 @@ const Login = () => {
                 setShowPassword((prev) => !prev)
               }
               disabled={isAnyLoading}
-              className="absolute right-3 p-1 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+              className="absolute right-3 p-1.5 text-gray-500 hover:text-gray-700 disabled:opacity-50 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               aria-label={
                 showPassword
                   ? "Hide password"
@@ -407,25 +416,25 @@ const Login = () => {
               }
             >
               {showPassword ? (
-                <EyeOff size={17} />
+                <EyeOff size={17} aria-hidden="true" />
               ) : (
-                <Eye size={17} />
+                <Eye size={17} aria-hidden="true" />
               )}
             </button>
           </div>
         </div>
 
-     
         <button
           type="submit"
           disabled={isAnyLoading}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
         >
           {actionLoading ? (
             <>
               <Loader2
                 className="animate-spin"
                 size={18}
+                aria-hidden="true"
               />
               Signing in...
             </>

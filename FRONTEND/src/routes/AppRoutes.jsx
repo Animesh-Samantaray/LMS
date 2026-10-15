@@ -1,71 +1,65 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-
-import LandingPage from "../pages/LandingPage";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import ForgotPassword from "../pages/ForgotPassword";
-import VerifyTwoFactor from "../pages/VerifyTwoFactor";
-import VerifyCertificate from "../pages/VerifyCertificate";
-
-import StudentDashboard from "../pages/dashboards/StudentDashboard";
-import StudentMyCourses from "../pages/dashboards/student/StudentMyCourses";
-import StudentCertificates from "../pages/dashboards/student/StudentCertificates";
-import ViewCertificate from "../pages/dashboards/student/ViewCertificate";
-import InstructorDashboard from "../pages/dashboards/InstructorDashboard";
-import InstructorAssignments from '../pages/dashboards/instructor/InstructorAssignments';
-import InstructorQuizzes from '../pages/dashboards/instructor/InstructorQuizzes';
-import AdminDashboard from "../pages/dashboards/AdminDashboard";
-import CategoryManagement from "../pages/dashboards/admin/CategoryManagement";
-import CourseManagement from "../pages/dashboards/admin/CourseManagement";
-import UserManagement from "../pages/dashboards/admin/UserManagement";
-import MyCourses from "../pages/dashboards/instructor/MyCourses";
-import CreateCourse from "../pages/dashboards/instructor/CreateCourse";
-import EditCourse from "../pages/dashboards/instructor/EditCourse";
-import CourseContent from "../pages/dashboards/instructor/CourseContent";
-import ProfileSettings from "../pages/dashboards/ProfileSettings";
-import PremiumCoursesPage from "../pages/PremiumCoursesPage";
-import PremiumCourseDetailsPage from "../pages/PremiumCourseDetailsPage";
-import CourseList from "../pages/CourseList";
-import CourseDetails from "../pages/CourseDetails";
-import CourseLearn from "../pages/dashboards/student/CourseLearn";
-import StudentQuizzes from "../pages/dashboards/student/StudentQuizzes";
-import QuizTest from "../pages/dashboards/student/QuizTest";
-import StudentExams from "../pages/dashboards/student/StudentExams";
-import ExamDetailsPage from "../pages/ExamDetailsPage";
-import ActiveExamPage from "../pages/ActiveExamPage";
-import ExamResultPage from "../pages/ExamResultPage";
-import ExamLeaderboardPage from "../pages/ExamLeaderboardPage";
-import InstructorExams from "../pages/dashboards/instructor/InstructorExams";
-import InstructorExamQuestions from "../pages/dashboards/instructor/InstructorExamQuestions";
-import CourseAnalytics from "../pages/dashboards/instructor/CourseAnalytics";
-import MyReports from "../pages/dashboards/reports/MyReports";
-import AdminReports from "../pages/dashboards/reports/AdminReports";
-import AdminAnalytics from "../pages/dashboards/admin/AdminAnalytics";
-
-import StudentAnalytics from "../pages/dashboards/instructor/StudentAnalytics";
-import DiscussionPage from "../pages/dashboards/DiscussionPage";
-import StudentCalendar from "../pages/dashboards/student/StudentCalendar";
-import StudentReviews from "../pages/dashboards/student/StudentReviews";
-import StudentQueries from "../pages/dashboards/student/StudentQueries";
-import InstructorQueries from "../pages/dashboards/instructor/InstructorQueries";
-import AdminQueries from "../pages/dashboards/admin/AdminQueries";
-import AdminChatbotLogs from "../pages/dashboards/admin/AdminChatbotLogs";
 
 import { useAuth } from "../context/AuthContext";
 import { getDashboardPath } from "../utils/auth";
 import LoadingScreen from "../components/LoadingScreen";
+import RouteLoadingFallback from "../components/RouteLoadingFallback";
 
+// Lazy-loaded routes for optimal initial bundle size and rapid LCP
+const LandingPage = lazy(() => import("../pages/LandingPage"));
+const Login = lazy(() => import("../pages/Login"));
+const Signup = lazy(() => import("../pages/Signup"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const VerifyTwoFactor = lazy(() => import("../pages/VerifyTwoFactor"));
+const VerifyCertificate = lazy(() => import("../pages/VerifyCertificate"));
 
+const StudentDashboard = lazy(() => import("../pages/dashboards/StudentDashboard"));
+const StudentMyCourses = lazy(() => import("../pages/dashboards/student/StudentMyCourses"));
+const StudentCertificates = lazy(() => import("../pages/dashboards/student/StudentCertificates"));
+const ViewCertificate = lazy(() => import("../pages/dashboards/student/ViewCertificate"));
+const InstructorDashboard = lazy(() => import("../pages/dashboards/InstructorDashboard"));
+const InstructorAssignments = lazy(() => import('../pages/dashboards/instructor/InstructorAssignments'));
+const InstructorQuizzes = lazy(() => import('../pages/dashboards/instructor/InstructorQuizzes'));
+const AdminDashboard = lazy(() => import("../pages/dashboards/AdminDashboard"));
+const CategoryManagement = lazy(() => import("../pages/dashboards/admin/CategoryManagement"));
+const CourseManagement = lazy(() => import("../pages/dashboards/admin/CourseManagement"));
+const UserManagement = lazy(() => import("../pages/dashboards/admin/UserManagement"));
+const MyCourses = lazy(() => import("../pages/dashboards/instructor/MyCourses"));
+const CreateCourse = lazy(() => import("../pages/dashboards/instructor/CreateCourse"));
+const EditCourse = lazy(() => import("../pages/dashboards/instructor/EditCourse"));
+const CourseContent = lazy(() => import("../pages/dashboards/instructor/CourseContent"));
+const ProfileSettings = lazy(() => import("../pages/dashboards/ProfileSettings"));
+const PremiumCoursesPage = lazy(() => import("../pages/PremiumCoursesPage"));
+const PremiumCourseDetailsPage = lazy(() => import("../pages/PremiumCourseDetailsPage"));
+const CourseList = lazy(() => import("../pages/CourseList"));
+const CourseDetails = lazy(() => import("../pages/CourseDetails"));
+const CourseLearn = lazy(() => import("../pages/dashboards/student/CourseLearn"));
+const StudentQuizzes = lazy(() => import("../pages/dashboards/student/StudentQuizzes"));
+const QuizTest = lazy(() => import("../pages/dashboards/student/QuizTest"));
+const StudentExams = lazy(() => import("../pages/dashboards/student/StudentExams"));
+const ExamDetailsPage = lazy(() => import("../pages/ExamDetailsPage"));
+const ActiveExamPage = lazy(() => import("../pages/ActiveExamPage"));
+const ExamResultPage = lazy(() => import("../pages/ExamResultPage"));
+const ExamLeaderboardPage = lazy(() => import("../pages/ExamLeaderboardPage"));
+const InstructorExams = lazy(() => import("../pages/dashboards/instructor/InstructorExams"));
+const InstructorExamQuestions = lazy(() => import("../pages/dashboards/instructor/InstructorExamQuestions"));
+const CourseAnalytics = lazy(() => import("../pages/dashboards/instructor/CourseAnalytics"));
+const MyReports = lazy(() => import("../pages/dashboards/reports/MyReports"));
+const AdminReports = lazy(() => import("../pages/dashboards/reports/AdminReports"));
+const AdminAnalytics = lazy(() => import("../pages/dashboards/admin/AdminAnalytics"));
+const StudentAnalytics = lazy(() => import("../pages/dashboards/instructor/StudentAnalytics"));
+const DiscussionPage = lazy(() => import("../pages/dashboards/DiscussionPage"));
+const StudentCalendar = lazy(() => import("../pages/dashboards/student/StudentCalendar"));
+const StudentReviews = lazy(() => import("../pages/dashboards/student/StudentReviews"));
+const StudentQueries = lazy(() => import("../pages/dashboards/student/StudentQueries"));
+const InstructorQueries = lazy(() => import("../pages/dashboards/instructor/InstructorQueries"));
+const AdminQueries = lazy(() => import("../pages/dashboards/admin/AdminQueries"));
+const AdminChatbotLogs = lazy(() => import("../pages/dashboards/admin/AdminChatbotLogs"));
 
-
-
-
-
-
-
-
-
+const AddPracticeChallenge = lazy(() => import('../pages/dashboards/instructor/AddPracticeChallenge'));
+const InstructorPracticeList = lazy(() => import('../pages/dashboards/instructor/InstructorPracticeList'));
+const PracticeZone = lazy(() => import('../pages/dashboards/student/PracticeZone'));
 
 const ProtectedRoute = ({ roles }) => {
   const {
@@ -81,25 +75,20 @@ const ProtectedRoute = ({ roles }) => {
     return <LoadingScreen />;
   }
 
-  
   if (lmsProfileMissing) {
     return <Navigate to="/signup" replace />;
   }
 
-  
   if (firebaseUser && twoFactorRequired) {
     return <Navigate to="/verify-2fa" replace />;
   }
 
-  
   if (!user || !user.role) {
     return <Navigate to="/login" replace />;
   }
 
-  
   if (roles && !roles.some(r => r.toLowerCase() === user?.role?.toLowerCase()?.trim())) {
     const targetPath = getDashboardPath(user?.role);
-    // Prevent infinite redirect loops if target path requires a role we don't have
     if (location.pathname === targetPath) {
       return <Navigate to="/" replace />;
     }
@@ -108,113 +97,54 @@ const ProtectedRoute = ({ roles }) => {
 
   return <Outlet />;
 };
-
-
-
-
-
-import AddPracticeChallenge from '../pages/dashboards/instructor/AddPracticeChallenge';
-import InstructorPracticeList from '../pages/dashboards/instructor/InstructorPracticeList';
-import PracticeZone from '../pages/dashboards/student/PracticeZone';
 
 const PublicOnlyRoute = () => {
   const {
     user,
     firebaseUser,
-    lmsProfileMissing,
     twoFactorRequired,
     loading,
   } = useAuth();
   const location = useLocation();
 
-  if (loading) {
-    return <LoadingScreen />;
+  // If already confirmed authenticated, redirect to role dashboard
+  if (!loading && user?.role) {
+    const targetPath = getDashboardPath(user.role);
+    if (location.pathname !== targetPath) {
+      return <Navigate to={targetPath} replace />;
+    }
   }
 
-  
-
-
-
-  if (firebaseUser && twoFactorRequired) {
+  if (!loading && firebaseUser && twoFactorRequired) {
     return <Navigate to="/verify-2fa" replace />;
   }
 
-  
-
-
-
-
-
-  if (lmsProfileMissing) {
-    return <Outlet />;
-  }
-
-  
-
-
-  if (user && user?.role) {
-    const targetPath = getDashboardPath(user?.role);
-    if (location.pathname === targetPath) {
-      return <Navigate to="/" replace />;
-    }
-    return <Navigate to={targetPath} replace />;
-  }
-
+  // Render public login/signup page immediately without full-screen loading blocker
   return <Outlet />;
 };
-
-
-
 
 const HomeRoute = () => {
   const {
     user,
     firebaseUser,
-    lmsProfileMissing,
     twoFactorRequired,
     loading,
   } = useAuth();
   const location = useLocation();
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
-  
-
-
-
-  if (lmsProfileMissing) {
-    return <Outlet />;
-  }
-
-  
-
-
-  if (firebaseUser && twoFactorRequired) {
-    return <Navigate to="/verify-2fa" replace />;
-  }
-
-  
-
-  if (user && user?.role) {
-    const targetPath = getDashboardPath(user?.role);
-    if (location.pathname === targetPath) {
-      return <LandingPage />;
+  if (!loading && user?.role) {
+    const targetPath = getDashboardPath(user.role);
+    if (location.pathname !== targetPath) {
+      return <Navigate to={targetPath} replace />;
     }
-    return <Navigate to={targetPath} replace />;
+  }
+
+  if (!loading && firebaseUser && twoFactorRequired) {
+    return <Navigate to="/verify-2fa" replace />;
   }
 
   return <LandingPage />;
 };
-
-
-
-
-
-
-
-
 
 const TwoFactorRoute = () => {
   const {
@@ -227,13 +157,10 @@ const TwoFactorRoute = () => {
     return <LoadingScreen />;
   }
 
-  
   if (!firebaseUser) {
     return <Navigate to="/login" replace />;
   }
 
-  
-  
   if (!twoFactorRequired) {
     return <Navigate to="/" replace />;
   }
@@ -243,295 +170,101 @@ const TwoFactorRoute = () => {
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      
-      <Route path="/" element={<HomeRoute />} />
-      <Route path="/premium-courses" element={<PremiumCoursesPage />} />
-      <Route path="/course/:id" element={<PremiumCourseDetailsPage />} />
-      <Route path="/courses" element={<CourseList />} />
-      <Route path="/courses/:id" element={<CourseDetails />} />
+    <Suspense fallback={<RouteLoadingFallback />}>
+      <Routes>
+        <Route path="/" element={<HomeRoute />} />
+        <Route path="/premium-courses" element={<PremiumCoursesPage />} />
+        <Route path="/course/:id" element={<PremiumCourseDetailsPage />} />
+        <Route path="/courses" element={<CourseList />} />
+        <Route path="/courses/:id" element={<CourseDetails />} />
 
-      
-      <Route element={<PublicOnlyRoute />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-      </Route>
+        {/* Public only routes */}
+        <Route element={<PublicOnlyRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        </Route>
 
-      
-      <Route element={<TwoFactorRoute />}>
-        <Route
-          path="/verify-2fa"
-          element={<VerifyTwoFactor />}
-        />
-      </Route>
+        <Route element={<TwoFactorRoute />}>
+          <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
+        </Route>
 
-      <Route path="/verify-certificate/:certificateId?" element={<VerifyCertificate />} />
+        <Route path="/verify-certificate/:certificateId?" element={<VerifyCertificate />} />
 
-      
-      <Route element={<ProtectedRoute roles={["Student"]} />}>
-        <Route
-          path="/student/dashboard"
-          element={<StudentDashboard />}
-        />
+        {/* Student Routes */}
+        <Route element={<ProtectedRoute roles={["Student"]} />}>
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/courses" element={<CourseList />} />
+          <Route path="/student/courses/my" element={<StudentMyCourses />} />
+          <Route path="/student/courses/:id/learn" element={<CourseLearn />} />
+          <Route path="/student/quizzes" element={<StudentQuizzes />} />
+          <Route path="/student/quizzes/:quizId/take" element={<QuizTest />} />
+          <Route path="/student/profile" element={<ProfileSettings />} />
+          <Route path="/student/certificates" element={<StudentCertificates />} />
+          <Route path="/student/certificates/view/:id" element={<ViewCertificate />} />
+          <Route path="/student/analytics" element={<StudentAnalytics />} />
+          <Route path="/student/discussions" element={<DiscussionPage />} />
+          <Route path="/student/calendar" element={<StudentCalendar />} />
+          <Route path="/student/reviews" element={<StudentReviews />} />
+          <Route path="/student/reports" element={<MyReports />} />
+          <Route path="/student/practice" element={<PracticeZone />} />
+          <Route path="/student/queries" element={<StudentQueries />} />
+          <Route path="/exams" element={<StudentExams />} />
+          <Route path="/exams/:examId" element={<ExamDetailsPage />} />
+          <Route path="/exams/:examId/attempt" element={<ActiveExamPage />} />
+          <Route path="/exams/:examId/result/:attemptId" element={<ExamResultPage />} />
+        </Route>
 
-        <Route
-          path="/student/courses"
-          element={<CourseList />}
-        />
+        {/* Instructor Routes */}
+        <Route element={<ProtectedRoute roles={["Instructor"]} />}>
+          <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+          <Route path="/instructor/courses" element={<MyCourses />} />
+          <Route path="/instructor/courses/my" element={<MyCourses />} />
+          <Route path="/instructor/discussions" element={<DiscussionPage />} />
+          <Route path="/instructor/profile" element={<ProfileSettings />} />
+          <Route path="/instructor/reports" element={<MyReports />} />
+          <Route path="/instructor/practice" element={<InstructorPracticeList />} />
+          <Route path="/instructor/practice/create" element={<AddPracticeChallenge />} />
+          <Route path="/instructor/practice/edit/:id" element={<AddPracticeChallenge />} />
+          <Route path="/instructor/queries" element={<InstructorQueries />} />
+        </Route>
 
-        <Route
-          path="/student/courses/my"
-          element={<StudentMyCourses />}
-        />
+        {/* Shared Instructor & Admin */}
+        <Route element={<ProtectedRoute roles={["Instructor", "Admin"]} />}>
+          <Route path="/instructor/courses/create" element={<CreateCourse />} />
+          <Route path="/instructor/courses/:id/edit" element={<EditCourse />} />
+          <Route path="/instructor/courses/:id/content" element={<CourseContent />} />
+          <Route path="/instructor/assignments" element={<InstructorAssignments />} />
+          <Route path="/instructor/quizzes" element={<InstructorQuizzes />} />
+          <Route path="/instructor/exams" element={<InstructorExams />} />
+          <Route path="/instructor/exams/:examId/questions" element={<InstructorExamQuestions />} />
+          <Route path="/instructor/course-analytics/:id" element={<CourseAnalytics />} />
+          <Route path="/instructor/student-analytics/:studentId" element={<StudentAnalytics />} />
+        </Route>
 
-        <Route
-          path="/student/courses/:id/learn"
-          element={<CourseLearn />}
-        />
+        {/* Admin Routes */}
+        <Route element={<ProtectedRoute roles={["Admin"]} />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/categories" element={<CategoryManagement />} />
+          <Route path="/admin/courses" element={<CourseManagement />} />
+          <Route path="/admin/discussions" element={<DiscussionPage />} />
+          <Route path="/admin/profile" element={<ProfileSettings />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/queries" element={<AdminQueries />} />
+          <Route path="/admin/chatbot-logs" element={<AdminChatbotLogs />} />
+        </Route>
 
-        <Route
-          path="/student/quizzes"
-          element={<StudentQuizzes />}
-        />
+        {/* General discussion & leaderboard */}
+        <Route element={<ProtectedRoute roles={["Student", "Instructor", "Admin"]} />}>
+          <Route path="/discussions" element={<DiscussionPage />} />
+          <Route path="/exams/:examId/leaderboard" element={<ExamLeaderboardPage />} />
+        </Route>
 
-        <Route
-          path="/student/quizzes/:quizId/take"
-          element={<QuizTest />}
-        />
-
-        <Route
-          path="/student/profile"
-          element={<ProfileSettings />}
-        />
-
-        <Route
-          path="/student/certificates"
-          element={<StudentCertificates />}
-        />
-
-        <Route
-          path="/student/certificates/view/:id"
-          element={<ViewCertificate />}
-        />
-
-        <Route
-          path="/student/analytics"
-          element={<StudentAnalytics />}
-        />
-
-        <Route
-          path="/student/discussions"
-          element={<DiscussionPage />}
-        />
-
-        <Route
-          path="/student/calendar"
-          element={<StudentCalendar />}
-        />
-
-        <Route
-          path="/student/reviews"
-          element={<StudentReviews />}
-        />
-        <Route
-          path="/student/reports"
-          element={<MyReports />}
-        />
-        <Route
-          path="/student/practice"
-          element={<PracticeZone />}
-        />
-        <Route
-          path="/student/queries"
-          element={<StudentQueries />}
-        />
-        <Route
-          path="/exams"
-          element={<StudentExams />}
-        />
-        <Route
-          path="/exams/:examId"
-          element={<ExamDetailsPage />}
-        />
-        <Route
-          path="/exams/:examId/attempt"
-          element={<ActiveExamPage />}
-        />
-        <Route
-          path="/exams/:examId/result/:attemptId"
-          element={<ExamResultPage />}
-        />
-      </Route>
-
-      <Route element={<ProtectedRoute roles={["Instructor"]} />}>
-        <Route
-          path="/instructor/dashboard"
-          element={<InstructorDashboard />}
-        />
-        
-        <Route
-          path="/instructor/courses"
-          element={<MyCourses />}
-        />
-
-        <Route
-          path="/instructor/courses/my"
-          element={<MyCourses />}
-        />
-
-        <Route
-          path="/instructor/discussions"
-          element={<DiscussionPage />}
-        />
-
-        <Route
-          path="/instructor/profile"
-          element={<ProfileSettings />}
-        />
-        <Route
-          path="/instructor/reports"
-          element={<MyReports />}
-        />
-        <Route
-
-          path="/instructor/practice"
-
-          element={<InstructorPracticeList />}
-
-        />
-
-        <Route
-
-          path="/instructor/practice/create"
-
-          element={<AddPracticeChallenge />}
-
-        />
-
-        <Route
-
-          path="/instructor/practice/edit/:id"
-
-          element={<AddPracticeChallenge />}
-
-        />
-        <Route
-          path="/instructor/queries"
-          element={<InstructorQueries />}
-        />
-      </Route>
-
-      {/* Shared routes for course creation, editing and analytics (Instructor & Admin) */}
-      <Route element={<ProtectedRoute roles={["Instructor", "Admin"]} />}>
-        <Route
-          path="/instructor/courses/create"
-          element={<CreateCourse />}
-        />
-        
-        <Route
-          path="/instructor/courses/:id/edit"
-          element={<EditCourse />}
-        />
-
-        <Route
-          path="/instructor/courses/:id/content"
-          element={<CourseContent />}
-        />
-        <Route
-          path="/instructor/assignments"
-          element={<InstructorAssignments />}
-        />
-        <Route
-          path="/instructor/quizzes"
-          element={<InstructorQuizzes />}
-        />
-        <Route
-          path="/instructor/exams"
-          element={<InstructorExams />}
-        />
-        <Route
-          path="/instructor/exams/:examId/questions"
-          element={<InstructorExamQuestions />}
-        />
-        <Route
-          path="/instructor/course-analytics/:id"
-          element={<CourseAnalytics />}
-        />
-        <Route
-          path="/instructor/student-analytics/:studentId"
-          element={<StudentAnalytics />}
-        />
-      </Route>
-
-      
-      <Route element={<ProtectedRoute roles={["Admin"]} />}>
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        />
-
-        <Route
-          path="/admin/users"
-          element={<UserManagement />}
-        />
-
-        <Route
-          path="/admin/categories"
-          element={<CategoryManagement />}
-        />
-        
-        <Route
-          path="/admin/courses"
-          element={<CourseManagement />}
-        />
-
-        <Route
-          path="/admin/discussions"
-          element={<DiscussionPage />}
-        />
-
-        <Route
-          path="/admin/profile"
-          element={<ProfileSettings />}
-        />
-        <Route
-          path="/admin/reports"
-          element={<AdminReports />}
-        />
-        <Route
-          path="/admin/analytics"
-          element={<AdminAnalytics />}
-        />
-        <Route
-          path="/admin/queries"
-          element={<AdminQueries />}
-        />
-        <Route
-          path="/admin/chatbot-logs"
-          element={<AdminChatbotLogs />}
-        />
-
-      </Route>
-
-      {/* General discussion & leaderboard route accessible to logged-in users */}
-      <Route element={<ProtectedRoute roles={["Student", "Instructor", "Admin"]} />}>
-        <Route
-          path="/discussions"
-          element={<DiscussionPage />}
-        />
-        <Route
-          path="/exams/:examId/leaderboard"
-          element={<ExamLeaderboardPage />}
-        />
-      </Route>
-
-      
-      <Route path="*" element={<LandingPage />} />
-    </Routes>
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    </Suspense>
   );
 };
 

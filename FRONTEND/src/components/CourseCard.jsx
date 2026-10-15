@@ -87,6 +87,9 @@ const CourseCard = ({
           <img
             src={course.thumbnail}
             alt={course.title}
+            width="400"
+            height="192"
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={(e) => {
               e.target.style.display = 'none';

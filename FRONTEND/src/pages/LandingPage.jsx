@@ -4,9 +4,10 @@ import {
   Monitor, Users, BookOpen, Award, Play, Star,
   Clock, Video, Search, ChevronDown, CheckCircle2,
   TrendingUp, Laptop, PenTool, PieChart, Shield, GraduationCap,
-  LayoutGrid, Mail, CheckCircle, Heart, Bookmark, Facebook, Instagram, Twitter, Linkedin,
+  LayoutGrid, Mail, CheckCircle, Heart, Bookmark,
   Atom, Figma, Apple, PlayCircle, Globe, MoreHorizontal, User, Settings,
-  LifeBuoy, FileText, ToggleLeft, CloudDownload, Puzzle, Clipboard
+  LifeBuoy, FileText, ToggleLeft, CloudDownload, Puzzle, Clipboard,
+  Menu, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +19,7 @@ const LandingNavbar = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollTimeout = React.useRef(null);
   const lastScrollY = React.useRef(0);
 
@@ -52,8 +54,8 @@ const LandingNavbar = () => {
     <header className={`w-full bg-white fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${scrolled ? 'shadow-md' : 'border-b border-gray-100'} ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
       <div className="container mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between">
         <div className="flex items-center gap-4 lg:gap-8">
-          <Link to="/" className="flex items-center gap-1">
-            <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+          <Link to="/" className="flex items-center gap-1" aria-label="SHNOOR LMS Home">
+            <img src="/shnoor-logo.png" alt="SHNOOR LMS" width="140" height="40" className="h-[40px] w-auto object-contain" />
             <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
           </Link>
           <div className="relative group hidden lg:block">
@@ -357,92 +359,113 @@ const LandingNavbar = () => {
           </div>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="hidden md:flex items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-2 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
             <input type="text" placeholder="Search" className="bg-transparent border-none outline-none text-sm w-40 text-gray-700 placeholder-gray-400" />
             <Search size={16} className="text-gray-400" />
           </div>
           
           {isLoggedIn ? (
-            <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 cursor-pointer shadow-sm hover:shadow-md transition-shadow" onClick={() => navigate(user?.role === 'instructor' ? '/instructor-dashboard' : '/student-dashboard')}>
-              <img src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} alt="Profile" className="w-full h-full object-cover" />
+            <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 cursor-pointer shadow-sm hover:shadow-md transition-shadow" onClick={() => navigate(user?.role === 'instructor' ? '/instructor/dashboard' : '/student/dashboard')} aria-label="Go to Dashboard">
+              <img src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} alt={user?.name || "User profile"} width="36" height="36" className="w-full h-full object-cover" />
             </div>
           ) : (
             <button onClick={() => navigate('/login')} className="px-5 py-2 bg-gray-900 text-white rounded-md font-semibold text-sm hover:bg-gray-800 transition-colors shadow-sm">
               Log in
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white border-b border-gray-200 shadow-xl overflow-hidden px-4 py-4 space-y-3"
+          >
+            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+              <input 
+                type="text" 
+                placeholder="Search courses..." 
+                className="bg-transparent border-none outline-none text-sm w-full text-gray-700 placeholder-gray-400" 
+              />
+              <Search size={16} className="text-gray-400" />
+            </div>
+
+            <nav className="flex flex-col space-y-1">
+              <Link 
+                to="/courses" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium text-sm transition-colors"
+              >
+                <LayoutGrid size={18} className="text-blue-500" />
+                Browse All Courses
+              </Link>
+              <a 
+                href="#courses" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium text-sm transition-colors"
+              >
+                <TrendingUp size={18} className="text-orange-500" />
+                Popular Courses
+              </a>
+              <Link 
+                to="/signup" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium text-sm transition-colors"
+              >
+                <GraduationCap size={18} className="text-purple-500" />
+                Become an Instructor
+              </Link>
+            </nav>
+
+            <div className="pt-2 border-t border-gray-100 flex flex-col gap-2">
+              {isLoggedIn ? (
+                <Link
+                  to={user?.role === 'instructor' ? '/instructor/dashboard' : '/student/dashboard'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 bg-blue-600 text-white rounded-md font-semibold text-sm hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2.5 bg-gray-100 text-gray-800 rounded-md font-semibold text-sm hover:bg-gray-200 transition-colors"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2.5 bg-blue-600 text-white rounded-md font-semibold text-sm hover:bg-blue-700 transition-colors shadow-sm"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
-
-const LandingFooter = () => (
-  <footer className="bg-slate-50 pt-16 pb-8 border-t border-gray-200">
-    <div className="container mx-auto px-4 lg:px-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-        <div className="lg:col-span-2">
-          <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-1">
-              <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
-              <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
-            </Link>
-            <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
-              SHNOOR LMS platform, built specifically for education centers which are dedicated to teaching and involve learners.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
-              <a key={i} href="#" className="w-9 h-9 rounded bg-white shadow-sm flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-                <Icon size={16} />
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h4 className="font-bold text-gray-900 mb-4">Company</h4>
-          <ul className="flex flex-col gap-3 text-sm text-gray-500">
-            <li><a href="#" className="hover:text-blue-600 transition-colors">About us</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Contact us</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">News and Blogs</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Library</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Career</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-bold text-gray-900 mb-4">Community</h4>
-          <ul className="flex flex-col gap-3 text-sm text-gray-500">
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Documentation</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Faq</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Forum</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Sitemap</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-bold text-gray-900 mb-4">Teaching</h4>
-          <ul className="flex flex-col gap-3 text-sm text-gray-500">
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Become a teacher</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">How to guide</a></li>
-            <li><a href="#" className="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="flex flex-col lg:flex-row items-center justify-between pt-8 border-t border-gray-200 gap-4">
-        <p className="text-gray-500 text-sm">Copyrights &copy; {new Date().getFullYear()} SHNOOR LMS. All rights reserved.</p>
-        <div className="flex items-center gap-6 text-sm text-gray-500">
-          <a href="#" className="flex items-center gap-1 hover:text-gray-900"><Globe size={14}/> Language</a>
-          <a href="#" className="hover:text-gray-900">Terms of use</a>
-          <a href="#" className="hover:text-gray-900">Privacy policy</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -561,7 +584,10 @@ const LandingPage = () => {
               <motion.div className="w-full lg:w-6/12 relative mt-10 lg:mt-0 flex justify-center" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
                   <img 
                     src="/hero-vector.png" 
-                    alt="LMS Learning Platform" 
+                    alt="LMS Learning Platform hero illustration" 
+                    width="550"
+                    height="450"
+                    fetchPriority="high"
                     className="relative z-10 w-full max-w-[550px] h-auto object-contain drop-shadow-xl" 
                   />
                   
@@ -571,10 +597,10 @@ const LandingPage = () => {
                 <div className="absolute top-1/4 right-0 lg:-right-10 bg-emerald-500 rounded-xl p-4 shadow-xl z-20 overflow-hidden">
                    <h4 className="text-white font-bold text-sm mb-3 relative z-10">Our daily new students</h4>
                    <div className="flex items-center -space-x-2 relative z-10">
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=A" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=B" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=C" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=D" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=A" alt="Student avatar" width="32" height="32" loading="lazy" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=B" alt="Student avatar" width="32" height="32" loading="lazy" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=C" alt="Student avatar" width="32" height="32" loading="lazy" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=D" alt="Student avatar" width="32" height="32" loading="lazy" className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white" />
                      <div className="w-8 h-8 rounded-full border-2 border-emerald-500 bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">1K+</div>
                    </div>
                 </div>
@@ -652,7 +678,7 @@ const LandingPage = () => {
                   <div className={`h-48 ${c.bg} flex items-center justify-center relative overflow-hidden`}>
                     <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                     {c.img ? (
-                      <img src={c.img} alt={c.title} className="w-16 h-16 relative z-10 drop-shadow-md object-contain" />
+                      <img src={c.img} alt={c.title} width="64" height="64" loading="lazy" className="w-16 h-16 relative z-10 drop-shadow-md object-contain" />
                     ) : (
                       <c.icon size={64} className="text-white relative z-10 drop-shadow-md" />
                     )}
@@ -713,7 +739,7 @@ const LandingPage = () => {
                 {[...trendCourses, ...trendCourses, ...trendCourses].map((c, i) => (
                   <div key={i} className="min-w-[100%] md:min-w-[calc(50%-16px)] lg:min-w-[calc(33.333%-21px)] shrink-0 snap-start bg-white rounded-2xl overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.05)] border border-gray-100 hover:-translate-y-1 transition-transform">
                   <div className="relative h-[220px]">
-                    <img src={c.img} alt={c.title} className="w-full h-full object-cover" />
+                    <img src={c.img} alt={c.title} width="600" height="220" loading="lazy" className="w-full h-full object-cover" />
                     <div className="absolute top-4 left-4 bg-white/90 px-2 py-1 rounded text-xs font-bold shadow-sm">
                       Free
                     </div>
@@ -744,7 +770,7 @@ const LandingPage = () => {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${c.avatar}`} className="w-8 h-8 rounded-full bg-gray-100" />
+                        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${c.avatar}`} alt={c.author} width="32" height="32" loading="lazy" className="w-8 h-8 rounded-full bg-gray-100" />
                         <span className="text-sm font-semibold text-gray-700">{c.author}</span>
                       </div>
                       {c.price === "Free" ? (
@@ -771,7 +797,7 @@ const LandingPage = () => {
                 
                 <div className="absolute top-20 left-0 lg:-left-4 bg-white p-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] w-72 z-10 border border-gray-50">
                   <div className="flex justify-center mb-4">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Carolyn" className="w-16 h-16 rounded-full bg-pink-100 border-2 border-white shadow-sm" />
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Carolyn" alt="Carolyn Ortiz" width="64" height="64" loading="lazy" className="w-16 h-16 rounded-full bg-pink-100 border-2 border-white shadow-sm" />
                   </div>
                   <p className="text-sm text-gray-500 text-center italic mb-4 leading-relaxed">
                     "Moonlight newspaper up its enjoyment agreeable depending. Timed voice share led him to widen noisy young. At weddings believed laughing"
@@ -785,7 +811,7 @@ const LandingPage = () => {
                 
                 <div className="absolute bottom-10 right-4 lg:right-10 bg-white p-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] w-72 z-20 border border-gray-50">
                   <div className="flex justify-center mb-4">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dennis" className="w-16 h-16 rounded-full bg-blue-100 border-2 border-white shadow-sm" />
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dennis" alt="Dennis Barrett" width="64" height="64" loading="lazy" className="w-16 h-16 rounded-full bg-blue-100 border-2 border-white shadow-sm" />
                   </div>
                   <p className="text-sm text-gray-500 text-center italic mb-4 leading-relaxed">
                     "At weddings believed laughing although the Moonlight newspaper up its enjoyment agreeable depending."
@@ -801,11 +827,11 @@ const LandingPage = () => {
                   <h6 className="font-bold text-gray-900 text-xs mb-3">100+ Verified Mentors</h6>
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lori" className="w-8 h-8 rounded bg-red-100" />
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lori" alt="Lori Stevens" width="32" height="32" loading="lazy" className="w-8 h-8 rounded bg-red-100" />
                       <div><p className="text-xs font-bold text-gray-900 leading-tight">Lori Stevens</p><p className="text-[10px] text-gray-500">Tutor of physic</p></div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Billy" className="w-8 h-8 rounded bg-blue-100" />
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Billy" alt="Billy Vasquez" width="32" height="32" loading="lazy" className="w-8 h-8 rounded bg-blue-100" />
                       <div><p className="text-xs font-bold text-gray-900 leading-tight">Billy Vasquez</p><p className="text-[10px] text-gray-500">Tutor of chemistry</p></div>
                     </div>
                   </div>
