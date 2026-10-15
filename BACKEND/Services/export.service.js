@@ -9,7 +9,7 @@ import Resource from "../Models/Resource.model.js";
 import Quiz from "../Models/Quiz.model.js";
 import QuizQuestion from "../Models/QuizQuestion.model.js";
 import QuizSubmission from "../Models/QuizSubmission.model.js";
-import Exam from "../Models/Exam.Model.js";
+import Exam from "../Models/Exam.model.js";
 import ExamQuestion from "../Models/ExamQuestion.model.js";
 import ExamAttempt from "../Models/ExamAttempt.model.js";
 import Assignment from "../Models/Assignment.model.js";

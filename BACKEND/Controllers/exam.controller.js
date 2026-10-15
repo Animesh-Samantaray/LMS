@@ -3,7 +3,7 @@ import axios from "axios";
 import mammoth from "mammoth";
 import { PDFParse } from "pdf-parse";
 
-import Exam from "../Models/Exam.Model.js";
+import Exam from "../Models/Exam.model.js";
 import Course from "../Models/Course.model.js";
 import ExamQuestion from "../Models/ExamQuestion.model.js";
 
