@@ -41,6 +41,27 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setThemeDropdownOpen(false);
+        setProfileDropdownOpen(false);
+        setNotificationDropdownOpen(false);
+      }
+    };
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -142,8 +163,9 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
       
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 lg:hidden animate-fade-in"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden animate-fade-in"
           onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
         />
       )}
 
@@ -161,7 +183,7 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
             className={`flex items-center gap-3 group cursor-pointer w-full ${isCollapsed && !mobileMenuOpen ? 'justify-center' : ''}`}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-              <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[32px] object-contain shrink-0" />
+              <img src="/shnoor-logo.png" alt="SHNOOR LMS" width="112" height="32" className="h-[32px] w-auto object-contain shrink-0" />
               {(!isCollapsed || mobileMenuOpen) && (
                 <div className="flex flex-col min-w-0 overflow-hidden transition-all duration-300 opacity-100 justify-center">
                   <span className="text-xl font-extrabold text-[var(--lms-text-primary)] tracking-tight ml-1">LMS</span>
@@ -255,7 +277,9 @@ const DashboardLayout = ({ children, sidebarItems, roleTitle, pageTitle = "Dashb
               {user?.profileImage ? (
                 <img
                   src={user.profileImage}
-                  alt={user.name || 'User'}
+                  alt={user.name || 'User profile'}
+                  width="32"
+                  height="32"
                   className="w-full h-full object-cover"
                 />
               ) : (

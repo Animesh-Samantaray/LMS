@@ -315,12 +315,16 @@ const Signup = () => {
           <form onSubmit={handleEmailSubmit} className="space-y-3">
             {formData.role === 'Admin' && (
               <div>
-                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label
+                  htmlFor="signup-admin-token"
+                  className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1"
+                >
                   Admin Access Token
                 </label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" aria-hidden="true" />
                   <input
+                    id="signup-admin-token"
                     type="password"
                     name="adminAccessToken"
                     value={formData.adminAccessToken}
@@ -328,7 +332,7 @@ const Signup = () => {
                     placeholder="Enter admin access token"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -336,34 +340,48 @@ const Signup = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Full Name</label>
+                <label
+                  htmlFor="signup-fullname"
+                  className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1"
+                >
+                  Full Name
+                </label>
                 <div className="relative flex items-center">
-                  <User size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
+                  <User size={15} className="absolute left-3 text-gray-500 pointer-events-none" aria-hidden="true" />
                   <input
+                    id="signup-fullname"
                     type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="John Doe"
+                    autoComplete="name"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Email</label>
+                <label
+                  htmlFor="signup-email"
+                  className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1"
+                >
+                  Email
+                </label>
                 <div className="relative flex items-center">
-                  <Mail size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
+                  <Mail size={15} className="absolute left-3 text-gray-500 pointer-events-none" aria-hidden="true" />
                   <input
+                    id="signup-email"
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    autoComplete="email"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -371,38 +389,65 @@ const Signup = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Password</label>
+                <label
+                  htmlFor="signup-password"
+                  className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1"
+                >
+                  Password
+                </label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" aria-hidden="true" />
                   <input
+                    id="signup-password"
                     type={showPassword ? 'text' : 'password'}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
+                    autoComplete="new-password"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 text-gray-500 hover:text-gray-700">
-                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 text-gray-500 hover:text-gray-700 p-1"
+                  >
+                    {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">Confirm</label>
+                <label
+                  htmlFor="signup-confirm-password"
+                  className="block text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1"
+                >
+                  Confirm
+                </label>
                 <div className="relative flex items-center">
-                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" />
+                  <Lock size={15} className="absolute left-3 text-gray-500 pointer-events-none" aria-hidden="true" />
                   <input
+                    id="signup-confirm-password"
                     type={showConfirmPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="••••••••"
+                    autoComplete="new-password"
                     required
                     disabled={isAnyLoading}
-                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-slate-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
+                    className="w-full pl-9 pr-9 py-2 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500/25 focus:border-blue-500 outline-none transition-all disabled:opacity-50"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 text-gray-500 hover:text-gray-700 p-1"
+                  >
+                    {showConfirmPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -410,9 +455,9 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 mt-4 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             >
-              {actionLoading ? <Loader2 className="animate-spin" size={18} /> : `Create ${formData.role} Account`}
+              {actionLoading ? <Loader2 className="animate-spin" size={18} aria-hidden="true" /> : `Create ${formData.role} Account`}
             </button>
           </form>
         </div>

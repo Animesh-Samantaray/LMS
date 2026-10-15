@@ -1,0 +1,15 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /courses
+Allow: /login
+Allow: /signup
+Allow: /forgot-password
+Allow: /verify-certificate
+Disallow: /student/
+Disallow: /instructor/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /verify-2fa
+
+Sitemap: https://lms-plum-zeta.vercel.app/sitemap.xml

@@ -94,9 +94,10 @@ const Navbar = () => {
         <Link
           to="/"
           onClick={() => setMobileMenuOpen(false)}
+          aria-label="SHNOOR LMS Home"
           className="flex items-center gap-1 group relative z-10"
         >
-          <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+          <img src="/shnoor-logo.png" alt="SHNOOR LMS" width="140" height="40" className="h-[40px] w-auto object-contain" />
           <span className="text-2xl font-extrabold text-white tracking-tight ml-1">LMS</span>
         </Link>
 

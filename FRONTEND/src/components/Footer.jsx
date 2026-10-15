@@ -9,8 +9,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div className="lg:col-span-2">
             <div className="space-y-6">
-              <Link to="/" className="flex items-center gap-1">
-                <img src="/shnoor-logo.png" alt="SHNOOR" className="h-[40px] object-contain" />
+              <Link to="/" className="flex items-center gap-1" aria-label="SHNOOR LMS Home">
+                <img src="/shnoor-logo.png" alt="SHNOOR LMS" width="140" height="40" loading="lazy" className="h-[40px] w-auto object-contain" />
                 <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight ml-1">LMS</span>
               </Link>
               <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
@@ -18,9 +18,19 @@ const Footer = () => {
               </p>
             </div>
             <div className="flex gap-3 mt-6">
-              {[Facebook, Instagram, Twitter, Linkedin].map((Icon, i) => (
-                <a key={i} href="#" className="w-9 h-9 rounded bg-white shadow-sm flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-                  <Icon size={16} />
+              {[
+                { Icon: Facebook, name: 'Facebook' },
+                { Icon: Instagram, name: 'Instagram' },
+                { Icon: Twitter, name: 'Twitter' },
+                { Icon: Linkedin, name: 'LinkedIn' },
+              ].map(({ Icon, name }) => (
+                <a
+                  key={name}
+                  href="#"
+                  aria-label={`Visit our ${name} page`}
+                  className="w-9 h-9 rounded bg-white shadow-sm flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors"
+                >
+                  <Icon size={16} aria-hidden="true" />
                 </a>
               ))}
             </div>
