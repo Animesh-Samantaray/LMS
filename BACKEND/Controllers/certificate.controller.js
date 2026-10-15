@@ -12,7 +12,7 @@ import { createNotification } from '../Services/notification.service.js';
 
 import sendMail from "../Utils/sendMail.js";
 import puppeteer from "puppeteer";
-import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -230,7 +230,7 @@ export const generateCertificate = async (req, res) => {
       return res.json({ alreadyGenerated: true, certificate });
     }
 
-    const certId = `SHNOOR-CERT-${new Date().getFullYear()}-${uuidv4().split('-')[0].toUpperCase()}`;
+    const certId = `SHNOOR-CERT-${new Date().getFullYear()}-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
     const completionDateStr = new Date().toLocaleDateString('en-GB', {
       day: 'numeric', month: 'long', year: 'numeric'
     });
