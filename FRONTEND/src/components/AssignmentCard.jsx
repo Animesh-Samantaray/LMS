@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, Globe, Award, Calendar, FileText, AlertCircle, Edit2, Trash2, Send, Loader } from 'lucide-react';
+import { API_BASE_URL } from '../services/api.service';
 
 const AssignmentCard = ({
   assignment,
@@ -73,7 +74,7 @@ const AssignmentCard = ({
                   ({formatFileSize(assignment.questionFile.fileSize)})
                 </span>
                 <a 
-                  href={`http://localhost:5000${assignment.questionFile.url}`} 
+                  href={assignment.questionFile.url?.startsWith('http') ? assignment.questionFile.url : `${API_BASE_URL || ''}${assignment.questionFile.url}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-[var(--lms-accent)] hover:underline font-bold ml-1 shrink-0"

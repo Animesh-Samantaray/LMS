@@ -6,6 +6,7 @@ import CourseCard from '../components/CourseCard';
 import api from '../services/api.service';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
+import { getCachedData, setCachedData } from '../utils/cache';
 
 const CourseList = () => {
   const { user } = useAuth();
@@ -20,11 +21,17 @@ const CourseList = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const cached = getCachedData('categories');
+      if (cached && Array.isArray(cached) && cached.length > 0) {
+        setCategories(cached);
+      }
       try {
         const res = await api.get('/api/categories');
         const list = res.data.categories || res.data || [];
         setCategories(list);
+        setCachedData('categories', list, 15);
       } catch (err) {
+        // Fallback to cache if network fails
       }
     };
     fetchCategories();
@@ -32,8 +39,14 @@ const CourseList = () => {
 
   useEffect(() => {
     const fetchCoursesAndEnrollments = async () => {
+      const cachedCourses = getCachedData('public_courses');
+      if (cachedCourses && Array.isArray(cachedCourses) && cachedCourses.length > 0) {
+        setCourses(cachedCourses);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
+        if (!cachedCourses) setLoading(true);
         const [courseRes, enrolledRes] = await Promise.all([
           api.get('/api/courses'),
           user?.role === 'Student' ? api.get('/api/courses/enrolled/my').catch(() => null) : null
@@ -41,6 +54,7 @@ const CourseList = () => {
         
         const courseList = courseRes.data.courses || courseRes.data || [];
         setCourses(courseList);
+        setCachedData('public_courses', courseList, 5);
 
         const ids = new Set();
         if (user) {

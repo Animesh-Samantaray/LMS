@@ -6,6 +6,7 @@ import DashboardLayout from '../../../components/DashboardLayout';
 import studentService from '../../../services/student.service';
 import api from '../../../services/api.service';
 import CourseCard from '../../../components/CourseCard';
+import { getCachedData, setCachedData } from '../../../utils/cache';
 
 const StudentMyCourses = () => {
   const { user } = useAuth();
@@ -16,11 +17,19 @@ const StudentMyCourses = () => {
 
   useEffect(() => {
     const fetchEnrolled = async () => {
+      const cacheKey = `enrolled_courses_${user?._id || user?.id || 'me'}`;
+      const cached = getCachedData(cacheKey);
+      if (cached && Array.isArray(cached) && cached.length > 0) {
+        setEnrolledCourses(cached);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
+        if (!cached) setLoading(true);
         const res = await api.get('/api/courses/enrolled/my');
         const courses = res.data.courses || res.data || [];
         setEnrolledCourses(courses);
+        setCachedData(cacheKey, courses, 5);
         setError('');
       } catch (err) {
         try {
@@ -28,6 +37,7 @@ const StudentMyCourses = () => {
           const profile = data?.profile || data?.data || data;
           const courses = profile?.courses || profile?.enrolledCourses || profile?.enrolled || [];
           setEnrolledCourses(courses);
+          setCachedData(cacheKey, courses, 5);
         } catch (innerErr) {
           setError(err.response?.data?.message || err.message || 'Failed to fetch enrolled courses');
         }

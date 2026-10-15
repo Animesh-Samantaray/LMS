@@ -12,6 +12,7 @@ import AssignmentDetailModal from '../components/AssignmentDetailModal';
 import CourseReviews from '../components/reviews/CourseReviews';
 import StarRating from '../components/reviews/StarRating';
 import { useAuth } from '../context/AuthContext';
+import { getCachedData, setCachedData } from '../utils/cache';
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -90,8 +91,21 @@ const CourseDetails = () => {
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
+      const cacheKey = `course_detail_${id}`;
+      const cached = getCachedData(cacheKey);
+      if (cached?.course) {
+        setCourse(cached.course);
+        if (cached.units && Array.isArray(cached.units)) {
+          setUnits(cached.units);
+          if (cached.units.length > 0) {
+            setExpandedUnits({ [cached.units[0]._id || cached.units[0].id]: true });
+          }
+        }
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
+        if (!cached?.course) setLoading(true);
         const [courseRes, unitsRes] = await Promise.all([
           api.get(`/api/courses/${id}`),
           api.get(`/api/courses/${id}/units`).catch(() => ({ data: { success: false, units: [] } }))
@@ -115,8 +129,14 @@ const CourseDetails = () => {
           setUnits(unitsData);
           setExpandedUnits({ [unitsData[0]._id || unitsData[0].id]: true });
         }
+
+        if (courseData) {
+          setCachedData(cacheKey, { course: courseData, units: unitsData }, 10);
+        }
       } catch (err) {
-        setError("Failed to load course details. The course may not exist or has been removed.");
+        if (!cached?.course) {
+          setError("Failed to load course details. The course may not exist or has been removed.");
+        }
       } finally {
         setLoading(false);
       }

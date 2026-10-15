@@ -1,4 +1,12 @@
 {
+  "name": "shnoor-lms",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm --prefix BACKEND start",
+    "dev": "npm --prefix BACKEND run dev",
+    "build": "npm --prefix FRONTEND run build",
+    "client": "npm --prefix FRONTEND run dev"
+  },
   "dependencies": {
     "firebase": "^12.19.0",
     "firebase-admin": "^14.4.0"

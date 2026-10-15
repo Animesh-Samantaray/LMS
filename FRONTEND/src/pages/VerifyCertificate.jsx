@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api, { API_BASE_URL } from '../services/api.service';
 import { ShieldCheck, CheckCircle, XCircle, Award, Calendar, User, Search, Loader } from 'lucide-react';
 
 const VerifyCertificate = () => {
@@ -22,7 +22,7 @@ const VerifyCertificate = () => {
     setError(null);
     setVerificationResult(null);
     try {
-      const res = await axios.get(`http://localhost:5000/api/certificates/${idToVerify}`);
+      const res = await api.get(`/api/certificates/${idToVerify}`);
       setVerificationResult(res.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Certificate not found or invalid.');
@@ -154,7 +154,7 @@ const VerifyCertificate = () => {
               
               <div className="mt-8 pt-6 border-t border-emerald-500/20 text-center">
                 <a 
-                  href={`http://localhost:5000${verificationResult.pdfUrl}`}
+                  href={verificationResult.pdfUrl?.startsWith('http') ? verificationResult.pdfUrl : `${API_BASE_URL || ''}${verificationResult.pdfUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 font-bold text-emerald-600 hover:text-emerald-500 transition-colors"

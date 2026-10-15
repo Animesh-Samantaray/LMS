@@ -16,6 +16,9 @@ export default defineConfig({
   optimizeDeps: {
     include: ['recharts'],
   },
+  build: {
+    chunkSizeWarningLimit: 1600,
+  },
   server: {
     port: 5173,
     proxy: {
