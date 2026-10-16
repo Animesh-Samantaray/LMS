@@ -43,11 +43,25 @@ const directConversationSchema = new mongoose.Schema(
       of: Number,
       default: {},
     },
+    archivedBy: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        archivedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 directConversationSchema.index({ participants: 1 });
+directConversationSchema.index({ "archivedBy.user": 1 });
 
 const DirectConversation =
   mongoose.models.DirectConversation ||

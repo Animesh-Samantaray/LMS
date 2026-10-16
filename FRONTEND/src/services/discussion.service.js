@@ -6,6 +6,16 @@ export const discussionService = {
     return res.data;
   },
 
+  archiveDiscussion: async (discussionId) => {
+    const res = await api.patch(`/api/discussions/${discussionId}/archive`);
+    return res.data;
+  },
+
+  unarchiveDiscussion: async (discussionId) => {
+    const res = await api.patch(`/api/discussions/${discussionId}/unarchive`);
+    return res.data;
+  },
+
   getCourseDiscussion: async (courseId) => {
     const res = await api.get(`/api/discussions/course/${courseId}`);
     return res.data;

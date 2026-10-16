@@ -6,6 +6,9 @@ import {
   sendDirectMessage,
   uploadDirectFile,
   getMyDirectConversations,
+  getArchivedDirectConversations,
+  archiveDirectConversation,
+  unarchiveDirectConversation,
   toggleDirectReaction,
   deleteDirectMessage,
 } from "../Controllers/directChat.controller.js";
@@ -41,8 +44,17 @@ const handleUpload = (req, res, next) => {
 // Get or create one-to-one conversation
 router.post("/get-or-create", authMiddleware, getOrCreateDirectConversation);
 
-// Get my direct conversations
+// Get my active direct conversations
 router.get("/my-conversations", authMiddleware, getMyDirectConversations);
+
+// Get my archived direct conversations (MUST come before /:conversationId)
+router.get("/archived", authMiddleware, getArchivedDirectConversations);
+
+// Archive direct conversation
+router.patch("/:conversationId/archive", authMiddleware, archiveDirectConversation);
+
+// Unarchive direct conversation
+router.patch("/:conversationId/unarchive", authMiddleware, unarchiveDirectConversation);
 
 // Get direct messages
 router.get("/:conversationId/messages", authMiddleware, getDirectMessages);

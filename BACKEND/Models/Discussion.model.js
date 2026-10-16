@@ -43,12 +43,25 @@ const discussionSchema = new mongoose.Schema(
       of: Date,
       default: {},
     },
+    archivedBy: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        archivedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
-
 discussionSchema.index({ members: 1 });
+discussionSchema.index({ "archivedBy.user": 1 });
 
 const Discussion =
   mongoose.models.Discussion ||

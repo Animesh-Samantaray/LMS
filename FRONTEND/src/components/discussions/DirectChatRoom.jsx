@@ -9,6 +9,8 @@ import {
   Send,
   Loader2,
   AlertCircle,
+  Archive,
+  ArchiveRestore,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
@@ -50,6 +52,8 @@ const DirectChatRoom = ({
   returnDiscussion,
   theme = 'dark',
   onOpenForward,
+  onArchive,
+  onUnarchive,
 }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
@@ -525,8 +529,28 @@ const DirectChatRoom = ({
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-semibold">
+        <div className="flex items-center gap-2">
+          {conversation?.isArchived ? (
+            <button
+              onClick={onUnarchive}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+              title="Unarchive this conversation"
+            >
+              <ArchiveRestore size={14} />
+              <span className="hidden sm:inline">Unarchive Chat</span>
+            </button>
+          ) : (
+            <button
+              onClick={onArchive}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface)] text-[var(--lms-text-secondary)] hover:text-cyan-600 dark:hover:text-cyan-400 font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+              title="Archive this conversation"
+            >
+              <Archive size={14} />
+              <span className="hidden sm:inline">Archive Chat</span>
+            </button>
+          )}
+
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-semibold">
             <Sparkles size={13} />
             <span>Direct Messaging</span>
           </div>

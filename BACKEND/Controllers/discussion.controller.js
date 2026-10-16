@@ -3,6 +3,7 @@ import Discussion from "../Models/Discussion.model.js";
 import Course from "../Models/Course.model.js";
 import User from "../Models/User.model.js";
 import Message from "../Models/Message.model.js";
+import { getSocketIo } from "../Configs/socket.js";
 
 // get my discussions
 export const getMyDiscussions = async (req, res) => {
@@ -126,6 +127,9 @@ export const getMyDiscussions = async (req, res) => {
                 }
               : null,
             updatedAt: lastMessage ? lastMessage.createdAt : discussion.updatedAt,
+            isArchived: Boolean(
+              discussion.archivedBy?.some((a) => a.user?.toString() === userId.toString())
+            ),
           };
         } catch (innerErr) {
           console.error("Error processing discussion for course:", course?._id, innerErr);
@@ -405,5 +409,95 @@ export const getDiscussionMembers = async (req, res) => {
   } catch (error) {
     console.error("Get discussion members error:", error);
     return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const archiveDiscussion = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    const { discussionId } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(discussionId)) {
+      return res.status(400).json({ success: false, message: "Invalid discussion ID" });
+    }
+
+    const discussion = await Discussion.findById(discussionId);
+    if (!discussion) {
+      return res.status(404).json({ success: false, message: "Discussion not found" });
+    }
+
+    const alreadyArchived = discussion.archivedBy?.some(
+      (entry) => entry.user?.toString() === userId.toString()
+    );
+
+    if (!alreadyArchived) {
+      discussion.archivedBy = discussion.archivedBy || [];
+      discussion.archivedBy.push({
+        user: userId,
+        archivedAt: new Date(),
+      });
+      await discussion.save();
+    }
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`user:${userId}`).emit("discussion:archived", {
+        discussionId,
+        isArchived: true,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Group discussion archived successfully",
+      data: { discussionId, isArchived: true },
+    });
+  } catch (error) {
+    console.error("archiveDiscussion error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
+export const unarchiveDiscussion = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    const { discussionId } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(discussionId)) {
+      return res.status(400).json({ success: false, message: "Invalid discussion ID" });
+    }
+
+    await Discussion.findByIdAndUpdate(discussionId, {
+      $pull: {
+        archivedBy: {
+          user: userId,
+        },
+      },
+    });
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`user:${userId}`).emit("discussion:unarchived", {
+        discussionId,
+        isArchived: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Group discussion unarchived successfully",
+      data: { discussionId, isArchived: false },
+    });
+  } catch (error) {
+    console.error("unarchiveDiscussion error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 };
