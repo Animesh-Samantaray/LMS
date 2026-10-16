@@ -16,7 +16,7 @@ const checkDirectAccess = async (conversationId, userId) => {
   }
 
   const conversation = await DirectConversation.findById(conversationId)
-    .select("participants")
+    .select("participants archivedBy")
     .lean();
   if (!conversation) {
     return { allowed: false, conversation: null };
@@ -76,6 +76,7 @@ export const getOrCreateDirectConversation = async (req, res) => {
           new mongoose.Types.ObjectId(sortedIds[1]),
         ],
         unreadCounts: new Map(),
+        archivedBy: [],
       });
 
       conversation = await DirectConversation.findById(created._id)
@@ -83,10 +84,17 @@ export const getOrCreateDirectConversation = async (req, res) => {
         .lean();
     }
 
+    const isArchived = conversation.archivedBy?.some(
+      (a) => a.user?.toString() === currentUserId.toString()
+    ) || false;
+
     return res.status(200).json({
       success: true,
       message: "Direct conversation retrieved successfully",
-      conversation,
+      conversation: {
+        ...conversation,
+        isArchived,
+      },
     });
   } catch (error) {
     console.error("getOrCreateDirectConversation error:", error);
@@ -315,6 +323,7 @@ export const getMyDirectConversations = async (req, res) => {
 
     const conversations = await DirectConversation.find({
       participants: currentUserId,
+      "archivedBy.user": { $ne: currentUserId },
     })
       .populate("participants", "name email role profileImage")
       .populate("lastMessage.senderId", "name profileImage")
@@ -335,6 +344,7 @@ export const getMyDirectConversations = async (req, res) => {
         lastMessage: conv.lastMessage || null,
         unreadCount,
         updatedAt: conv.updatedAt,
+        isArchived: false,
       };
     });
 
@@ -344,6 +354,149 @@ export const getMyDirectConversations = async (req, res) => {
     });
   } catch (error) {
     console.error("getMyDirectConversations error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
+export const getArchivedDirectConversations = async (req, res) => {
+  try {
+    const currentUserId = getUserId(req.user);
+    if (!currentUserId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    const conversations = await DirectConversation.find({
+      participants: currentUserId,
+      "archivedBy.user": currentUserId,
+    })
+      .populate("participants", "name email role profileImage")
+      .populate("lastMessage.senderId", "name profileImage")
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    const formatted = conversations.map((conv) => {
+      const otherParticipant = conv.participants?.find(
+        (p) => p && p._id.toString() !== currentUserId.toString()
+      );
+      const unreadCount = conv.unreadCounts
+        ? (conv.unreadCounts instanceof Map ? conv.unreadCounts.get(currentUserId.toString()) : conv.unreadCounts[currentUserId.toString()]) || 0
+        : 0;
+      const archiveEntry = (conv.archivedBy || []).find(
+        (a) => a.user?.toString() === currentUserId.toString()
+      );
+
+      return {
+        _id: conv._id,
+        otherParticipant: otherParticipant || null,
+        lastMessage: conv.lastMessage || null,
+        unreadCount,
+        updatedAt: conv.updatedAt,
+        isArchived: true,
+        archivedAt: archiveEntry?.archivedAt || conv.updatedAt,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: formatted,
+    });
+  } catch (error) {
+    console.error("getArchivedDirectConversations error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
+export const archiveDirectConversation = async (req, res) => {
+  try {
+    const currentUserId = getUserId(req.user);
+    const { conversationId } = req.params;
+
+    if (!currentUserId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    const { allowed, conversation } = await checkDirectAccess(conversationId, currentUserId);
+    if (!allowed || !conversation) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this conversation",
+      });
+    }
+
+    const alreadyArchived = conversation.archivedBy?.some(
+      (entry) => entry.user?.toString() === currentUserId.toString()
+    );
+
+    if (!alreadyArchived) {
+      await DirectConversation.findByIdAndUpdate(conversationId, {
+        $push: {
+          archivedBy: {
+            user: currentUserId,
+            archivedAt: new Date(),
+          },
+        },
+      });
+    }
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`user:${currentUserId}`).emit("direct:conversation:archived", {
+        conversationId,
+        isArchived: true,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Conversation archived successfully",
+      data: { conversationId, isArchived: true },
+    });
+  } catch (error) {
+    console.error("archiveDirectConversation error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
+export const unarchiveDirectConversation = async (req, res) => {
+  try {
+    const currentUserId = getUserId(req.user);
+    const { conversationId } = req.params;
+
+    if (!currentUserId) {
+      return res.status(401).json({ success: false, message: "User not identified" });
+    }
+
+    const { allowed, conversation } = await checkDirectAccess(conversationId, currentUserId);
+    if (!allowed || !conversation) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this conversation",
+      });
+    }
+
+    await DirectConversation.findByIdAndUpdate(conversationId, {
+      $pull: {
+        archivedBy: {
+          user: currentUserId,
+        },
+      },
+    });
+
+    const io = getSocketIo();
+    if (io) {
+      io.to(`user:${currentUserId}`).emit("direct:conversation:unarchived", {
+        conversationId,
+        isArchived: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Conversation unarchived successfully",
+      data: { conversationId, isArchived: false },
+    });
+  } catch (error) {
+    console.error("unarchiveDirectConversation error:", error);
     return res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 };

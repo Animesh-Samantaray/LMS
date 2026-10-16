@@ -1,5 +1,6 @@
 import React from 'react';
-import { MessageSquare, Search, RefreshCw, AlertCircle } from 'lucide-react';
+import { MessageSquare, Search, RefreshCw, AlertCircle, Archive } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import DiscussionListItem from './DiscussionListItem';
 
 const DiscussionList = ({
@@ -10,6 +11,9 @@ const DiscussionList = ({
   error,
   onRetry,
   searchQuery,
+  filterType = 'all',
+  onArchive,
+  onUnarchive,
 }) => {
   if (loading) {
     return (
@@ -52,7 +56,21 @@ const DiscussionList = ({
   if (discussions.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        {searchQuery ? (
+        {filterType === 'archived' ? (
+          <>
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 mb-3 border border-amber-500/20">
+              <Archive size={22} />
+            </div>
+            <p className="text-sm font-semibold text-[var(--lms-text-primary)] mb-1">
+              {searchQuery ? 'No matching archived groups' : 'No archived group discussions'}
+            </p>
+            <p className="text-xs text-[var(--lms-text-muted)] max-w-xs">
+              {searchQuery
+                ? 'Try searching with a different course title.'
+                : 'Hover over any course group and click the archive icon to keep your active list clean.'}
+            </p>
+          </>
+        ) : searchQuery ? (
           <>
             <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 mb-3 border border-cyan-500/20">
               <Search size={22} />
@@ -83,14 +101,19 @@ const DiscussionList = ({
 
   return (
     <div className="flex-1 overflow-y-auto divide-y divide-[var(--lms-border)]">
-      {discussions.map((disc) => (
-        <DiscussionListItem
-          key={disc._id}
-          discussion={disc}
-          isSelected={selectedDiscussion?._id === disc._id}
-          onSelect={onSelectDiscussion}
-        />
-      ))}
+      <AnimatePresence initial={false}>
+        {discussions.map((disc) => (
+          <DiscussionListItem
+            key={disc._id}
+            discussion={disc}
+            isSelected={selectedDiscussion?._id === disc._id}
+            onSelect={onSelectDiscussion}
+            isArchived={filterType === 'archived' || disc.isArchived}
+            onArchive={onArchive}
+            onUnarchive={onUnarchive}
+          />
+        ))}
+      </AnimatePresence>
     </div>
   );
 };

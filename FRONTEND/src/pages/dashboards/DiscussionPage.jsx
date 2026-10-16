@@ -65,7 +65,10 @@ const DiscussionPage = () => {
   // Direct 1-on-1 Chat states
   const [sidebarTab, setSidebarTab] = useState('groups'); // 'groups' | 'direct'
   const [directConversations, setDirectConversations] = useState([]);
+  const [archivedDirectConversations, setArchivedDirectConversations] = useState([]);
+  const [directSubView, setDirectSubView] = useState('active'); // 'active' | 'archived'
   const [loadingDirect, setLoadingDirect] = useState(false);
+  const [loadingArchived, setLoadingArchived] = useState(false);
   const [activeDirectChat, setActiveDirectChat] = useState(null); // { conversation, otherUser, returnDiscussion }
 
   const socketRef = useRef(null);
@@ -88,9 +91,142 @@ const DiscussionPage = () => {
     }
   }, []);
 
+  const fetchArchivedDirectConversations = useCallback(async () => {
+    try {
+      setLoadingArchived(true);
+      const res = await directChatService.getArchivedDirectConversations();
+      if (res?.success) {
+        setArchivedDirectConversations(res.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to load archived direct conversations:', err);
+    } finally {
+      setLoadingArchived(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchDirectConversations();
-  }, [fetchDirectConversations]);
+    fetchArchivedDirectConversations();
+  }, [fetchDirectConversations, fetchArchivedDirectConversations]);
+
+  const handleArchiveConversation = async (conversationId) => {
+    if (!conversationId) return;
+    try {
+      const res = await directChatService.archiveDirectConversation(conversationId);
+      if (res?.success) {
+        toast.success('Conversation archived');
+        setDirectConversations((prev) => {
+          const target = prev.find((c) => c._id === conversationId);
+          if (target) {
+            setArchivedDirectConversations((prevArchived) => [
+              { ...target, isArchived: true, archivedAt: new Date().toISOString() },
+              ...prevArchived.filter((c) => c._id !== conversationId),
+            ]);
+          }
+          return prev.filter((c) => c._id !== conversationId);
+        });
+
+        setActiveDirectChat((prev) => {
+          if (prev?.conversation?._id === conversationId) {
+            return {
+              ...prev,
+              conversation: {
+                ...prev.conversation,
+                isArchived: true,
+              },
+            };
+          }
+          return prev;
+        });
+      } else {
+        toast.error(res?.message || 'Failed to archive conversation');
+      }
+    } catch (err) {
+      console.error('Error archiving conversation:', err);
+      toast.error(err.response?.data?.message || 'Failed to archive conversation');
+    }
+  };
+
+  const handleUnarchiveConversation = async (conversationId) => {
+    if (!conversationId) return;
+    try {
+      const res = await directChatService.unarchiveDirectConversation(conversationId);
+      if (res?.success) {
+        toast.success('Conversation unarchived');
+        setArchivedDirectConversations((prev) => {
+          const target = prev.find((c) => c._id === conversationId);
+          if (target) {
+            setDirectConversations((prevActive) => [
+              { ...target, isArchived: false },
+              ...prevActive.filter((c) => c._id !== conversationId),
+            ]);
+          }
+          return prev.filter((c) => c._id !== conversationId);
+        });
+
+        setActiveDirectChat((prev) => {
+          if (prev?.conversation?._id === conversationId) {
+            return {
+              ...prev,
+              conversation: {
+                ...prev.conversation,
+                isArchived: false,
+              },
+            };
+          }
+          return prev;
+        });
+      } else {
+        toast.error(res?.message || 'Failed to unarchive conversation');
+      }
+    } catch (err) {
+      console.error('Error unarchiving conversation:', err);
+      toast.error(err.response?.data?.message || 'Failed to unarchive conversation');
+    }
+  };
+
+  const handleArchiveDiscussion = async (discussionId) => {
+    if (!discussionId) return;
+    try {
+      const res = await discussionService.archiveDiscussion(discussionId);
+      if (res?.success) {
+        toast.success('Group discussion archived');
+        setDiscussions((prev) =>
+          prev.map((d) => (d._id === discussionId ? { ...d, isArchived: true } : d))
+        );
+        setSelectedDiscussion((prev) =>
+          prev?._id === discussionId ? { ...prev, isArchived: true } : prev
+        );
+      } else {
+        toast.error(res?.message || 'Failed to archive discussion');
+      }
+    } catch (err) {
+      console.error('Error archiving group discussion:', err);
+      toast.error(err.response?.data?.message || 'Failed to archive discussion');
+    }
+  };
+
+  const handleUnarchiveDiscussion = async (discussionId) => {
+    if (!discussionId) return;
+    try {
+      const res = await discussionService.unarchiveDiscussion(discussionId);
+      if (res?.success) {
+        toast.success('Group discussion unarchived');
+        setDiscussions((prev) =>
+          prev.map((d) => (d._id === discussionId ? { ...d, isArchived: false } : d))
+        );
+        setSelectedDiscussion((prev) =>
+          prev?._id === discussionId ? { ...prev, isArchived: false } : prev
+        );
+      } else {
+        toast.error(res?.message || 'Failed to unarchive discussion');
+      }
+    } catch (err) {
+      console.error('Error unarchiving group discussion:', err);
+      toast.error(err.response?.data?.message || 'Failed to unarchive discussion');
+    }
+  };
 
   const handleStartDirectChat = async (targetMember) => {
     if (!targetMember?._id) return;
@@ -344,8 +480,32 @@ const DiscussionPage = () => {
         );
       });
 
+      socket.off('direct:conversation:archived');
+      socket.off('direct:conversation:unarchived');
+      socket.off('discussion:archived');
+      socket.off('discussion:unarchived');
+
+      socket.on('direct:conversation:archived', () => {
+        fetchDirectConversations();
+        fetchArchivedDirectConversations();
+      });
+
+      socket.on('direct:conversation:unarchived', () => {
+        fetchDirectConversations();
+        fetchArchivedDirectConversations();
+      });
+
+      socket.on('discussion:archived', () => {
+        fetchDiscussions();
+      });
+
+      socket.on('discussion:unarchived', () => {
+        fetchDiscussions();
+      });
+
       socket.on('direct:notification', ({ conversationId, message }) => {
         fetchDirectConversations();
+        fetchArchivedDirectConversations();
         const otherName = message?.senderId?.name || 'A group member';
         showBrowserMessageNotification({
           messageId: message?._id,
@@ -357,6 +517,7 @@ const DiscussionPage = () => {
           onClick: () => {
             window.focus();
             fetchDirectConversations();
+            fetchArchivedDirectConversations();
           },
         });
       });
@@ -373,9 +534,13 @@ const DiscussionPage = () => {
         socketRef.current.off('message:deletedForEveryone');
         socketRef.current.off('message:deleted');
         socketRef.current.off('message:reaction');
+        socketRef.current.off('direct:conversation:archived');
+        socketRef.current.off('direct:conversation:unarchived');
+        socketRef.current.off('discussion:archived');
+        socketRef.current.off('discussion:unarchived');
       }
     };
-  }, [user, discussions.length, fetchDirectConversations]);
+  }, [user, discussions.length, fetchDirectConversations, fetchArchivedDirectConversations]);
 
   useEffect(() => {
     if (!selectedDiscussion) return;
@@ -659,6 +824,7 @@ const DiscussionPage = () => {
             onRefresh={() => {
               fetchDiscussions();
               fetchDirectConversations();
+              fetchArchivedDirectConversations();
             }}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -668,6 +834,13 @@ const DiscussionPage = () => {
             sidebarTab={sidebarTab}
             setSidebarTab={setSidebarTab}
             directConversations={directConversations}
+            archivedDirectConversations={archivedDirectConversations}
+            directSubView={directSubView}
+            setDirectSubView={setDirectSubView}
+            onArchiveConversation={handleArchiveConversation}
+            onUnarchiveConversation={handleUnarchiveConversation}
+            onArchiveDiscussion={handleArchiveDiscussion}
+            onUnarchiveDiscussion={handleUnarchiveDiscussion}
             activeDirectChat={activeDirectChat}
             onSelectDirectChat={handleSelectDirectChat}
           />
@@ -689,6 +862,8 @@ const DiscussionPage = () => {
               returnDiscussion={activeDirectChat.returnDiscussion || selectedDiscussion}
               theme={theme}
               onOpenForward={(msg) => handleOpenForward(msg, 'direct')}
+              onArchive={() => handleArchiveConversation(activeDirectChat.conversation?._id)}
+              onUnarchive={() => handleUnarchiveConversation(activeDirectChat.conversation?._id)}
             />
           ) : selectedDiscussion ? (
             <>
@@ -710,6 +885,8 @@ const DiscussionPage = () => {
                 }}
                 showMembersPanel={showMembersPanel}
                 onClearMessages={() => setClearDialogOpen(true)}
+                onArchive={() => handleArchiveDiscussion(selectedDiscussion?._id)}
+                onUnarchive={() => handleUnarchiveDiscussion(selectedDiscussion?._id)}
                 showBackButton={Boolean(selectedDiscussion)}
                 isClearing={clearing}
               />

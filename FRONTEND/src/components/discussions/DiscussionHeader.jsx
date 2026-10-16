@@ -9,6 +9,8 @@ import {
   Info,
   CheckCircle,
   Image as ImageIcon,
+  Archive,
+  ArchiveRestore,
 } from 'lucide-react';
 
 const DiscussionHeader = ({
@@ -21,6 +23,8 @@ const DiscussionHeader = ({
   onClearMessages,
   showBackButton,
   isClearing,
+  onArchive,
+  onUnarchive,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -118,6 +122,26 @@ const DiscussionHeader = ({
         >
           <ImageIcon size={17} />
         </button>
+
+        {discussion?.isArchived ? (
+          <button
+            onClick={onUnarchive}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+            title="Unarchive group discussion"
+          >
+            <ArchiveRestore size={14} />
+            <span className="hidden sm:inline">Unarchive</span>
+          </button>
+        ) : (
+          <button
+            onClick={onArchive}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--lms-border)] bg-[var(--lms-surface-subtle)] hover:bg-[var(--lms-surface)] text-[var(--lms-text-secondary)] hover:text-cyan-600 dark:hover:text-cyan-400 font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+            title="Archive group discussion"
+          >
+            <Archive size={14} />
+            <span className="hidden sm:inline">Archive</span>
+          </button>
+        )}
 
         {canManage && (
           <div className="relative">

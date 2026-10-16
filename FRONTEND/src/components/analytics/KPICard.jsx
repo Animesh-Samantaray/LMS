@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { fadeInUp, cardHoverProps } from '../../utils/motion';
 
 const KPICard = ({
   title,
@@ -45,10 +47,14 @@ const KPICard = ({
   const scheme = colorMap[colorScheme] || colorMap.blue;
 
   return (
-    <div
+    <motion.div
+      variants={fadeInUp(12, 0.3)}
+      initial="hidden"
+      animate="visible"
+      {...(onClick ? cardHoverProps : {})}
       onClick={onClick}
       className={`lms-glass-card p-5 flex flex-col justify-between transition-all duration-200 ${
-        onClick ? 'cursor-pointer hover:-translate-y-0.5' : ''
+        onClick ? 'cursor-pointer' : ''
       } ${scheme.accentBorder}`}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -83,7 +89,7 @@ const KPICard = ({
           </span>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

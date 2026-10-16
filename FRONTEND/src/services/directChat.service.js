@@ -11,6 +11,21 @@ export const directChatService = {
     return res.data;
   },
 
+  getArchivedDirectConversations: async () => {
+    const res = await api.get('/api/direct-chat/archived');
+    return res.data;
+  },
+
+  archiveDirectConversation: async (conversationId) => {
+    const res = await api.patch(`/api/direct-chat/${conversationId}/archive`);
+    return res.data;
+  },
+
+  unarchiveDirectConversation: async (conversationId) => {
+    const res = await api.patch(`/api/direct-chat/${conversationId}/unarchive`);
+    return res.data;
+  },
+
   getDirectMessages: async (conversationId) => {
     const res = await api.get(`/api/direct-chat/${conversationId}/messages`);
     return res.data;

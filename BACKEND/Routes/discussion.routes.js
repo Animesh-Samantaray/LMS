@@ -6,6 +6,8 @@ import {
   getCourseDiscussion,
   getDiscussionMembers,
   deleteDiscussion,
+  archiveDiscussion,
+  unarchiveDiscussion,
 } from "../Controllers/discussion.controller.js";
 import authorizeRoles from "../Middlewares/role.middleware.js";
 import authMiddleware from "../Middlewares/auth.middleware.js";
@@ -28,6 +30,12 @@ router.get(
   authMiddleware,
   getDiscussionMembers
 );
+
+// archive discussion
+router.patch("/:discussionId/archive", authMiddleware, archiveDiscussion);
+
+// unarchive discussion
+router.patch("/:discussionId/unarchive", authMiddleware, unarchiveDiscussion);
 
 // delete discussion
 router.delete(
